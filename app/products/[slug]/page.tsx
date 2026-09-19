@@ -1,15 +1,14 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { MOCK_PRODUCTS } from "@/lib/mock-data";
+import { getProductBySlug } from "@/lib/actions/products";
 import { formatUGX } from "@/lib/utils";
 import ProductGallery from "@/components/products/ProductGallery";
 import ShareButton from "@/components/products/ShareButton";
 
-// Dynamic SEO Generation
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const resolvedParams = await params;
-  const product = MOCK_PRODUCTS.find((p) => p.slug === resolvedParams.slug);
+  const product = await getProductBySlug(resolvedParams.slug);
   
   if (!product) return { title: "Product Not Found" };
 
@@ -19,14 +18,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     openGraph: {
       title: product.name,
       description: product.description,
-      images: [product.images.find(img => img.is_primary)?.image_url || ""],
+      images: [product.images[0]?.image_url || ""],
     },
   };
 }
 
 export default async function ProductDetailsPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
-  const product = MOCK_PRODUCTS.find((p) => p.slug === resolvedParams.slug);
+  const product = await getProductBySlug(resolvedParams.slug);
 
   if (!product) {
     notFound();
@@ -36,7 +35,6 @@ export default async function ProductDetailsPage({ params }: { params: Promise<{
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12 max-w-6xl">
-      {/* BREADCRUMBS */}
       <nav className="text-sm text-gray-500 mb-8 font-medium">
         <Link href="/" className="hover:text-brand-primary">Home</Link>
         <span className="mx-2">/</span>
@@ -48,13 +46,10 @@ export default async function ProductDetailsPage({ params }: { params: Promise<{
       </nav>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16">
-        
-        {/* LEFT: IMAGE GALLERY */}
         <div>
           <ProductGallery images={product.images} productName={product.name} />
         </div>
 
-        {/* RIGHT: PRODUCT INFO */}
         <div className="flex flex-col">
           <div className="mb-6 border-b border-gray-100 pb-6">
             <h1 className="text-3xl md:text-4xl font-extrabold text-brand-charcoal mb-4 leading-tight">
@@ -69,7 +64,7 @@ export default async function ProductDetailsPage({ params }: { params: Promise<{
               }`}>
                 {product.availability}
               </span>
-              {product.is_new_arrival && (
+              {product.is_new_arrival === true && (
                 <span className="px-3 py-1 text-xs font-bold rounded-full bg-brand-surface text-brand-primary border border-brand-primary/20">
                   NEW ARRIVAL
                 </span>
@@ -93,21 +88,6 @@ export default async function ProductDetailsPage({ params }: { params: Promise<{
             <p className="text-gray-600 leading-relaxed">{product.description}</p>
           </div>
 
-          {/* SPECIFICATIONS */}
-          {product.specifications && Object.keys(product.specifications).length > 0 && (
-            <div className="mb-8 bg-brand-surface p-6 rounded-2xl border border-gray-100">
-              <h3 className="font-bold text-brand-charcoal mb-4">Key Features</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6 text-sm">
-                {Object.entries(product.specifications).map(([key, value]) => (
-                  <div key={key} className="flex flex-col">
-                    <span className="text-gray-500 font-medium">{key}</span>
-                    <span className="text-brand-charcoal font-semibold">{value}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* ACTIONS */}
           <div className="mt-auto pt-6 flex flex-col sm:flex-row gap-4">
             <Link 
@@ -121,13 +101,8 @@ export default async function ProductDetailsPage({ params }: { params: Promise<{
             >
               {isOutOfStock ? "Out of Stock" : "Order Now"}
             </Link>
-            
-            <ShareButton 
-              title={product.name} 
-              text={`Check out the ${product.name} at Essyrise Electronics!`} 
-            />
+            <ShareButton title={product.name} text={`Check out the ${product.name} at Essyrise Electronics!`} />
           </div>
-          
         </div>
       </div>
     </div>
