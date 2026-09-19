@@ -1,10 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import ProductCard from "@/components/products/ProductCard";
-import { MOCK_CATEGORIES, MOCK_PRODUCTS } from "@/lib/mock-data";
+import { getProducts, getCategories } from "@/lib/actions/products";
 
-export default function Home() {
-  const featuredProducts = MOCK_PRODUCTS.filter(p => p.is_featured).slice(0, 4);
+// Convert to async component to fetch data server-side
+export default async function Home() {
+  const products = await getProducts();
+  const categories = await getCategories();
+  
+  const featuredProducts = products.filter(p => p.is_featured).slice(0, 4);
 
   return (
     <div>
@@ -35,7 +39,7 @@ export default function Home() {
             <h2 className="text-2xl md:text-3xl font-bold text-brand-charcoal">Shop by Category</h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-6">
-            {MOCK_CATEGORIES.map((cat) => (
+            {categories.map((cat) => (
               <Link href={`/category/${cat.slug}`} key={cat.id} className="group bg-white rounded-2xl shadow-sm hover:shadow-card-hover p-4 text-center transition-all border border-gray-100 flex flex-col items-center">
                 <div className="w-20 h-20 relative mb-4 rounded-full overflow-hidden bg-gray-50 border-2 border-transparent group-hover:border-brand-accent transition-colors">
                   <Image 
@@ -61,32 +65,18 @@ export default function Home() {
             View All →
           </Link>
         </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-          {featuredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      </section>
-
-      {/* TRUST FACTORS */}
-      <section className="bg-white py-16 border-t border-gray-100">
-        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-          <div className="p-6">
-            <div className="w-12 h-12 mx-auto bg-brand-surface text-brand-primary rounded-full flex items-center justify-center mb-4 text-xl">🚚</div>
-            <h3 className="font-bold text-brand-charcoal mb-2">Fast Delivery</h3>
-            <p className="text-gray-500 text-sm">Quick and reliable delivery across Mbarara and surrounding areas.</p>
+        
+        {featuredProducts.length > 0 ? (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            {featuredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
           </div>
-          <div className="p-6">
-            <div className="w-12 h-12 mx-auto bg-brand-surface text-brand-primary rounded-full flex items-center justify-center mb-4 text-xl">🛡️</div>
-            <h3 className="font-bold text-brand-charcoal mb-2">Genuine Products</h3>
-            <p className="text-gray-500 text-sm">Authentic phones and accessories from trusted brands.</p>
+        ) : (
+          <div className="text-center py-10 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+            <p className="text-gray-500">No products added yet. Add your first product in the admin dashboard.</p>
           </div>
-          <div className="p-6">
-            <div className="w-12 h-12 mx-auto bg-brand-surface text-brand-primary rounded-full flex items-center justify-center mb-4 text-xl">💬</div>
-            <h3 className="font-bold text-brand-charcoal mb-2">Great Support</h3>
-            <p className="text-gray-500 text-sm">We are here to help you find exactly what you need.</p>
-          </div>
-        </div>
+        )}
       </section>
     </div>
   );
