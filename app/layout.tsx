@@ -1,20 +1,13 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import Header from "@/components/layout/Header";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Essyrise Electronics | Phones & Genuine Accessories in Mbarara",
   description: "The latest phones, genuine accessories, and great deals in Mbarara, Uganda. Order online today.",
-  openGraph: {
-    title: "Essyrise Electronics",
-    description: "Phones & Genuine Accessories in Mbarara",
-    url: "https://essyriseelectronics.com",
-    siteName: "Essyrise Electronics",
-    locale: "en_UG",
-    type: "website",
-  },
 };
 
 export default function RootLayout({
@@ -25,23 +18,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} min-h-screen flex flex-col`}>
-        {/* TOP NAVIGATION SHELL */}
-        <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-200 shadow-sm">
-          <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-            <div className="text-xl font-bold tracking-tight text-brand-primary">
-              ESSYRISE <span className="text-brand-accent">ELECTRONICS</span>
-            </div>
-            <nav className="hidden md:flex gap-6 font-medium text-sm">
-              <a href="/" className="hover:text-brand-accent transition-colors">Home</a>
-              <a href="/shop" className="hover:text-brand-accent transition-colors">Shop</a>
-              <a href="/category/phones" className="hover:text-brand-accent transition-colors">Phones</a>
-            </nav>
-            {/* Mobile Menu Button Placeholder */}
-            <button className="md:hidden p-2 text-brand-charcoal">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-            </button>
-          </div>
-        </header>
+        {/* INTERACTIVE HEADER */}
+        <Header />
 
         {/* MAIN CONTENT */}
         <main className="flex-grow">
@@ -49,9 +27,31 @@ export default function RootLayout({
         </main>
 
         {/* FOOTER SHELL */}
-        <footer className="bg-brand-charcoal text-white py-8 mt-12">
-          <div className="container mx-auto px-4 text-center text-sm text-gray-400">
-            <p>&copy; {new Date().getFullYear()} Essyrise Electronics. Mbarara, Uganda.</p>
+        <footer id="contact" className="bg-brand-charcoal text-white py-12 mt-12">
+          <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
+            <div>
+              <h3 className="text-lg font-bold mb-4 text-brand-coral">ESSYRISE ELECTRONICS</h3>
+              <p className="text-gray-400">Your premium destination for top-tier electronics and smartphones in Mbarara.</p>
+            </div>
+            <div>
+              <h3 className="text-lg font-bold mb-4">Quick Links</h3>
+              <ul className="space-y-2 text-gray-400">
+                <li><a href="/shop" className="hover:text-white transition-colors">Shop All</a></li>
+                <li><a href="/category/phones" className="hover:text-white transition-colors">Phones</a></li>
+                <li><a href="/category/phone-accessories" className="hover:text-white transition-colors">Accessories</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-lg font-bold mb-4">Contact</h3>
+              <ul className="space-y-2 text-gray-400">
+                <li>Mbarara, Uganda</li>
+                <li>Call: +256 (0) 700 000 000</li>
+                <li>Email: info@essyriseelectronics.com</li>
+              </ul>
+            </div>
+          </div>
+          <div className="container mx-auto px-4 text-center text-xs text-gray-500 mt-12 pt-8 border-t border-gray-800">
+            <p>&copy; {new Date().getFullYear()} Essyrise Electronics. All rights reserved.</p>
           </div>
         </footer>
       </body>
