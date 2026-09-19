@@ -1,24 +1,28 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ProductCard from "@/components/products/ProductCard";
-import { MOCK_CATEGORIES, MOCK_PRODUCTS } from "@/lib/mock-data";
+import { getCategories, getProducts } from "@/lib/actions/products";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const resolvedParams = await params;
-  const category = MOCK_CATEGORIES.find((c) => c.slug === resolvedParams.slug);
+  const categories = await getCategories();
+  const category = categories.find((c) => c.slug === resolvedParams.slug);
+  
   if (!category) return { title: "Category Not Found" };
   return { title: `${category.name} | Essyrise Electronics` };
 }
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
-  const category = MOCK_CATEGORIES.find((c) => c.slug === resolvedParams.slug);
+  const categories = await getCategories();
+  const category = categories.find((c) => c.slug === resolvedParams.slug);
 
   if (!category) {
     notFound();
   }
 
-  const categoryProducts = MOCK_PRODUCTS.filter(
+  const allProducts = await getProducts();
+  const categoryProducts = allProducts.filter(
     (product) => product.category_id === category.id
   );
 
