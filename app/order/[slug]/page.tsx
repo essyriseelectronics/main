@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { MOCK_PRODUCTS } from "@/lib/mock-data";
+import { getProductBySlug } from "@/lib/actions/products";
 import CheckoutForm from "@/components/orders/CheckoutForm";
 import { ArrowLeft } from "lucide-react";
 
@@ -11,13 +11,12 @@ export const metadata: Metadata = {
 
 export default async function OrderPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
-  const product = MOCK_PRODUCTS.find((p) => p.slug === resolvedParams.slug);
+  const product = await getProductBySlug(resolvedParams.slug);
 
   if (!product) {
     notFound();
   }
 
-  // Prevent ordering out of stock items
   if (product.availability === "OUT OF STOCK") {
     return (
       <div className="container mx-auto px-4 py-20 text-center">
