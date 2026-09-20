@@ -23,9 +23,9 @@ export interface Category {
   slug: string;
   description?: string;
   image_url?: string;
-  is_active: boolean;
+  is_active: boolean | number;
   created_at: string;
-  updated_at: string;
+  updated_at?: string;
 }
 
 export interface ProductImage {
@@ -34,8 +34,8 @@ export interface ProductImage {
   image_url: string;
   r2_key: string;
   alt_text?: string;
-  sort_order: number;
-  is_primary: boolean;
+  sort_order?: number;
+  is_primary: boolean | number;
   created_at: string;
 }
 
@@ -47,16 +47,16 @@ export interface Product {
   category_name?: string;
   description: string;
   price: number; // in UGX
-  discount_price?: number;
-  currency: string;
+  discount_price?: number | null;
+  currency?: string;
   availability: AvailabilityStatus;
-  is_featured: boolean;
-  is_new_arrival: boolean;
-  is_active: boolean;
+  is_featured: boolean | number;
+  is_new_arrival: boolean | number;
+  is_active: boolean | number;
   specifications?: Record<string, string>;
   images: ProductImage[];
   created_at: string;
-  updated_at: string;
+  updated_at?: string;
 }
 
 export interface OrderItem {
@@ -81,10 +81,10 @@ export interface Order {
   note?: string;
   status: OrderStatus;
   total_amount: number;
-  currency: string;
+  currency?: string;
   items?: OrderItem[];
   created_at: string;
-  updated_at: string;
+  updated_at?: string;
 }
 
 export interface Contact {
@@ -92,12 +92,14 @@ export interface Contact {
   name: string;
   phone: string;
   email?: string;
-  source: "IMPORT" | "ORDER" | "MANUAL" | "OTHER";
-  marketing_opt_in: boolean;
-  is_active: boolean;
+  location?: string | null;
+  address?: string | null;
+  source: string;
+  marketing_opt_in: boolean | number;
+  is_active?: boolean | number;
   groups?: string[];
   created_at: string;
-  updated_at: string;
+  updated_at?: string;
 }
 
 export interface ContactGroup {
@@ -115,11 +117,11 @@ export interface SmsCampaign {
   message_template: string;
   product_id?: string;
   recipient_count: number;
-  sms_units: number;
+  sms_units?: number;
   estimated_cost: number;
   actual_cost?: number;
   status: CampaignStatus;
-  created_by: string;
+  created_by?: string;
   created_at: string;
-  updated_at: string;
+  updated_at?: string;
 }
