@@ -1,18 +1,10 @@
-/** @type {import('next/next').NextConfig} */
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'images.unsplash.com',
-      },
-      {
-        protocol: 'https',
-        hostname: '*.r2.cloudflarestorage.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'pub-*.r2.dev',
+        hostname: '**', // Whitelists all HTTPS images. For production, replace '**' with your R2 domain (e.g., 'pub-abc123xyz.r2.dev')
       },
     ],
   },
