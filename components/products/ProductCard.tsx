@@ -41,7 +41,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             sizes="(max-width: 768px) 50vw, 25vw"
           />
         ) : (
-          <div className="flex flex-col items-center justify-center text-gray-400 w-full h-full bg-gray-100">
+          <div className="flex flex-col items-center justify-center text-gray-400 w-full h-full bg-gray-100 absolute inset-0">
             <ImageIcon className="w-10 h-10 mb-2 opacity-50" />
             <span className="text-[10px] font-bold uppercase tracking-wider">No Image</span>
           </div>
