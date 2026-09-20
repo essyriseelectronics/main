@@ -1,11 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Plus, Search, Edit, MessageSquare, Trash2 } from "lucide-react";
-import { MOCK_PRODUCTS } from "@/lib/mock-data";
+import { getProducts } from "@/lib/actions/products";
 import { formatUGX } from "@/lib/utils";
 
-export default function AdminProductsPage() {
-  const products = MOCK_PRODUCTS;
+export default async function AdminProductsPage() {
+  const products = await getProducts();
 
   return (
     <div>
@@ -60,52 +60,59 @@ export default function AdminProductsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {products.map((product) => {
-                const primaryImage = product.images.find(img => img.is_primary)?.image_url || product.images[0]?.image_url;
-                return (
-                  <tr key={product.id} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 relative rounded-lg border border-gray-200 overflow-hidden bg-white flex-shrink-0">
-                          {primaryImage && <Image src={primaryImage} alt={product.name} fill className="object-cover" sizes="48px" />}
+              {products.length > 0 ? (
+                products.map((product) => {
+                  const primaryImage = product.images.find(img => img.is_primary)?.image_url || product.images[0]?.image_url;
+                  return (
+                    <tr key={product.id} className="hover:bg-gray-50/50 transition-colors">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 relative rounded-lg border border-gray-200 overflow-hidden bg-white flex-shrink-0">
+                            {primaryImage && <Image src={primaryImage} alt={product.name} fill className="object-cover" sizes="48px" />}
+                          </div>
+                          <div>
+                            <p className="font-semibold text-brand-charcoal">{product.name}</p>
+                            <p className="text-xs text-gray-400 mt-0.5">{product.is_featured ? 'Featured' : ''}</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-semibold text-brand-charcoal">{product.name}</p>
-                          <p className="text-xs text-gray-400 mt-0.5">{product.is_featured ? 'Featured' : ''}</p>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-600">{product.category_name}</td>
+                      <td className="px-6 py-4 text-sm">
+                        <span className="font-semibold text-brand-charcoal">{formatUGX(product.discount_price || product.price)}</span>
+                        {product.discount_price && <span className="block text-xs text-gray-400 line-through">{formatUGX(product.price)}</span>}
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`px-2.5 py-1 text-xs font-bold rounded-full ${
+                          product.availability === "IN STOCK" ? "bg-green-100 text-green-700" :
+                          product.availability === "LIMITED STOCK" ? "bg-orange-100 text-orange-700" :
+                          "bg-gray-200 text-gray-600"
+                        }`}>
+                          {product.availability}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex justify-end gap-2">
+                          <button title="Promote via SMS" className="p-2 text-brand-primary hover:bg-purple-50 rounded-lg transition-colors">
+                            <MessageSquare className="w-4 h-4" />
+                          </button>
+                          <button title="Edit Product" className="p-2 text-gray-400 hover:text-brand-charcoal hover:bg-gray-100 rounded-lg transition-colors">
+                            <Edit className="w-4 h-4" />
+                          </button>
+                          <button title="Delete" className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+                            <Trash2 className="w-4 h-4" />
+                          </button>
                         </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">{product.category_name}</td>
-                    <td className="px-6 py-4 text-sm">
-                      <span className="font-semibold text-brand-charcoal">{formatUGX(product.discount_price || product.price)}</span>
-                      {product.discount_price && <span className="block text-xs text-gray-400 line-through">{formatUGX(product.price)}</span>}
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`px-2.5 py-1 text-xs font-bold rounded-full ${
-                        product.availability === "IN STOCK" ? "bg-green-100 text-green-700" :
-                        product.availability === "LIMITED STOCK" ? "bg-orange-100 text-orange-700" :
-                        "bg-gray-200 text-gray-600"
-                      }`}>
-                        {product.availability}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex justify-end gap-2">
-                        {/* SMS PROMOTION SHORTCUT */}
-                        <button title="Promote via SMS" className="p-2 text-brand-primary hover:bg-purple-50 rounded-lg transition-colors">
-                          <MessageSquare className="w-4 h-4" />
-                        </button>
-                        <button title="Edit Product" className="p-2 text-gray-400 hover:text-brand-charcoal hover:bg-gray-100 rounded-lg transition-colors">
-                          <Edit className="w-4 h-4" />
-                        </button>
-                        <button title="Delete" className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan={5} className="text-center py-12 text-gray-500">
+                    No products found in database. Add your first product above.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
