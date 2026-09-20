@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ImageIcon } from "lucide-react";
 import { Product } from "@/types";
 import { formatUGX } from "@/lib/utils";
 
@@ -8,36 +9,43 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-    // Notice the added "?" after product.images
-  const primaryImage = product.images?.find((img) => img.is_primary)?.image_url || product.images?.[0]?.image_url || "/placeholder-image.jpg";
+  // Safely check for an image URL using optional chaining
+  const primaryImage = product.images?.find((img) => img.is_primary)?.image_url || product.images?.[0]?.image_url;
   const isOutOfStock = product.availability === "OUT OF STOCK";
-  
+
   return (
-    <div className="group bg-white rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 border border-gray-100 overflow-hidden flex flex-col h-full relative">
-      
+    <div className="group bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 overflow-hidden flex flex-col h-full relative">
+
       {/* BADGES */}
       <div className="absolute top-3 left-3 z-10 flex flex-col gap-2">
         {product.discount_price && (
-          <span className="bg-brand-accent text-white text-xs font-bold px-2 py-1 rounded-md">
+          <span className="bg-brand-accent text-white text-xs font-bold px-2 py-1 rounded-md shadow-sm">
             SALE
           </span>
         )}
         {isOutOfStock && (
-          <span className="bg-gray-800 text-white text-xs font-bold px-2 py-1 rounded-md">
+          <span className="bg-gray-800 text-white text-xs font-bold px-2 py-1 rounded-md shadow-sm">
             OUT OF STOCK
           </span>
         )}
       </div>
 
-      {/* IMAGE */}
-      <Link href={`/products/${product.slug}`} className="relative aspect-[4/5] overflow-hidden bg-gray-50 block">
-        <Image
-          src={primaryImage}
-          alt={product.name}
-          fill
-          className="object-cover group-hover:scale-105 transition-transform duration-500"
-          sizes="(max-width: 768px) 50vw, 25vw"
-        />
+      {/* IMAGE OR FALLBACK */}
+      <Link href={`/products/${product.slug}`} className="relative aspect-[4/5] overflow-hidden bg-gray-50 flex items-center justify-center border-b border-gray-100">
+        {primaryImage ? (
+          <Image
+            src={primaryImage}
+            alt={product.name}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            sizes="(max-width: 768px) 50vw, 25vw"
+          />
+        ) : (
+          <div className="flex flex-col items-center text-gray-300">
+            <ImageIcon className="w-12 h-12 mb-2" />
+            <span className="text-xs font-medium">No Image</span>
+          </div>
+        )}
       </Link>
 
       {/* DETAILS */}
@@ -61,10 +69,10 @@ export default function ProductCard({ product }: ProductCardProps) {
           ) : (
             <div className="text-brand-primary font-bold text-lg">{formatUGX(product.price)}</div>
           )}
-          
+
           <Link 
             href={`/products/${product.slug}`}
-            className="mt-4 block w-full text-center bg-gray-50 hover:bg-brand-primary hover:text-white text-brand-charcoal font-semibold py-2 rounded-lg transition-colors border border-gray-200 hover:border-brand-primary"
+            className="mt-4 block w-full text-center bg-gray-50 hover:bg-brand-primary hover:text-white text-brand-charcoal font-semibold py-2 rounded-lg transition-colors border border-gray-200 hover:border-brand-primary text-sm"
           >
             View Details
           </Link>
