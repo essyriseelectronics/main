@@ -1,13 +1,15 @@
+export const dynamic = "force-dynamic"; // Bypasses the cache so your live database images always show
+
 import Image from "next/image";
 import Link from "next/link";
 import ProductCard from "@/components/products/ProductCard";
+import NewsletterForm from "@/components/marketing/NewsletterForm";
 import { getProducts, getCategories } from "@/lib/actions/products";
 
-// Convert to async component to fetch data server-side
 export default async function Home() {
   const products = await getProducts();
   const categories = await getCategories();
-  
+
   const featuredProducts = products.filter(p => p.is_featured).slice(0, 4);
 
   return (
@@ -41,14 +43,12 @@ export default async function Home() {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-6">
             {categories.map((cat) => (
               <Link href={`/category/${cat.slug}`} key={cat.id} className="group bg-white rounded-2xl shadow-sm hover:shadow-card-hover p-4 text-center transition-all border border-gray-100 flex flex-col items-center">
-                <div className="w-20 h-20 relative mb-4 rounded-full overflow-hidden bg-gray-50 border-2 border-transparent group-hover:border-brand-accent transition-colors">
-                  <Image 
-                    src={cat.image_url || "/placeholder.jpg"} 
-                    alt={cat.name}
-                    fill
-                    className="object-cover"
-                    sizes="80px"
-                  />
+                <div className="w-20 h-20 relative mb-4 rounded-full overflow-hidden bg-gray-50 border-2 border-transparent group-hover:border-brand-accent transition-colors flex items-center justify-center text-gray-400">
+                  {cat.image_url ? (
+                    <Image src={cat.image_url} alt={cat.name} fill className="object-cover" sizes="80px" />
+                  ) : (
+                    <span className="text-xs font-medium">No img</span>
+                  )}
                 </div>
                 <h3 className="font-semibold text-brand-charcoal group-hover:text-brand-primary text-sm md:text-base">{cat.name}</h3>
               </Link>
@@ -65,7 +65,7 @@ export default async function Home() {
             View All →
           </Link>
         </div>
-        
+
         {featuredProducts.length > 0 ? (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {featuredProducts.map((product) => (
@@ -77,6 +77,21 @@ export default async function Home() {
             <p className="text-gray-500">No products added yet. Add your first product in the admin dashboard.</p>
           </div>
         )}
+      </section>
+
+      {/* NEWSLETTER CTA SECTION */}
+      <section className="bg-brand-charcoal text-white py-16 px-4">
+        <div className="container mx-auto max-w-3xl text-center">
+          <h2 className="text-3xl font-bold mb-4">Never Miss a Deal</h2>
+          <p className="text-gray-400 mb-8 text-sm md:text-base">
+            Join the Essyrise community. Subscribe to our newsletter to get exclusive offers, new arrival alerts, and tech tips straight to your inbox.
+          </p>
+          
+          {/* Re-using the Newsletter Form component here */}
+          <div className="max-w-md mx-auto">
+            <NewsletterForm />
+          </div>
+        </div>
       </section>
     </div>
   );
