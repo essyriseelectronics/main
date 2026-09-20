@@ -1,34 +1,38 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Product } from "@/types";
-import { formatUGX, generateOrderNumber } from "@/lib/utils";
+import { formatUGX } from "@/lib/utils";
+import { createOrder } from "@/lib/actions/orders";
 
 interface CheckoutFormProps {
   product: Product;
 }
 
 export default function CheckoutForm({ product }: CheckoutFormProps) {
-  const router = useRouter();
   const [quantity, setQuantity] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const activePrice = product.discount_price || product.price;
   const total = activePrice * quantity;
-  const primaryImage = product.images.find(img => img.is_primary)?.image_url || product.images[0]?.image_url;
+  const primaryImage = product.images?.find(img => img.is_primary)?.image_url || product.images?.[0]?.image_url;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // In Phase 2, this will be a real POST request to our Server Action / D1 Database
-    // For now, we simulate network delay and redirect to success page
-    setTimeout(() => {
-      const mockOrderNumber = generateOrderNumber(Math.floor(Math.random() * 1000));
-      router.push(`/order/success/${mockOrderNumber}`);
-    }, 1500);
+    const formData = new FormData(e.currentTarget);
+    
+    try {
+      // Pass the formData directly to our server action
+      await createOrder(formData);
+      // createOrder handles the router.push redirection internally upon success
+    } catch (error) {
+      console.error(error);
+      alert("There was an issue processing your order. Please try again.");
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -38,26 +42,31 @@ export default function CheckoutForm({ product }: CheckoutFormProps) {
       <div className="lg:col-span-7 bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
         <h2 className="text-2xl font-bold text-brand-charcoal mb-6">Delivery Details</h2>
         <form onSubmit={handleSubmit} className="space-y-5">
+          
+          {/* SECURE IDENTIFIER (Hidden from user) */}
+          <input type="hidden" name="product_id" value={product.id} />
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
-              <input required type="text" className="w-full rounded-lg border-gray-300 focus:border-brand-primary focus:ring-brand-primary shadow-sm" placeholder="John Doe" />
+              <input required name="name" type="text" className="w-full rounded-lg border-gray-300 focus:border-brand-primary focus:ring-brand-primary shadow-sm" placeholder="John Doe" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number *</label>
-              <input required type="tel" className="w-full rounded-lg border-gray-300 focus:border-brand-primary focus:ring-brand-primary shadow-sm" placeholder="0700 000 000" />
+              <input required name="phone" type="tel" className="w-full rounded-lg border-gray-300 focus:border-brand-primary focus:ring-brand-primary shadow-sm" placeholder="0700 000 000" />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">City / Location *</label>
-              <input required type="text" className="w-full rounded-lg border-gray-300 focus:border-brand-primary focus:ring-brand-primary shadow-sm" placeholder="Mbarara" />
+              <input required name="location" type="text" className="w-full rounded-lg border-gray-300 focus:border-brand-primary focus:ring-brand-primary shadow-sm" placeholder="Mbarara" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Quantity *</label>
               <input 
                 required 
+                name="quantity"
                 type="number" 
                 min="1" 
                 max="10"
@@ -70,12 +79,12 @@ export default function CheckoutForm({ product }: CheckoutFormProps) {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Delivery Address *</label>
-            <input required type="text" className="w-full rounded-lg border-gray-300 focus:border-brand-primary focus:ring-brand-primary shadow-sm" placeholder="High Street, Next to Post Office" />
+            <input required name="address" type="text" className="w-full rounded-lg border-gray-300 focus:border-brand-primary focus:ring-brand-primary shadow-sm" placeholder="High Street, Next to Post Office" />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Additional Note (Optional)</label>
-            <textarea rows={3} className="w-full rounded-lg border-gray-300 focus:border-brand-primary focus:ring-brand-primary shadow-sm" placeholder="Any specific instructions for delivery..."></textarea>
+            <textarea name="note" rows={3} className="w-full rounded-lg border-gray-300 focus:border-brand-primary focus:ring-brand-primary shadow-sm" placeholder="Any specific instructions for delivery..."></textarea>
           </div>
 
           <button 
