@@ -2,8 +2,11 @@
 
 import { queryD1 } from "@/lib/db/client";
 import { generateOrderNumber, normalizeUgandaPhone } from "@/lib/utils";
-import { Product } from "@/types";
+import { Product, Order } from "@/types";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
+
+// --- CREATE (Public Checkout) ---
 
 export async function createOrder(formData: FormData) {
   const productId = formData.get("product_id") as string;
@@ -16,7 +19,6 @@ export async function createOrder(formData: FormData) {
 
   const phone = normalizeUgandaPhone(rawPhone);
 
-  // 1. Fetch live product to verify price (Security Rule: Never trust client price)
   const products = await queryD1<Product>("SELECT * FROM products WHERE id = ? AND is_active = 1", [productId]);
   if (!products.length) throw new Error("Product unavailable or inactive.");
   
@@ -26,7 +28,6 @@ export async function createOrder(formData: FormData) {
   const activePrice = product.discount_price || product.price;
   const total = activePrice * quantity;
 
-  // 2. Handle Contact (Upsert logic to prevent duplicate contacts)
   let contactId = `cont-${crypto.randomUUID()}`;
   const existingContacts = await queryD1<{id: string}>("SELECT id FROM contacts WHERE phone = ?", [phone]);
   
@@ -43,9 +44,8 @@ export async function createOrder(formData: FormData) {
     );
   }
 
-  // 3. Create Order Record
   const orderId = `ord-${crypto.randomUUID()}`;
-  const orderNumber = generateOrderNumber(Math.floor(Math.random() * 999)); // Simple sequence for V1
+  const orderNumber = generateOrderNumber(Math.floor(Math.random() * 999));
 
   await queryD1(
     `INSERT INTO orders (id, order_number, customer_id, customer_name, customer_phone, location, delivery_address, note, total_amount)
@@ -53,7 +53,6 @@ export async function createOrder(formData: FormData) {
      [orderId, orderNumber, contactId, name, phone, location, address, note, total]
   );
 
-  // 4. Create Order Item Record
   const itemId = `item-${crypto.randomUUID()}`;
   await queryD1(
     `INSERT INTO order_items (id, order_id, product_id, product_name_snapshot, unit_price, quantity, subtotal)
@@ -61,6 +60,36 @@ export async function createOrder(formData: FormData) {
      [itemId, orderId, product.id, product.name, activePrice, quantity, total]
   );
 
-  // Redirect client to success page
+  // Clear admin cache so the new order appears immediately
+  revalidatePath("/admin/orders");
+  revalidatePath("/admin");
+
   redirect(`/order/success/${orderNumber}`);
+}
+
+// --- READ & UPDATE (Admin Dashboard) ---
+
+export async function getOrders(): Promise<Order[]> {
+  try {
+    // Fetch all orders, newest first
+    const sql = `SELECT * FROM orders ORDER BY created_at DESC`;
+    return await queryD1<Order>(sql);
+  } catch (error) {
+    console.error("Failed to fetch orders", error);
+    return [];
+  }
+}
+
+export async function updateOrderStatus(orderId: string, newStatus: string) {
+  try {
+    await queryD1(
+      `UPDATE orders SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+      [newStatus, orderId]
+    );
+    revalidatePath("/admin/orders");
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to update order status", error);
+    throw new Error("Could not update status.");
+  }
 }
