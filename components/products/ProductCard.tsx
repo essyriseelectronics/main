@@ -9,13 +9,12 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  // Defensive check: Grab the primary image, or the first image, or leave it undefined.
+  // Grab the image safely
   const primaryImage = product.images?.find((img) => img.is_primary)?.image_url || product.images?.[0]?.image_url;
   const isOutOfStock = product.availability === "OUT OF STOCK";
 
   return (
     <div className="group bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 overflow-hidden flex flex-col h-full relative">
-
       {/* BADGES */}
       <div className="absolute top-3 left-3 z-10 flex flex-col gap-2">
         {product.discount_price && (
@@ -30,7 +29,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         )}
       </div>
 
-      {/* IMAGE OR GRAY FALLBACK BOX */}
+      {/* IMAGE OR GRAY FALLBACK */}
       <Link href={`/products/${product.slug}`} className="relative aspect-[4/5] overflow-hidden bg-gray-50 flex flex-col items-center justify-center border-b border-gray-100">
         {primaryImage ? (
           <Image
@@ -69,11 +68,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           ) : (
             <div className="text-brand-primary font-bold text-lg">{formatUGX(product.price)}</div>
           )}
-
-          <Link 
-            href={`/products/${product.slug}`}
-            className="mt-4 block w-full text-center bg-gray-50 hover:bg-brand-primary hover:text-white text-brand-charcoal font-semibold py-2 rounded-lg transition-colors border border-gray-200 hover:border-brand-primary text-sm"
-          >
+          <Link href={`/products/${product.slug}`} className="mt-4 block w-full text-center bg-gray-50 hover:bg-brand-primary hover:text-white text-brand-charcoal font-semibold py-2 rounded-lg transition-colors border border-gray-200 hover:border-brand-primary text-sm">
             View Details
           </Link>
         </div>
