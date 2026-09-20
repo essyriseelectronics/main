@@ -9,7 +9,7 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  // Safely check for an image URL using optional chaining
+  // Defensive check: Grab the primary image, or the first image, or leave it undefined.
   const primaryImage = product.images?.find((img) => img.is_primary)?.image_url || product.images?.[0]?.image_url;
   const isOutOfStock = product.availability === "OUT OF STOCK";
 
@@ -30,8 +30,8 @@ export default function ProductCard({ product }: ProductCardProps) {
         )}
       </div>
 
-      {/* IMAGE OR FALLBACK */}
-      <Link href={`/products/${product.slug}`} className="relative aspect-[4/5] overflow-hidden bg-gray-50 flex items-center justify-center border-b border-gray-100">
+      {/* IMAGE OR GRAY FALLBACK BOX */}
+      <Link href={`/products/${product.slug}`} className="relative aspect-[4/5] overflow-hidden bg-gray-50 flex flex-col items-center justify-center border-b border-gray-100">
         {primaryImage ? (
           <Image
             src={primaryImage}
@@ -41,9 +41,9 @@ export default function ProductCard({ product }: ProductCardProps) {
             sizes="(max-width: 768px) 50vw, 25vw"
           />
         ) : (
-          <div className="flex flex-col items-center text-gray-300">
-            <ImageIcon className="w-12 h-12 mb-2" />
-            <span className="text-xs font-medium">No Image</span>
+          <div className="flex flex-col items-center justify-center text-gray-400 w-full h-full bg-gray-100">
+            <ImageIcon className="w-10 h-10 mb-2 opacity-50" />
+            <span className="text-[10px] font-bold uppercase tracking-wider">No Image</span>
           </div>
         )}
       </Link>
