@@ -8,7 +8,8 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const primaryImage = product.images.find((img) => img.is_primary)?.image_url || product.images[0]?.image_url || "/placeholder-image.jpg";
+    // Notice the added "?" after product.images
+  const primaryImage = product.images?.find((img) => img.is_primary)?.image_url || product.images?.[0]?.image_url || "/placeholder-image.jpg";
   const isOutOfStock = product.availability === "OUT OF STOCK";
   
   return (
