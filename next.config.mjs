@@ -4,7 +4,9 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '**', // Whitelists all HTTPS images. For production, replace '**' with your R2 domain (e.g., 'pub-abc123xyz.r2.dev')
+        hostname: 'pub-36d21ae1f39f456e8133f83f35c0ef4d.r2.dev',
+        port: '',
+        pathname: '/**', // This allows any image path inside your specific R2 bucket
       },
     ],
   },
