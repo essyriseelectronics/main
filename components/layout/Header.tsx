@@ -135,9 +135,9 @@ export default function Header() {
             </button>
 
             {/* Center: Brand Logo */}
-            <Link href="/" className="text-lg font-black tracking-tight text-brand-primary absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-              ESSYRISE<span className="text-brand-accent">.</span>
-            </Link>
+  <Link href="/" className="text-lg font-black tracking-tight text-brand-primary absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+    ESSYRISE<span className="text-brand-accent">.</span>
+  </Link>
 
             {/* Right: Search & Cart Icons */}
             <div className="flex items-center gap-1 -mr-2">
