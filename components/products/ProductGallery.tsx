@@ -14,10 +14,9 @@ interface ProductGalleryProps {
 export default function ProductGallery({ images, productName }: ProductGalleryProps) {
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // Fallback if no images are provided
   if (!images || images.length === 0) {
     return (
-      <div className="relative aspect-[4/5] md:aspect-square w-full bg-gray-50 rounded-2xl border border-gray-100 flex flex-col items-center justify-center text-gray-400">
+      <div className="relative block w-full aspect-[4/5] md:aspect-square bg-gray-50 rounded-2xl border border-gray-100 flex flex-col items-center justify-center text-gray-400">
         <ImageIcon className="w-12 h-12 mb-2 opacity-50" />
         <span className="text-sm font-medium">No image available</span>
       </div>
@@ -28,16 +27,17 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
 
   return (
     <div className="flex flex-col gap-4">
-      {/* MAIN IMAGE */}
-      <div className="relative aspect-[4/5] md:aspect-square w-full bg-gray-50 rounded-2xl border border-gray-100 overflow-hidden flex items-center justify-center">
+      {/* THE FIX: Added "block w-full" to ensure the container expands */}
+      <div className="relative block w-full aspect-[4/5] md:aspect-square bg-gray-50 rounded-2xl border border-gray-100 overflow-hidden">
         {activeImage?.image_url ? (
           <Image src={activeImage.image_url} alt={activeImage.alt_text || productName} fill className="object-cover" priority sizes="(max-width: 768px) 100vw, 50vw" />
         ) : (
-          <ImageIcon className="w-12 h-12 text-gray-300" />
+          <div className="absolute inset-0 flex items-center justify-center">
+             <ImageIcon className="w-12 h-12 text-gray-300" />
+          </div>
         )}
       </div>
 
-      {/* THUMBNAILS */}
       {images.length > 1 && (
         <div className="flex gap-3 overflow-x-auto pb-2 snap-x">
           {images.map((img, idx) => (
@@ -45,7 +45,7 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
               key={img.id}
               onClick={() => setActiveIndex(idx)}
               className={cn(
-                "relative w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden border-2 transition-all snap-start bg-gray-50",
+                "relative block w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden border-2 transition-all snap-start bg-gray-50",
                 activeIndex === idx ? "border-brand-primary shadow-md" : "border-transparent opacity-70 hover:opacity-100"
               )}
             >
