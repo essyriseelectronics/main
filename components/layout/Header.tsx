@@ -40,9 +40,9 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-100 shadow-sm">
       {!isMobile ? (
-        /* ================================================= */
-        /* 1. DESKTOP HEADER                                 */
-        /* ================================================= */
+        {/* ================================================= */}
+        {/* 1. DESKTOP HEADER                                 */}
+        {/* ================================================= */}
         <div className="flex items-center justify-between h-20 w-full px-8 lg:px-16">
           <Link href="/" className="text-2xl font-black tracking-tight text-brand-primary flex items-center gap-1">
             ESSYRISE<span className="text-brand-accent">.</span>
@@ -114,9 +114,9 @@ export default function Header() {
           </div>
         </div>
       ) : (
-        /* ================================================= */
-        /* 2. MOBILE HEADER                                  */
-        /* ================================================= */
+        {/* ================================================= */}
+        {/* 2. MOBILE HEADER                                  */}
+        {/* ================================================= */}
         <div className="relative">
           <div className="relative flex items-center justify-between h-16 px-4 w-full">
             
@@ -155,8 +155,8 @@ export default function Header() {
           </div>
 
           {/* ================================================= */}
-          /* 3. MOBILE DRAWER (Matched to Reference Image)     */
-          /* ================================================= */}
+          {/* 3. MOBILE DRAWER (Matched to Reference Image)     */}
+          {/* ================================================= */}
           {isMobileMenuOpen && (
             <div className="fixed inset-0 z-[100] flex">
               <div className="fixed inset-0 bg-black/50 transition-opacity" onClick={() => setIsMobileMenuOpen(false)} />
