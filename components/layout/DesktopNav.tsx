@@ -21,14 +21,17 @@ export default function DesktopNav() {
   };
 
   return (
-    <div className="hidden md:flex items-center justify-between h-20 px-6 container mx-auto">
-      {/* BRANDING */}
+    // 'hidden md:flex' guarantees it never renders on mobile screens.
+    // 'w-full' and padding stretch it completely across the entire screen width.
+    <div className="hidden md:flex items-center justify-between h-20 w-full px-8 lg:px-16 bg-white">
+      
+      {/* BRANDING (Far Left) */}
       <Link href="/" className="text-2xl font-black tracking-tight text-brand-primary flex items-center gap-1">
         ESSYRISE<span className="text-brand-accent">.</span>
       </Link>
 
-      {/* SPREAD DESKTOP LINKS & DROPDOWNS */}
-      <nav className="flex items-center gap-8 font-semibold text-sm text-brand-charcoal">
+      {/* SPREAD NAVIGATION & DROPDOWNS (Center-Left) */}
+      <nav className="flex items-center gap-10 font-semibold text-sm text-brand-charcoal">
         <Link href="/" className="hover:text-brand-accent transition-colors">Home</Link>
         <Link href="/shop" className="hover:text-brand-accent transition-colors">Shop All</Link>
 
@@ -37,7 +40,7 @@ export default function DesktopNav() {
           <button 
             onClick={() => setIsCategoryOpen(!isCategoryOpen)}
             onBlur={() => setTimeout(() => setIsCategoryOpen(false), 200)}
-            className="flex items-center gap-1 hover:text-brand-accent transition-colors py-2 outline-none"
+            className="flex items-center gap-1 hover:text-brand-accent transition-colors py-2 outline-none cursor-pointer"
           >
             Categories <ChevronDown className={`w-4 h-4 transition-transform ${isCategoryOpen ? "rotate-180" : ""}`} />
           </button>
@@ -55,10 +58,10 @@ export default function DesktopNav() {
         </div>
       </nav>
 
-      {/* RIGHT SIDE UTILITIES & ACTION BUTTON */}
-      <div className="flex items-center gap-5">
+      {/* UTILITIES & ACTION BUTTONS (Far Right) */}
+      <div className="flex items-center gap-6">
         {isSearchOpen ? (
-          <form onSubmit={handleSearch} className="flex items-center bg-gray-50 border border-gray-200 rounded-full px-4 py-1.5 w-64 shadow-inner">
+          <form onSubmit={handleSearch} className="flex items-center bg-gray-50 border border-gray-200 rounded-full px-4 py-1.5 w-72 shadow-inner">
             <input 
               type="text"
               autoFocus
@@ -72,7 +75,7 @@ export default function DesktopNav() {
             </button>
           </form>
         ) : (
-          <button onClick={() => setIsSearchOpen(true)} className="p-2 text-brand-charcoal hover:text-brand-primary transition-colors">
+          <button onClick={() => setIsSearchOpen(true)} className="p-2 text-brand-charcoal hover:text-brand-primary transition-colors cursor-pointer">
             <Search className="w-5 h-5" />
           </button>
         )}
@@ -82,10 +85,11 @@ export default function DesktopNav() {
           <span className="absolute top-0 right-0 w-4 h-4 bg-brand-accent text-white text-[10px] font-bold flex items-center justify-center rounded-full">0</span>
         </Link>
 
-        <Link href="/admin/products" className="bg-brand-primary text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-brand-secondary transition-all shadow-md shadow-brand-primary/20">
+        <Link href="/admin/products" className="bg-brand-primary text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-brand-secondary transition-all shadow-md shadow-brand-primary/20">
           Admin Panel
         </Link>
       </div>
+
     </div>
   );
 }
