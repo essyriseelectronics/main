@@ -4,13 +4,14 @@ import { ImageIcon } from "lucide-react";
 import { Product } from "@/types";
 import { formatUGX } from "@/lib/utils";
 
+// Extend type to accept our guaranteed image patch
 interface ProductCardProps {
-  product: Product;
+  product: Product & { _guaranteed_image?: string | null };
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  // We use == 1 because SQLite stores booleans as 1 or 0
-  const primaryImage = product.images?.find((img) => img.is_primary == 1)?.image_url || product.images?.[0]?.image_url;
+  // Rely on the guaranteed backend patch
+  const primaryImage = product._guaranteed_image || product.images?.[0]?.image_url;
   const isOutOfStock = product.availability === "OUT OF STOCK";
 
   return (
@@ -26,7 +27,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         )}
       </div>
 
-      {/* THE FIX: "block w-full" forces the aspect ratio to calculate correctly */}
+      {/* IMAGE - 'block w-full' forces the link container to expand */}
       <Link href={`/products/${product.slug}`} className="relative block w-full aspect-[4/5] bg-gray-50 overflow-hidden border-b border-gray-100">
         {primaryImage ? (
           <Image
