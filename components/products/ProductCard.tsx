@@ -4,13 +4,11 @@ import { ImageIcon } from "lucide-react";
 import { Product } from "@/types";
 import { formatUGX } from "@/lib/utils";
 
-// Extend type to accept our guaranteed image patch
 interface ProductCardProps {
   product: Product & { _guaranteed_image?: string | null };
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  // Rely on the guaranteed backend patch
   const primaryImage = product._guaranteed_image || product.images?.[0]?.image_url;
   const isOutOfStock = product.availability === "OUT OF STOCK";
 
@@ -27,18 +25,18 @@ export default function ProductCard({ product }: ProductCardProps) {
         )}
       </div>
 
-      {/* IMAGE - 'block w-full' forces the link container to expand */}
-      <Link href={`/products/${product.slug}`} className="relative block w-full aspect-[4/5] bg-gray-50 overflow-hidden border-b border-gray-100">
+      {/* THE FIX: Removed 'fill', added explicit width/height and 'h-auto' */}
+      <Link href={`/products/${product.slug}`} className="relative block w-full bg-gray-50 overflow-hidden border-b border-gray-100">
         {primaryImage ? (
           <Image
             src={primaryImage}
             alt={product.name}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
-            sizes="(max-width: 768px) 50vw, 25vw"
+            width={400}
+            height={500}
+            className="w-full h-auto aspect-[4/5] object-cover group-hover:scale-105 transition-transform duration-500"
           />
         ) : (
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-400 w-full h-full bg-gray-100">
+          <div className="flex flex-col items-center justify-center text-gray-400 w-full aspect-[4/5] bg-gray-100">
             <ImageIcon className="w-10 h-10 mb-2 opacity-50" />
             <span className="text-[10px] font-bold uppercase tracking-wider">No Image</span>
           </div>
@@ -65,7 +63,6 @@ export default function ProductCard({ product }: ProductCardProps) {
           ) : (
             <div className="text-brand-primary font-bold text-lg">{formatUGX(product.price)}</div>
           )}
-
           <Link href={`/products/${product.slug}`} className="mt-4 block w-full text-center bg-gray-50 hover:bg-brand-primary hover:text-white text-brand-charcoal font-semibold py-2 rounded-lg transition-colors border border-gray-200 hover:border-brand-primary text-sm">
             View Details
           </Link>
