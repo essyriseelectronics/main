@@ -123,37 +123,43 @@ export default function Header() {
         /* ================================================= */
         /* 2. MOBILE HEADER & DRAWER (Matches Photos 1 & 3)  */
         /* ================================================= */
-        <div className="relative">
-          <div className="flex items-center justify-between h-16 px-4 w-full">
-            {/* Left: Hamburger Icon */}
-            <button 
-              className="p-2 -ml-2 text-brand-charcoal hover:bg-gray-100 rounded-lg flex items-center justify-center"
-              onClick={() => setIsMobileMenuOpen(true)}
-              aria-label="Open Menu"
-            >
-              <Menu className="w-6 h-6" />
-            </button>
+        <div className="grid grid-cols-3 items-center h-16 px-4 w-full">
+  
+  {/* Left Column: Hamburger Icon */}
+  <div className="flex items-center justify-start">
+    <button 
+      className="p-2 -ml-2 text-brand-charcoal hover:bg-gray-100 rounded-lg flex items-center justify-center"
+      onClick={() => setIsMobileMenuOpen(true)}
+      aria-label="Open Menu"
+    >
+      <Menu className="w-6 h-6" />
+    </button>
+  </div>
 
-            {/* Center: Brand Logo */}
-  <Link href="/" className="text-lg font-black tracking-tight text-brand-primary absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-    ESSYRISE<span className="text-brand-accent">.</span>
-  </Link>
+  {/* Center Column: Brand Logo (Always perfectly centered) */}
+  <div className="flex items-center justify-center">
+    <Link href="/" className="text-lg font-black tracking-tight text-brand-primary">
+      ESSYRISE<span className="text-brand-accent">.</span>
+    </Link>
+  </div>
 
-            {/* Right: Search & Cart Icons */}
-            <div className="flex items-center gap-1 -mr-2">
-              <button 
-                className="p-2 text-brand-charcoal hover:bg-gray-100 rounded-lg flex items-center justify-center"
-                onClick={() => setIsMobileMenuOpen(true)}
-                aria-label="Open Search"
-              >
-                <Search className="w-5 h-5" />
-              </button>
-              <Link href="/cart" className="p-2 text-brand-charcoal hover:bg-gray-100 rounded-lg relative flex items-center justify-center" aria-label="Cart">
-                <ShoppingBag className="w-5 h-5" />
-                <span className="absolute top-1 right-1 w-4 h-4 bg-brand-accent text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white">0</span>
-              </Link>
-            </div>
-          </div>
+  {/* Right Column: Search & Cart Icons */}
+  <div className="flex items-center justify-end gap-1">
+    <button 
+      className="p-2 text-brand-charcoal hover:bg-gray-100 rounded-lg flex items-center justify-center"
+      onClick={() => setIsMobileMenuOpen(true)}
+      aria-label="Open Search"
+    >
+      <Search className="w-5 h-5" />
+    </button>
+    <Link href="/cart" className="p-2 text-brand-charcoal hover:bg-gray-100 rounded-lg relative flex items-center justify-center" aria-label="Cart">
+      <ShoppingBag className="w-5 h-5" />
+      <span className="absolute top-1 right-1 w-4 h-4 bg-brand-accent text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white">0</span>
+    </Link>
+  </div>
+
+</div>
+
 
           {/* Mobile Slide-Out Drawer */}
           {isMobileMenuOpen && (
