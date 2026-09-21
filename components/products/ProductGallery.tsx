@@ -14,7 +14,6 @@ interface ProductGalleryProps {
 export default function ProductGallery({ images, productName }: ProductGalleryProps) {
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // Fallback if no images are provided
   if (!images || images.length === 0) {
     return (
       <div className="relative block w-full aspect-[4/5] md:aspect-square bg-gray-50 rounded-2xl border border-gray-100 flex flex-col items-center justify-center text-gray-400">
@@ -28,25 +27,25 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
 
   return (
     <div className="flex flex-col gap-4">
-      {/* MAIN IMAGE - 'block w-full' forces correct CSS expansion */}
-      <div className="relative block w-full aspect-[4/5] md:aspect-square bg-gray-50 rounded-2xl border border-gray-100 overflow-hidden">
+      {/* THE FIX: Main Image - explicit width/height to prevent collapse */}
+      <div className="relative block w-full bg-gray-50 rounded-2xl border border-gray-100 overflow-hidden">
         {activeImage?.image_url ? (
           <Image 
             src={activeImage.image_url} 
             alt={activeImage.alt_text || productName} 
-            fill 
-            className="object-cover" 
+            width={800}
+            height={800}
+            className="w-full h-auto aspect-[4/5] md:aspect-square object-cover" 
             priority 
-            sizes="(max-width: 768px) 100vw, 50vw" 
           />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center">
+          <div className="flex items-center justify-center w-full aspect-[4/5] md:aspect-square">
              <ImageIcon className="w-12 h-12 text-gray-300" />
           </div>
         )}
       </div>
 
-      {/* THUMBNAILS */}
+      {/* THUMBNAILS - These were already working well, but we will apply the same strict width/height rule */}
       {images.length > 1 && (
         <div className="flex gap-3 overflow-x-auto pb-2 snap-x">
           {images.map((img, idx) => (
@@ -62,9 +61,9 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
                 <Image 
                   src={img.image_url} 
                   alt={`Thumbnail ${idx + 1}`} 
-                  fill 
-                  className="object-cover" 
-                  sizes="80px" 
+                  width={80}
+                  height={80}
+                  className="w-full h-full object-cover" 
                 />
               )}
             </button>
