@@ -38,215 +38,209 @@ export default function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-100 shadow-sm">
-      {!isMobile ? (
-        <div className="flex items-center justify-between h-20 w-full px-8 lg:px-16">
-          {/* ================================================= */}
-          {/* 1. DESKTOP HEADER (UNCHANGED)                     */}
-          {/* ================================================= */}
-          
-          <Link href="/" className="text-2xl font-black tracking-tight text-brand-primary flex items-center gap-1">
-            ESSYRISE<span className="text-brand-accent">.</span>
-          </Link>
-
-          <nav className="flex items-center gap-8 font-semibold text-sm text-brand-charcoal">
-            <Link href="/" className="hover:text-brand-accent transition-colors">Home</Link>
-            
-            <div className="relative">
-              <button 
-                onClick={() => setIsDesktopCategoryOpen(!isDesktopCategoryOpen)}
-                onBlur={() => setTimeout(() => setIsDesktopCategoryOpen(false), 200)}
-                className="flex items-center gap-1 hover:text-brand-accent transition-colors py-2 outline-none cursor-pointer"
-              >
-                Categories <ChevronDown className={`w-4 h-4 transition-transform ${isDesktopCategoryOpen ? "rotate-180" : ""}`} />
-              </button>
-
-              {isDesktopCategoryOpen && (
-                <div className="absolute top-full left-0 w-56 bg-white border border-gray-100 shadow-xl rounded-2xl py-3 mt-1 flex flex-col z-50">
-                  <Link href="/category/smartphones" className="px-5 py-2.5 hover:bg-brand-surface hover:text-brand-primary transition-colors text-sm font-medium">
-                    Smartphones & Phones
-                  </Link>
-                  <Link href="/category/phone-accessories" className="px-5 py-2.5 hover:bg-brand-surface hover:text-brand-primary transition-colors text-sm font-medium">
-                    Accessories & Chargers
-                  </Link>
-                </div>
-              )}
-            </div>
-
-            <Link href="/shop" className="hover:text-brand-accent transition-colors">View All</Link>
-          </nav>
-
-          <div className="flex items-center gap-6">
-            {isSearchOpen ? (
-              <form onSubmit={handleSearch} className="flex items-center bg-gray-50 border border-gray-200 rounded-full px-4 py-1.5 w-64 shadow-inner">
-                <input 
-                  type="text"
-                  autoFocus
-                  placeholder="Search products..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="bg-transparent text-sm w-full outline-none text-brand-charcoal"
-                />
-                <button type="button" onClick={() => setIsSearchOpen(false)} className="text-gray-400 hover:text-gray-600 ml-2">
-                  <X className="w-4 h-4" />
-                </button>
-              </form>
-            ) : (
-              <button onClick={() => setIsSearchOpen(true)} className="p-2 text-brand-charcoal hover:text-brand-primary transition-colors cursor-pointer">
-                <Search className="w-5 h-5" />
-              </button>
-            )}
-
-            <Link href="/admin/products" className="text-sm font-semibold text-brand-charcoal hover:text-brand-primary transition-colors">
-              Login
+    <>
+      <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-100 shadow-sm">
+        {!isMobile ? (
+          <div className="flex items-center justify-between h-20 w-full px-8 lg:px-16">
+            {/* ================================================= */}
+            {/* 1. DESKTOP HEADER (UNCHANGED)                     */}
+            {/* ================================================= */}
+            <Link href="/" className="text-2xl font-black tracking-tight text-brand-primary flex items-center gap-1">
+              ESSYRISE<span className="text-brand-accent">.</span>
             </Link>
 
-            <Link 
-              href="/shop" 
-              className="bg-brand-primary text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-brand-secondary transition-all shadow-md shadow-brand-primary/25"
-            >
-              Register
-            </Link>
-
-            <Link href="/cart" className="p-2 text-brand-charcoal hover:text-brand-primary transition-colors relative">
-              <ShoppingBag className="w-5 h-5" />
-              <span className="absolute top-0 right-0 w-4 h-4 bg-brand-accent text-white text-[10px] font-bold flex items-center justify-center rounded-full">0</span>
-            </Link>
-          </div>
-        </div>
-      ) : (
-        <div className="relative">
-          {/* ================================================= */}
-          {/* 2. MOBILE HEADER (UNCHANGED)                      */}
-          {/* ================================================= */}
-          <div className="relative flex items-center justify-between h-16 px-4 w-full">
-            <div className="z-10">
-              <button 
-                className="p-2 -ml-2 text-brand-charcoal hover:bg-gray-100 rounded-lg flex items-center justify-center"
-                onClick={() => setIsMobileMenuOpen(true)}
-                aria-label="Open Menu"
-              >
-                <Menu className="w-7 h-7" strokeWidth={1.5} />
-              </button>
-            </div>
-
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <Link href="/" className="text-xl font-black tracking-tight text-brand-primary pointer-events-auto">
-                ESSYRISE<span className="text-brand-accent">.</span>
-              </Link>
-            </div>
-
-            <div className="z-10 flex items-center gap-2">
-              <button 
-                className="p-2 text-brand-charcoal hover:bg-gray-100 rounded-lg flex items-center justify-center"
-                onClick={() => setIsMobileMenuOpen(true)}
-                aria-label="Open Search"
-              >
-                <Search className="w-6 h-6" strokeWidth={1.5} />
-              </button>
-              <Link href="/cart" className="p-2 text-brand-charcoal hover:bg-gray-100 rounded-lg relative flex items-center justify-center" aria-label="Cart">
-                <ShoppingBag className="w-6 h-6" strokeWidth={1.5} />
-                <span className="absolute top-1 right-0 w-4 h-4 bg-brand-accent text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white">0</span>
-              </Link>
-            </div>
-          </div>
-
-          {/* ================================================= */}
-          {/* 3. MOBILE DRAWER (REDESIGNED TO MATCH SCREENSHOT) */}
-          {/* ================================================= */}
-          {isMobileMenuOpen && (
-            <div className="fixed inset-0 z-[100] flex">
-              {/* Dark Overlay over the page behind the drawer */}
-              <div className="fixed inset-0 bg-black/60 transition-opacity" onClick={() => setIsMobileMenuOpen(false)} />
+            <nav className="flex items-center gap-8 font-semibold text-sm text-brand-charcoal">
+              <Link href="/" className="hover:text-brand-accent transition-colors">Home</Link>
               
-              {/* Slide-in Drawer Container (~85% width) */}
-              <div className="relative w-[85%] max-w-[400px] bg-white h-full shadow-[5px_0_15px_rgba(0,0,0,0.1)] flex flex-col z-10 animate-in slide-in-from-left duration-300">
-                
-                {/* Header (60-70px high, Logo Left, X Right) */}
-                <div className="flex items-center justify-between px-8 py-5 border-b border-gray-100 min-h-[70px]">
-                  <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-black tracking-tight text-brand-primary">
-                    ESSYRISE<span className="text-brand-accent">.</span>
-                  </Link>
-                  <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 -mr-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors" aria-label="Close Menu">
-                    <X className="w-7 h-7" strokeWidth={1.5} />
-                  </button>
-                </div>
+              <div className="relative">
+                <button 
+                  onClick={() => setIsDesktopCategoryOpen(!isDesktopCategoryOpen)}
+                  onBlur={() => setTimeout(() => setIsDesktopCategoryOpen(false), 200)}
+                  className="flex items-center gap-1 hover:text-brand-accent transition-colors py-2 outline-none cursor-pointer"
+                >
+                  Categories <ChevronDown className={`w-4 h-4 transition-transform ${isDesktopCategoryOpen ? "rotate-180" : ""}`} />
+                </button>
 
-                {/* Generously Spaced Navigation Links */}
-                <div className="flex-1 overflow-y-auto bg-white flex flex-col">
-                  
-                  {/* Home */}
-                  <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="px-8 py-6 text-[16px] font-medium text-gray-800 border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    Home
-                  </Link>
-                  
-                  {/* Category Accordion with Chevron */}
-                  <div>
-                    <button 
-                      onClick={() => setIsMobileCategoryOpen(!isMobileCategoryOpen)}
-                      className="w-full flex items-center justify-between px-8 py-6 text-[16px] font-medium text-gray-800 border-b border-gray-100 hover:bg-gray-50 transition-colors"
-                    >
-                      <span>Shop by Category</span>
-                      <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${isMobileCategoryOpen ? "rotate-90" : ""}`} strokeWidth={2} />
-                    </button>
-                    {isMobileCategoryOpen && (
-                      <div className="bg-gray-50 flex flex-col border-b border-gray-100">
-                        <Link href="/category/smartphones" onClick={() => setIsMobileMenuOpen(false)} className="py-5 pl-12 text-[15px] font-medium text-gray-600 hover:text-brand-primary transition-colors">
-                          Smartphones & Phones
-                        </Link>
-                        <Link href="/category/phone-accessories" onClick={() => setIsMobileMenuOpen(false)} className="py-5 pl-12 text-[15px] font-medium text-gray-600 hover:text-brand-primary transition-colors">
-                          Accessories & Chargers
-                        </Link>
-                      </div>
-                    )}
+                {isDesktopCategoryOpen && (
+                  <div className="absolute top-full left-0 w-56 bg-white border border-gray-100 shadow-xl rounded-2xl py-3 mt-1 flex flex-col z-50">
+                    <Link href="/category/smartphones" className="px-5 py-2.5 hover:bg-brand-surface hover:text-brand-primary transition-colors text-sm font-medium">
+                      Smartphones & Phones
+                    </Link>
+                    <Link href="/category/phone-accessories" className="px-5 py-2.5 hover:bg-brand-surface hover:text-brand-primary transition-colors text-sm font-medium">
+                      Accessories & Chargers
+                    </Link>
                   </div>
+                )}
+              </div>
 
-                  {/* View All */}
-                  <Link href="/shop" onClick={() => setIsMobileMenuOpen(false)} className="px-8 py-6 text-[16px] font-medium text-gray-800 border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    View All
-                  </Link>
+              <Link href="/shop" className="hover:text-brand-accent transition-colors">View All</Link>
+            </nav>
 
-                  {/* Spacer to push utilities down if needed, but per screenshot they stack naturally */}
-                  
-                  {/* Cart Row (Green Icon, Items count right-aligned) */}
-                  <Link href="/cart" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between px-8 py-6 border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <div className="flex items-center gap-4 text-[16px] font-medium text-gray-800">
-                      <ShoppingBag className="w-6 h-6 text-[#00b050]" fill="currentColor" strokeWidth={0} /> 
-                      <span>Cart</span>
-                    </div>
-                    <span className="text-[15px] text-gray-400">0 Items</span>
-                  </Link>
+            <div className="flex items-center gap-6">
+              {isSearchOpen ? (
+                <form onSubmit={handleSearch} className="flex items-center bg-gray-50 border border-gray-200 rounded-full px-4 py-1.5 w-64 shadow-inner">
+                  <input 
+                    type="text"
+                    autoFocus
+                    placeholder="Search products..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="bg-transparent text-sm w-full outline-none text-brand-charcoal"
+                  />
+                  <button type="button" onClick={() => setIsSearchOpen(false)} className="text-gray-400 hover:text-gray-600 ml-2">
+                    <X className="w-4 h-4" />
+                  </button>
+                </form>
+              ) : (
+                <button onClick={() => setIsSearchOpen(true)} className="p-2 text-brand-charcoal hover:text-brand-primary transition-colors cursor-pointer">
+                  <Search className="w-5 h-5" />
+                </button>
+              )}
 
-                  {/* Lists Row (Red Heart) */}
-                  <Link href="/wishlist" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-4 px-8 py-6 border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <Heart className="w-6 h-6 text-[#ff3b30]" fill="currentColor" strokeWidth={0} /> 
-                    <span className="text-[16px] font-medium text-gray-800">Lists</span>
-                  </Link>
-                </div>
+              <Link href="/admin/products" className="text-sm font-semibold text-brand-charcoal hover:text-brand-primary transition-colors">
+                Login
+              </Link>
 
-                {/* Bottom Authentication Area */}
-                <div className="p-8 bg-[#f8f9fa] border-t border-gray-200 flex items-center justify-start gap-8">
-                  <Link 
-                    href="/login" 
-                    onClick={() => setIsMobileMenuOpen(false)} 
-                    className="flex items-center justify-center gap-2 bg-[#0074d9] text-white px-8 py-3.5 rounded-full font-bold text-[16px] shadow-sm hover:bg-blue-700 transition-colors"
-                  >
-                    <User className="w-5 h-5" fill="currentColor" strokeWidth={0} /> Login
-                  </Link>
-                  <Link 
-                    href="/register" 
-                    onClick={() => setIsMobileMenuOpen(false)} 
-                    className="text-[#0074d9] font-bold text-[16px] hover:underline transition-all"
-                  >
-                    Register
-                  </Link>
-                </div>
+              <Link 
+                href="/shop" 
+                className="bg-brand-primary text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-brand-secondary transition-all shadow-md shadow-brand-primary/25"
+              >
+                Register
+              </Link>
 
+              <Link href="/cart" className="p-2 text-brand-charcoal hover:text-brand-primary transition-colors relative">
+                <ShoppingBag className="w-5 h-5" />
+                <span className="absolute top-0 right-0 w-4 h-4 bg-brand-accent text-white text-[10px] font-bold flex items-center justify-center rounded-full">0</span>
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <div className="relative">
+            {/* ================================================= */}
+            {/* 2. MOBILE HEADER (UNCHANGED)                      */}
+            {/* ================================================= */}
+            <div className="relative flex items-center justify-between h-16 px-4 w-full">
+              <div className="z-10">
+                <button 
+                  className="p-2 -ml-2 text-brand-charcoal hover:bg-gray-100 rounded-lg flex items-center justify-center"
+                  onClick={() => setIsMobileMenuOpen(true)}
+                  aria-label="Open Menu"
+                >
+                  <Menu className="w-7 h-7" strokeWidth={1.5} />
+                </button>
+              </div>
+
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <Link href="/" className="text-xl font-black tracking-tight text-brand-primary pointer-events-auto">
+                  ESSYRISE<span className="text-brand-accent">.</span>
+                </Link>
+              </div>
+
+              <div className="z-10 flex items-center gap-2">
+                <button 
+                  className="p-2 text-brand-charcoal hover:bg-gray-100 rounded-lg flex items-center justify-center"
+                  onClick={() => setIsMobileMenuOpen(true)}
+                  aria-label="Open Search"
+                >
+                  <Search className="w-6 h-6" strokeWidth={1.5} />
+                </button>
+                <Link href="/cart" className="p-2 text-brand-charcoal hover:bg-gray-100 rounded-lg relative flex items-center justify-center" aria-label="Cart">
+                  <ShoppingBag className="w-6 h-6" strokeWidth={1.5} />
+                  <span className="absolute top-1 right-0 w-4 h-4 bg-brand-accent text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white">0</span>
+                </Link>
               </div>
             </div>
-          )}
+          </div>
+        )}
+      </header>
+
+      {/* ================================================= */}
+      {/* 3. MOBILE DRAWER (BROUGHT OUTSIDE HEADER)           */}
+      {/* ================================================= */}
+      {isMobileMenuOpen && isMobile && (
+        <div className="fixed inset-0 z-[9999] flex">
+          {/* Dark Overlay */}
+          <div className="absolute inset-0 bg-black/60 transition-opacity" onClick={() => setIsMobileMenuOpen(false)} />
+          
+          {/* Slide-in Drawer Container */}
+          <div className="relative w-[85%] max-w-[400px] bg-white h-[100dvh] shadow-[5px_0_15px_rgba(0,0,0,0.2)] flex flex-col z-10 animate-in slide-in-from-left duration-300">
+            
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 min-h-[70px]">
+              <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-black tracking-tight text-brand-primary">
+                ESSYRISE<span className="text-brand-accent">.</span>
+              </Link>
+              <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 -mr-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors" aria-label="Close Menu">
+                <X className="w-6 h-6" strokeWidth={1.5} />
+              </button>
+            </div>
+
+            {/* Scrollable Links */}
+            <div className="flex-1 overflow-y-auto bg-white flex flex-col">
+              
+              <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="px-6 py-5 text-[16px] font-medium text-gray-800 border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                Home
+              </Link>
+              
+              <div>
+                <button 
+                  onClick={() => setIsMobileCategoryOpen(!isMobileCategoryOpen)}
+                  className="w-full flex items-center justify-between px-6 py-5 text-[16px] font-medium text-gray-800 border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                >
+                  <span>Shop by Category</span>
+                  <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${isMobileCategoryOpen ? "rotate-90" : ""}`} strokeWidth={2} />
+                </button>
+                {isMobileCategoryOpen && (
+                  <div className="bg-gray-50 flex flex-col border-b border-gray-100">
+                    <Link href="/category/smartphones" onClick={() => setIsMobileMenuOpen(false)} className="py-4 pl-10 text-[15px] font-medium text-gray-600 hover:text-brand-primary transition-colors">
+                      Smartphones & Phones
+                    </Link>
+                    <Link href="/category/phone-accessories" onClick={() => setIsMobileMenuOpen(false)} className="py-4 pl-10 text-[15px] font-medium text-gray-600 hover:text-brand-primary transition-colors">
+                      Accessories & Chargers
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              <Link href="/shop" onClick={() => setIsMobileMenuOpen(false)} className="px-6 py-5 text-[16px] font-medium text-gray-800 border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                View All
+              </Link>
+
+              <Link href="/cart" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between px-6 py-5 border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                <div className="flex items-center gap-4 text-[16px] font-medium text-gray-800">
+                  <ShoppingBag className="w-5 h-5 text-emerald-600" /> 
+                  <span>Cart</span>
+                </div>
+                <span className="text-[15px] text-gray-400">0 Items</span>
+              </Link>
+
+              <Link href="/wishlist" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-4 px-6 py-5 border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                <Heart className="w-5 h-5 text-red-500" /> 
+                <span className="text-[16px] font-medium text-gray-800">Lists</span>
+              </Link>
+            </div>
+
+            {/* Bottom Authentication Area */}
+            <div className="p-6 bg-gray-50 border-t border-gray-200 flex items-center justify-start gap-6">
+              <Link 
+                href="/login" 
+                onClick={() => setIsMobileMenuOpen(false)} 
+                className="flex items-center justify-center gap-2 bg-brand-primary text-white px-8 py-3 rounded-full font-bold text-[16px] shadow-sm hover:opacity-90 transition-opacity"
+              >
+                <User className="w-5 h-5" /> Login
+              </Link>
+              <Link 
+                href="/register" 
+                onClick={() => setIsMobileMenuOpen(false)} 
+                className="text-brand-primary font-bold text-[16px] hover:underline transition-all"
+              >
+                Register
+              </Link>
+            </div>
+
+          </div>
         </div>
       )}
-    </header>
+    </>
   );
 }
