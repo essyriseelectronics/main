@@ -155,15 +155,19 @@ export default function Header() {
       </header>
 
       {/* ================================================= */}
-      {/* 3. MOBILE DRAWER (BROUGHT OUTSIDE HEADER)           */}
+      {/* 3. MOBILE DRAWER (TRUE FULL-SCREEN OVERLAY)       */}
       {/* ================================================= */}
       {isMobileMenuOpen && isMobile && (
-        <div className="fixed inset-0 z-[9999] flex">
-          {/* Dark Overlay */}
-          <div className="absolute inset-0 bg-black/60 transition-opacity" onClick={() => setIsMobileMenuOpen(false)} />
+        <>
+          {/* BLURRED BACKDROP: Covers 100% of the screen, fixed over everything */}
+          <div 
+            className="fixed inset-0 z-[9998] bg-black/40 backdrop-blur-sm transition-all" 
+            onClick={() => setIsMobileMenuOpen(false)} 
+            aria-hidden="true"
+          />
           
-          {/* Slide-in Drawer Container */}
-          <div className="relative w-[85%] max-w-[400px] bg-white h-[100dvh] shadow-[5px_0_15px_rgba(0,0,0,0.2)] flex flex-col z-10 animate-in slide-in-from-left duration-300">
+          {/* SLIDE-OUT DRAWER: Fixed to the left edge, top-to-bottom height */}
+          <div className="fixed inset-y-0 left-0 z-[9999] w-[85%] max-w-[360px] bg-white h-[100dvh] shadow-2xl flex flex-col animate-in slide-in-from-left duration-300">
             
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 min-h-[70px]">
@@ -239,7 +243,7 @@ export default function Header() {
             </div>
 
           </div>
-        </div>
+        </>
       )}
     </>
   );
