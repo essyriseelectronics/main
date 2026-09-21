@@ -29,13 +29,20 @@ export async function getProducts(): Promise<Product[]> {
     const imageSql = `SELECT * FROM product_images`;
     const images = await queryD1<ProductImage>(imageSql);
 
-    // 3. Map the images to their exact products
+    // 3. Map the images to their exact products and force a guaranteed image
     return products.map(p => {
       const productImages = images.filter(img => img.product_id === p.id);
+      
+      // FORCE A GUARANTEED PRIMARY IMAGE AT THE TOP LEVEL
+      // SQLite stores booleans as 1/0, so we check for both strictly
+      const primaryImgObj = productImages.find(img => img.is_primary === 1 || img.is_primary === true) || productImages[0];
+      
+      // We manually attach it as a hidden property the UI can blindly rely on
       return {
         ...p,
-        images: productImages || []
-      };
+        images: productImages || [],
+        _guaranteed_image: primaryImgObj ? primaryImgObj.image_url : null
+      } as Product & { _guaranteed_image?: string | null };
     });
   } catch (error) {
     console.error("Failed to fetch products", error);
@@ -60,9 +67,15 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
       const images = await queryD1<ProductImage>(
         `SELECT * FROM product_images WHERE product_id = ?`, 
         [product.id]
-      );
+      ) || [];
       
-      return { ...product, images: images || [] };
+      const primaryImgObj = images.find(img => img.is_primary === 1 || img.is_primary === true) || images[0];
+      
+      return { 
+        ...product, 
+        images: images,
+        _guaranteed_image: primaryImgObj ? primaryImgObj.image_url : null
+      } as Product & { _guaranteed_image?: string | null };
     }
     return null;
   } catch (error) {
