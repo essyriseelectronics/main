@@ -27,16 +27,16 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-100 shadow-sm">
       
       {/* ================================================= */}
-      {/* 1. DESKTOP HEADER                                 */}
+      {/* 1. DESKTOP HEADER (Matches Reference Photo 2)      */}
       {/* ================================================= */}
       <div className="hidden md:flex items-center justify-between h-20 w-full px-8 lg:px-16">
         
-        {/* Logo */}
+        {/* Left: Brand Logo */}
         <Link href="/" className="text-2xl font-black tracking-tight text-brand-primary flex items-center gap-1">
           ESSYRISE<span className="text-brand-accent">.</span>
         </Link>
 
-        {/* Spread Navigation Links */}
+        {/* Center: Navigation Links */}
         <nav className="flex items-center gap-8 font-semibold text-sm text-brand-charcoal">
           <Link href="/" className="hover:text-brand-accent transition-colors">Home</Link>
           
@@ -65,7 +65,7 @@ export default function Header() {
           <Link href="/shop" className="hover:text-brand-accent transition-colors">View All</Link>
         </nav>
 
-        {/* Right Side Utilities & Actions */}
+        {/* Right: Search, Login, Register CTA, Cart */}
         <div className="flex items-center gap-6">
           {isSearchOpen ? (
             <form onSubmit={handleSearch} className="flex items-center bg-gray-50 border border-gray-200 rounded-full px-4 py-1.5 w-64 shadow-inner">
@@ -88,14 +88,14 @@ export default function Header() {
           )}
 
           <Link href="/admin/products" className="text-sm font-semibold text-brand-charcoal hover:text-brand-primary transition-colors">
-            Admin
+            Login
           </Link>
 
           <Link 
             href="/shop" 
-            className="bg-brand-primary text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-brand-secondary transition-all shadow-md shadow-brand-primary/20"
+            className="bg-brand-primary text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-brand-secondary transition-all shadow-md shadow-brand-primary/20"
           >
-            Shop Now
+            Register
           </Link>
 
           <Link href="/cart" className="p-2 text-brand-charcoal hover:text-brand-primary transition-colors relative">
@@ -106,11 +106,11 @@ export default function Header() {
       </div>
 
       {/* ================================================= */}
-      {/* 2. MOBILE HEADER                                  */}
+      {/* 2. MOBILE HEADER (Matches Reference Photo 1)      */}
       {/* ================================================= */}
-      <div className="flex md:hidden items-center justify-between h-16 px-4 w-full relative">
+      <div className="flex md:hidden items-center justify-between h-16 px-4 w-full">
         
-        {/* Left: Hamburger Menu Icon */}
+        {/* Left: Hamburger Icon */}
         <button 
           className="p-2 -ml-2 text-brand-charcoal hover:bg-gray-100 rounded-lg flex items-center justify-center"
           onClick={() => setIsMobileMenuOpen(true)}
@@ -120,7 +120,7 @@ export default function Header() {
         </button>
 
         {/* Center: Brand Logo */}
-        <Link href="/" className="text-lg font-black tracking-tight text-brand-primary absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+        <Link href="/" className="text-lg font-black tracking-tight text-brand-primary">
           ESSYRISE<span className="text-brand-accent">.</span>
         </Link>
 
@@ -141,7 +141,7 @@ export default function Header() {
       </div>
 
       {/* ================================================= */}
-      {/* 3. MOBILE SLIDE-OUT DRAWER                        */}
+      {/* 3. MOBILE SLIDE-OUT DRAWER (Matches Reference 3)  */}
       {/* ================================================= */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-[100] flex md:hidden">
@@ -161,7 +161,7 @@ export default function Header() {
               </button>
             </div>
 
-            {/* Scrollable Nav Items */}
+            {/* Scrollable Navigation */}
             <div className="flex-1 overflow-y-auto">
               <div className="p-4 border-b border-gray-100">
                 <form onSubmit={handleSearch} className="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
@@ -217,13 +217,13 @@ export default function Header() {
               </div>
             </div>
 
-            {/* Footer Action Buttons */}
+            {/* Bottom Action Footer */}
             <div className="p-4 border-t border-gray-100 bg-gray-50 flex gap-3 mt-auto">
               <Link href="/admin/products" onClick={() => setIsMobileMenuOpen(false)} className="flex-1 bg-brand-primary text-white text-center py-3 rounded-xl font-bold text-xs shadow-sm">
-                Admin Panel
+                Login
               </Link>
               <Link href="/shop" onClick={() => setIsMobileMenuOpen(false)} className="flex-1 bg-white text-brand-primary border border-gray-200 text-center py-3 rounded-xl font-bold text-xs shadow-sm">
-                Browse Shop
+                Register
               </Link>
             </div>
 
