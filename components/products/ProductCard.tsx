@@ -9,8 +9,8 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  // We now know this safely grabs the URL!
-  const primaryImage = product.images?.find((img) => img.is_primary)?.image_url || product.images?.[0]?.image_url;
+  // We use == 1 because SQLite stores booleans as 1 or 0
+  const primaryImage = product.images?.find((img) => img.is_primary == 1)?.image_url || product.images?.[0]?.image_url;
   const isOutOfStock = product.availability === "OUT OF STOCK";
 
   return (
@@ -19,19 +19,15 @@ export default function ProductCard({ product }: ProductCardProps) {
       {/* BADGES */}
       <div className="absolute top-3 left-3 z-10 flex flex-col gap-2">
         {product.discount_price && (
-          <span className="bg-brand-accent text-white text-xs font-bold px-2 py-1 rounded-md shadow-sm">
-            SALE
-          </span>
+          <span className="bg-brand-accent text-white text-xs font-bold px-2 py-1 rounded-md shadow-sm">SALE</span>
         )}
         {isOutOfStock && (
-          <span className="bg-gray-800 text-white text-xs font-bold px-2 py-1 rounded-md shadow-sm">
-            OUT OF STOCK
-          </span>
+          <span className="bg-gray-800 text-white text-xs font-bold px-2 py-1 rounded-md shadow-sm">OUT OF STOCK</span>
         )}
       </div>
 
-      {/* IMAGE OR GRAY FALLBACK */}
-      <Link href={`/products/${product.slug}`} className="relative aspect-[4/5] overflow-hidden bg-gray-50 flex flex-col items-center justify-center border-b border-gray-100">
+      {/* THE FIX: "block w-full" forces the aspect ratio to calculate correctly */}
+      <Link href={`/products/${product.slug}`} className="relative block w-full aspect-[4/5] bg-gray-50 overflow-hidden border-b border-gray-100">
         {primaryImage ? (
           <Image
             src={primaryImage}
@@ -41,7 +37,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             sizes="(max-width: 768px) 50vw, 25vw"
           />
         ) : (
-          <div className="flex flex-col items-center justify-center text-gray-400 w-full h-full bg-gray-100 absolute inset-0">
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-400 w-full h-full bg-gray-100">
             <ImageIcon className="w-10 h-10 mb-2 opacity-50" />
             <span className="text-[10px] font-bold uppercase tracking-wider">No Image</span>
           </div>
@@ -59,7 +55,6 @@ export default function ProductCard({ product }: ProductCardProps) {
           </Link>
         </div>
 
-        {/* PRICING */}
         <div className="mt-auto">
           {product.discount_price ? (
             <div className="flex flex-col">
@@ -70,10 +65,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             <div className="text-brand-primary font-bold text-lg">{formatUGX(product.price)}</div>
           )}
 
-          <Link 
-            href={`/products/${product.slug}`}
-            className="mt-4 block w-full text-center bg-gray-50 hover:bg-brand-primary hover:text-white text-brand-charcoal font-semibold py-2 rounded-lg transition-colors border border-gray-200 hover:border-brand-primary text-sm"
-          >
+          <Link href={`/products/${product.slug}`} className="mt-4 block w-full text-center bg-gray-50 hover:bg-brand-primary hover:text-white text-brand-charcoal font-semibold py-2 rounded-lg transition-colors border border-gray-200 hover:border-brand-primary text-sm">
             View Details
           </Link>
         </div>
