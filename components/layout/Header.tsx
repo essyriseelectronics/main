@@ -42,7 +42,7 @@ export default function Header() {
       {!isMobile ? (
         <div className="flex items-center justify-between h-20 w-full px-8 lg:px-16">
           {/* ================================================= */}
-          {/* 1. DESKTOP HEADER                                 */}
+          {/* 1. DESKTOP HEADER (UNCHANGED)                     */}
           {/* ================================================= */}
           
           <Link href="/" className="text-2xl font-black tracking-tight text-brand-primary flex items-center gap-1">
@@ -117,11 +117,9 @@ export default function Header() {
       ) : (
         <div className="relative">
           {/* ================================================= */}
-          {/* 2. MOBILE HEADER                                  */}
+          {/* 2. MOBILE HEADER (UNCHANGED)                      */}
           {/* ================================================= */}
           <div className="relative flex items-center justify-between h-16 px-4 w-full">
-            
-            {/* Left: Hamburger Icon */}
             <div className="z-10">
               <button 
                 className="p-2 -ml-2 text-brand-charcoal hover:bg-gray-100 rounded-lg flex items-center justify-center"
@@ -132,14 +130,12 @@ export default function Header() {
               </button>
             </div>
 
-            {/* Center: True Absolute Centered Logo */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <Link href="/" className="text-xl font-black tracking-tight text-brand-primary pointer-events-auto">
                 ESSYRISE<span className="text-brand-accent">.</span>
               </Link>
             </div>
 
-            {/* Right: Search & Cart Icons */}
             <div className="z-10 flex items-center gap-2">
               <button 
                 className="p-2 text-brand-charcoal hover:bg-gray-100 rounded-lg flex items-center justify-center"
@@ -156,82 +152,91 @@ export default function Header() {
           </div>
 
           {/* ================================================= */}
-          {/* 3. MOBILE DRAWER (Matched to Reference Image)     */}
+          {/* 3. MOBILE DRAWER (REDESIGNED TO MATCH SCREENSHOT) */}
           {/* ================================================= */}
           {isMobileMenuOpen && (
             <div className="fixed inset-0 z-[100] flex">
-              <div className="fixed inset-0 bg-black/50 transition-opacity" onClick={() => setIsMobileMenuOpen(false)} />
+              {/* Dark Overlay over the page behind the drawer */}
+              <div className="fixed inset-0 bg-black/60 transition-opacity" onClick={() => setIsMobileMenuOpen(false)} />
               
-              <div className="relative w-[85%] max-w-[320px] bg-white h-full shadow-2xl flex flex-col z-10 animate-in slide-in-from-left duration-200">
+              {/* Slide-in Drawer Container (~85% width) */}
+              <div className="relative w-[85%] max-w-[400px] bg-white h-full shadow-[5px_0_15px_rgba(0,0,0,0.1)] flex flex-col z-10 animate-in slide-in-from-left duration-300">
                 
-                {/* Header */}
-                <div className="flex items-center justify-between p-5 border-b border-gray-100">
-                  <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="text-xl font-black tracking-tight text-brand-primary">
+                {/* Header (60-70px high, Logo Left, X Right) */}
+                <div className="flex items-center justify-between px-8 py-5 border-b border-gray-100 min-h-[70px]">
+                  <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-black tracking-tight text-brand-primary">
                     ESSYRISE<span className="text-brand-accent">.</span>
                   </Link>
-                  <button onClick={() => setIsMobileMenuOpen(false)} className="p-1 text-gray-500" aria-label="Close Menu">
-                    <X className="w-6 h-6" strokeWidth={1.5} />
+                  <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 -mr-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors" aria-label="Close Menu">
+                    <X className="w-7 h-7" strokeWidth={1.5} />
                   </button>
                 </div>
 
-                {/* Scrollable Links */}
-                <div className="flex-1 overflow-y-auto bg-white">
+                {/* Generously Spaced Navigation Links */}
+                <div className="flex-1 overflow-y-auto bg-white flex flex-col">
                   
-                  <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 py-4 text-[15px] text-gray-700 border-b border-gray-100 hover:bg-gray-50">
+                  {/* Home */}
+                  <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="px-8 py-6 text-[16px] font-medium text-gray-800 border-b border-gray-100 hover:bg-gray-50 transition-colors">
                     Home
                   </Link>
                   
+                  {/* Category Accordion with Chevron */}
                   <div>
                     <button 
                       onClick={() => setIsMobileCategoryOpen(!isMobileCategoryOpen)}
-                      className="w-full flex items-center justify-between px-6 py-4 text-[15px] text-gray-700 border-b border-gray-100 hover:bg-gray-50"
+                      className="w-full flex items-center justify-between px-8 py-6 text-[16px] font-medium text-gray-800 border-b border-gray-100 hover:bg-gray-50 transition-colors"
                     >
                       <span>Shop by Category</span>
-                      <ChevronRight className={`w-4 h-4 text-gray-400 transition-transform ${isMobileCategoryOpen ? "rotate-90" : ""}`} />
+                      <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${isMobileCategoryOpen ? "rotate-90" : ""}`} strokeWidth={2} />
                     </button>
                     {isMobileCategoryOpen && (
                       <div className="bg-gray-50 flex flex-col border-b border-gray-100">
-                        <Link href="/category/smartphones" onClick={() => setIsMobileMenuOpen(false)} className="py-3 pl-10 text-[14px] text-gray-600 hover:text-brand-primary">
+                        <Link href="/category/smartphones" onClick={() => setIsMobileMenuOpen(false)} className="py-5 pl-12 text-[15px] font-medium text-gray-600 hover:text-brand-primary transition-colors">
                           Smartphones & Phones
                         </Link>
-                        <Link href="/category/phone-accessories" onClick={() => setIsMobileMenuOpen(false)} className="py-3 pl-10 text-[14px] text-gray-600 hover:text-brand-primary">
+                        <Link href="/category/phone-accessories" onClick={() => setIsMobileMenuOpen(false)} className="py-5 pl-12 text-[15px] font-medium text-gray-600 hover:text-brand-primary transition-colors">
                           Accessories & Chargers
                         </Link>
                       </div>
                     )}
                   </div>
 
-                  <Link href="/shop" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 py-4 text-[15px] text-gray-700 border-b border-gray-100 hover:bg-gray-50">
+                  {/* View All */}
+                  <Link href="/shop" onClick={() => setIsMobileMenuOpen(false)} className="px-8 py-6 text-[16px] font-medium text-gray-800 border-b border-gray-100 hover:bg-gray-50 transition-colors">
                     View All
                   </Link>
 
-                  <Link href="/cart" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between px-6 py-4 border-b border-gray-100 hover:bg-gray-50">
-                    <div className="flex items-center gap-4 text-[15px] text-gray-700">
-                      <ShoppingBag className="w-5 h-5 text-emerald-600" fill="currentColor" strokeWidth={1} /> 
+                  {/* Spacer to push utilities down if needed, but per screenshot they stack naturally */}
+                  
+                  {/* Cart Row (Green Icon, Items count right-aligned) */}
+                  <Link href="/cart" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between px-8 py-6 border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                    <div className="flex items-center gap-4 text-[16px] font-medium text-gray-800">
+                      <ShoppingBag className="w-6 h-6 text-[#00b050]" fill="currentColor" strokeWidth={0} /> 
                       <span>Cart</span>
                     </div>
-                    <span className="text-sm text-gray-400">0 Items</span>
+                    <span className="text-[15px] text-gray-400">0 Items</span>
                   </Link>
 
-                  <Link href="/wishlist" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-4 px-6 py-4 text-[15px] text-gray-700 border-b border-gray-100 hover:bg-gray-50">
-                    <Heart className="w-5 h-5 text-brand-accent" fill="currentColor" strokeWidth={1} /> 
-                    <span>Lists</span>
+                  {/* Lists Row (Red Heart) */}
+                  <Link href="/wishlist" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-4 px-8 py-6 border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                    <Heart className="w-6 h-6 text-[#ff3b30]" fill="currentColor" strokeWidth={0} /> 
+                    <span className="text-[16px] font-medium text-gray-800">Lists</span>
                   </Link>
                 </div>
 
-                {/* Footer (Login Pill & Register Link) */}
-                <div className="p-6 bg-white border-t border-gray-100 flex items-center gap-6">
+                {/* Bottom Authentication Area */}
+                <div className="p-8 bg-[#f8f9fa] border-t border-gray-200 flex items-center justify-start gap-8">
                   <Link 
                     href="/login" 
                     onClick={() => setIsMobileMenuOpen(false)} 
-                    className="flex items-center justify-center gap-2 bg-brand-primary text-white px-8 py-2.5 rounded-full font-medium shadow-sm hover:bg-brand-secondary transition-colors"
+                    className="flex items-center justify-center gap-2 bg-[#0074d9] text-white px-8 py-3.5 rounded-full font-bold text-[16px] shadow-sm hover:bg-blue-700 transition-colors"
                   >
-                    <User className="w-4 h-4" /> Login
+                    <User className="w-5 h-5" fill="currentColor" strokeWidth={0} /> Login
                   </Link>
                   <Link 
                     href="/register" 
                     onClick={() => setIsMobileMenuOpen(false)} 
-                    className="text-brand-primary font-medium hover:text-brand-secondary transition-colors"
+                    className="text-[#0074d9] font-bold text-[16px] hover:underline transition-all"
                   >
                     Register
                   </Link>
