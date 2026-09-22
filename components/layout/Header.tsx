@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Menu,
   X,
@@ -13,7 +14,6 @@ import {
   Heart,
   User,
 } from "lucide-react";
-import { usePathname } from "next/navigation";
 
 export default function Header() {
   const pathname = usePathname();
@@ -22,50 +22,44 @@ export default function Header() {
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
+  // Portal is only available after hydration
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  /*
-   * Lock the main page when the mobile drawer is open.
-   */
+  // Prevent the page behind the drawer from scrolling
   useEffect(() => {
-    if (!mobileMenuOpen) {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
       document.body.style.overflow = "";
-      return;
     }
-
-    document.body.style.overflow = "hidden";
 
     return () => {
       document.body.style.overflow = "";
     };
   }, [mobileMenuOpen]);
 
-  /*
-   * Close the menu when navigating.
-   */
+  // Close drawer whenever navigation changes
   useEffect(() => {
     setMobileMenuOpen(false);
     setCategoriesOpen(false);
   }, [pathname]);
 
-  /*
-   * Escape key closes the drawer.
-   */
+  // Close drawer with Escape
   useEffect(() => {
     if (!mobileMenuOpen) return;
 
-    const handleKeyDown = (event: KeyboardEvent) => {
+    const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setMobileMenuOpen(false);
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keydown", handleEscape);
 
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keydown", handleEscape);
     };
   }, [mobileMenuOpen]);
 
@@ -78,14 +72,14 @@ export default function Header() {
 
   return (
     <>
-      {/* =====================================================
+      {/* =========================================================
           DESKTOP HEADER
-          Completely independent from mobile navigation.
-          ===================================================== */}
+          Only exists at md and above
+      ========================================================= */}
 
-      <nav className="hidden md:block bg-white sticky top-0 z-50 border-b border-gray-100 shadow-sm">
+      <nav className="hidden md:block sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
         <div className="w-full px-4 sm:px-6 lg:px-10">
-          <div className="flex justify-between items-center h-20">
+          <div className="flex items-center justify-between h-20">
 
             {/* Logo */}
             <Link
@@ -101,6 +95,7 @@ export default function Header() {
             {/* Desktop navigation */}
             <div className="flex items-center space-x-8 xl:space-x-10">
 
+              {/* Home */}
               <Link
                 href="/"
                 className="text-gray-600 hover:text-brand-primary font-medium transition-colors"
@@ -113,12 +108,12 @@ export default function Header() {
 
                 <button
                   type="button"
-                  className="flex items-center text-gray-600 hover:text-brand-primary font-medium transition-colors"
+                  className="flex items-center text-gray-600 hover:text-brand-primary font-medium transition-colors outline-none"
                 >
                   Categories
 
                   <ChevronDown
-                    className="h-4 w-4 ml-1 opacity-50 transition-transform group-hover:rotate-180"
+                    className="h-4 w-4 ml-1 opacity-50 transition-transform duration-200 group-hover:rotate-180"
                   />
                 </button>
 
@@ -141,6 +136,7 @@ export default function Header() {
                 </div>
               </div>
 
+              {/* View All */}
               <Link
                 href="/shop"
                 className="text-gray-600 hover:text-brand-primary font-medium transition-colors"
@@ -153,6 +149,7 @@ export default function Header() {
             {/* Desktop utilities */}
             <div className="flex items-center space-x-6">
 
+              {/* Search */}
               <button
                 type="button"
                 aria-label="Search"
@@ -164,6 +161,7 @@ export default function Header() {
                 />
               </button>
 
+              {/* Authentication */}
               <div className="flex items-center space-x-3">
 
                 <Link
@@ -175,13 +173,14 @@ export default function Header() {
 
                 <Link
                   href="/register"
-                  className="bg-brand-primary text-white px-5 py-2.5 rounded-xl font-medium hover:opacity-90 transition-colors"
+                  className="bg-brand-primary text-white px-5 py-2.5 rounded-xl font-medium hover:opacity-90 transition-colors shadow-sm"
                 >
                   Register
                 </Link>
 
               </div>
 
+              {/* Cart */}
               <Link
                 href="/cart"
                 aria-label="Cart"
@@ -198,26 +197,26 @@ export default function Header() {
               </Link>
 
             </div>
-
           </div>
         </div>
       </nav>
 
-      {/* =====================================================
+      {/* =========================================================
           MOBILE HEADER
-          Completely separate from desktop.
-          ===================================================== */}
+          Only exists below md
+      ========================================================= */}
 
-      <nav className="md:hidden bg-white sticky top-0 z-50 border-b border-gray-100">
+      <nav className="md:hidden sticky top-0 z-50 bg-white border-b border-gray-100">
 
-        <div className="h-16 px-4 flex items-center justify-between">
+        <div className="relative flex items-center justify-between h-16 px-4">
 
           {/* Hamburger */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(true)}
             aria-label="Open menu"
-            className="w-11 h-11 -ml-2 flex items-center justify-center text-gray-800"
+            aria-expanded={mobileMenuOpen}
+            className="w-11 h-11 -ml-2 flex items-center justify-center text-gray-800 rounded-md active:bg-gray-50"
           >
             <Menu
               className="h-6 w-6"
@@ -225,7 +224,7 @@ export default function Header() {
             />
           </button>
 
-          {/* Centered logo */}
+          {/* Center logo */}
           <Link
             href="/"
             className="absolute left-1/2 -translate-x-1/2 flex items-baseline select-none text-2xl font-black tracking-tight text-brand-primary"
@@ -236,9 +235,10 @@ export default function Header() {
             </span>
           </Link>
 
-          {/* Right utilities */}
+          {/* Mobile utilities */}
           <div className="flex items-center">
 
+            {/* Search */}
             <button
               type="button"
               aria-label="Search"
@@ -250,6 +250,7 @@ export default function Header() {
               />
             </button>
 
+            {/* Cart */}
             <Link
               href="/cart"
               aria-label="Cart"
@@ -260,57 +261,61 @@ export default function Header() {
                 strokeWidth={1.6}
               />
 
-              <span className="absolute top-1 right-0.5 w-4 h-4 bg-brand-accent text-white text-[9px] font-bold flex items-center justify-center rounded-full">
+              <span className="absolute top-1 right-0 w-4 h-4 bg-brand-accent text-white text-[9px] font-bold flex items-center justify-center rounded-full">
                 0
               </span>
             </Link>
 
           </div>
-
         </div>
       </nav>
 
-      {/* =====================================================
+      {/* =========================================================
           MOBILE DRAWER
           
-          IMPORTANT:
-          This is PORTALED directly to document.body.
-          It is therefore completely independent from the
-          sticky navbar's stacking/layout context.
-          ===================================================== */}
+          Rendered directly into document.body.
+          This prevents it from interfering with the header.
+      ========================================================= */}
 
       {mounted &&
-        mobileMenuOpen &&
         createPortal(
-          <div className="fixed inset-0 z-[9999] md:hidden">
+          <div
+            className={`fixed inset-0 z-[9999] md:hidden ${
+              mobileMenuOpen
+                ? "pointer-events-auto"
+                : "pointer-events-none"
+            }`}
+          >
 
-            {/* Dark backdrop */}
+            {/* ===================================================
+                BACKDROP
+            =================================================== */}
+
             <div
-              className="absolute inset-0 bg-black/40"
+              className={`absolute inset-0 bg-black/40 transition-opacity duration-300 ${
+                mobileMenuOpen
+                  ? "opacity-100"
+                  : "opacity-0"
+              }`}
               onClick={closeMobileMenu}
             />
 
-            {/* Drawer */}
+            {/* ===================================================
+                DRAWER
+            =================================================== */}
+
             <aside
-              className="
-                absolute
-                left-0
-                top-0
-                bottom-0
-                w-[85vw]
-                max-w-[390px]
-                bg-white
-                flex
-                flex-col
-                shadow-[4px_0_18px_rgba(0,0,0,0.12)]
-                animate-mobile-drawer
-              "
+              className={`absolute left-0 top-0 bottom-0 w-[85vw] max-w-[390px] bg-white flex flex-col shadow-[4px_0_18px_rgba(0,0,0,0.12)] transition-transform duration-300 ease-out ${
+                mobileMenuOpen
+                  ? "translate-x-0"
+                  : "-translate-x-full"
+              }`}
               aria-label="Mobile navigation"
             >
 
               {/* =================================================
                   DRAWER HEADER
-                  ================================================= */}
+              ================================================= */}
 
               <div className="h-[76px] shrink-0 px-7 flex items-center justify-between border-b border-gray-200">
 
@@ -329,7 +334,7 @@ export default function Header() {
                   type="button"
                   onClick={closeMobileMenu}
                   aria-label="Close menu"
-                  className="w-11 h-11 flex items-center justify-center text-gray-500"
+                  className="w-11 h-11 flex items-center justify-center text-gray-500 hover:text-gray-800 rounded-full hover:bg-gray-50 transition-colors"
                 >
                   <X
                     className="h-7 w-7"
@@ -340,8 +345,8 @@ export default function Header() {
               </div>
 
               {/* =================================================
-                  NAVIGATION
-                  ================================================= */}
+                  NAVIGATION AREA
+              ================================================= */}
 
               <div className="flex-1 overflow-y-auto">
 
@@ -349,69 +354,50 @@ export default function Header() {
                 <Link
                   href="/"
                   onClick={closeMobileMenu}
-                  className={`
-                    h-[74px]
-                    px-8
-                    flex
-                    items-center
-                    border-b
-                    border-gray-200
-                    text-[17px]
-                    font-normal
-                    ${
-                      isActive("/")
-                        ? "text-brand-primary"
-                        : "text-gray-800"
-                    }
-                  `}
+                  className={`h-[74px] px-8 flex items-center border-b border-gray-200 text-[17px] font-normal transition-colors ${
+                    isActive("/")
+                      ? "text-brand-primary"
+                      : "text-gray-800 hover:bg-gray-50"
+                  }`}
                 >
                   Home
                 </Link>
 
                 {/* =================================================
-                    CATEGORY
-                    ================================================= */}
+                    SHOP BY CATEGORY
+                ================================================= */}
 
                 <div className="border-b border-gray-200">
 
                   <button
                     type="button"
                     onClick={() =>
-                      setCategoriesOpen((value) => !value)
+                      setCategoriesOpen((current) => !current)
                     }
-                    className="w-full h-[74px] px-8 flex items-center justify-between text-left text-[17px] font-normal text-gray-800"
+                    className="w-full h-[74px] px-8 flex items-center justify-between text-left text-[17px] font-normal text-gray-800 hover:bg-gray-50 transition-colors"
                   >
-
                     <span>
                       Shop by Category
                     </span>
 
                     <ChevronRight
-                      className={`
-                        h-5
-                        w-5
-                        text-gray-400
-                        transition-transform
-                        duration-200
-                        ${
-                          categoriesOpen
-                            ? "rotate-90"
-                            : ""
-                        }
-                      `}
+                      className={`h-5 w-5 text-gray-400 transition-transform duration-200 ${
+                        categoriesOpen
+                          ? "rotate-90"
+                          : ""
+                      }`}
                       strokeWidth={1.6}
                     />
-
                   </button>
 
-                  {/* Category children */}
+                  {/* Category submenu */}
                   {categoriesOpen && (
                     <div className="bg-gray-50 border-t border-gray-200">
 
                       <Link
                         href="/category/smartphones"
                         onClick={closeMobileMenu}
-                        className="h-[58px] px-12 flex items-center justify-between border-b border-gray-200 text-[15px] text-gray-700"
+                        className="h-[58px] px-12 flex items-center justify-between border-b border-gray-200 text-[15px] text-gray-700 hover:bg-gray-100 transition-colors"
                       >
                         <span>
                           Smartphones & Phones
@@ -426,7 +412,7 @@ export default function Header() {
                       <Link
                         href="/category/phone-accessories"
                         onClick={closeMobileMenu}
-                        className="h-[58px] px-12 flex items-center justify-between text-[15px] text-gray-700"
+                        className="h-[58px] px-12 flex items-center justify-between text-[15px] text-gray-700 hover:bg-gray-100 transition-colors"
                       >
                         <span>
                           Accessories & Chargers
@@ -447,35 +433,28 @@ export default function Header() {
                 <Link
                   href="/shop"
                   onClick={closeMobileMenu}
-                  className={`
-                    h-[74px]
-                    px-8
-                    flex
-                    items-center
-                    border-b
-                    border-gray-200
-                    text-[17px]
-                    font-normal
-                    ${
-                      isActive("/shop")
-                        ? "text-brand-primary"
-                        : "text-gray-800"
-                    }
-                  `}
+                  className={`h-[74px] px-8 flex items-center border-b border-gray-200 text-[17px] font-normal transition-colors ${
+                    isActive("/shop")
+                      ? "text-brand-primary"
+                      : "text-gray-800 hover:bg-gray-50"
+                  }`}
                 >
                   View All
                 </Link>
 
                 {/* =================================================
                     CART
-                    ================================================= */}
+                ================================================= */}
 
                 <Link
                   href="/cart"
                   onClick={closeMobileMenu}
-                  className="h-[74px] px-8 flex items-center justify-between border-b border-gray-200"
+                  className={`h-[74px] px-8 flex items-center justify-between border-b border-gray-200 transition-colors ${
+                    isActive("/cart")
+                      ? "bg-gray-50"
+                      : "hover:bg-gray-50"
+                  }`}
                 >
-
                   <div className="flex items-center text-[17px] text-gray-800">
 
                     <ShoppingBag
@@ -492,17 +471,21 @@ export default function Header() {
                   <span className="text-[16px] text-gray-400">
                     0 Items
                   </span>
-
                 </Link>
 
-                {/* LISTS */}
+                {/* =================================================
+                    LISTS
+                ================================================= */}
 
                 <Link
                   href="/wishlist"
                   onClick={closeMobileMenu}
-                  className="h-[74px] px-8 flex items-center border-b border-gray-200 text-[17px] text-gray-800"
+                  className={`h-[74px] px-8 flex items-center border-b border-gray-200 text-[17px] transition-colors ${
+                    isActive("/wishlist")
+                      ? "bg-gray-50 text-brand-primary"
+                      : "text-gray-800 hover:bg-gray-50"
+                  }`}
                 >
-
                   <Heart
                     className="h-6 w-6 mr-5 text-brand-accent"
                     strokeWidth={1.7}
@@ -511,35 +494,23 @@ export default function Header() {
                   <span>
                     Lists
                   </span>
-
                 </Link>
 
               </div>
 
               {/* =================================================
-                  BOTTOM AUTH AREA
-                  ================================================= */}
+                  BOTTOM AUTHENTICATION
+              ================================================= */}
 
               <div className="shrink-0 bg-gray-50 border-t border-gray-200 px-7 py-7">
 
                 <div className="flex items-center">
 
+                  {/* Login */}
                   <Link
                     href="/login"
                     onClick={closeMobileMenu}
-                    className="
-                      h-[56px]
-                      px-7
-                      flex-[1.1]
-                      flex
-                      items-center
-                      justify-center
-                      bg-brand-primary
-                      text-white
-                      rounded-full
-                      text-[16px]
-                      font-semibold
-                    "
+                    className="h-[56px] flex-[1.1] flex items-center justify-center bg-brand-primary text-white rounded-full text-[16px] font-semibold hover:opacity-90 transition-opacity"
                   >
                     <User
                       className="h-5 w-5 mr-2"
@@ -549,19 +520,11 @@ export default function Header() {
                     Login
                   </Link>
 
+                  {/* Register */}
                   <Link
                     href="/register"
                     onClick={closeMobileMenu}
-                    className="
-                      h-[56px]
-                      flex-1
-                      flex
-                      items-center
-                      justify-center
-                      text-brand-primary
-                      text-[16px]
-                      font-semibold
-                    "
+                    className="h-[56px] flex-1 flex items-center justify-center text-brand-primary text-[16px] font-semibold hover:opacity-70 transition-opacity"
                   >
                     Register
                   </Link>
@@ -571,23 +534,6 @@ export default function Header() {
               </div>
 
             </aside>
-
-            {/* Drawer animation */}
-            <style jsx global>{`
-              @keyframes mobileDrawerIn {
-                from {
-                  transform: translateX(-100%);
-                }
-                to {
-                  transform: translateX(0);
-                }
-              }
-
-              .animate-mobile-drawer {
-                animation: mobileDrawerIn 260ms cubic-bezier(0.22, 1, 0.36, 1);
-              }
-            `}</style>
-
           </div>,
           document.body
         )}
