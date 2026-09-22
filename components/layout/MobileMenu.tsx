@@ -42,10 +42,9 @@ export default function MobileMenu({ categories }: MobileMenuProps) {
           <div className="relative w-4/5 max-w-sm bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-left duration-300">
             <div className="flex items-center justify-between p-4 border-b border-gray-100">
 
-              {/* ESSYRISE TEXT LOGO FOR MOBILE */}
               <Link href="/" onClick={() => setIsOpen(false)} className="flex items-baseline outline-none select-none">
-                <span className="text-2xl font-black text-brand-primary tracking-tight">ESSYRISE</span>
-                <span className="text-2xl font-black text-brand-accent tracking-tight">.</span>
+                <span className="text-2xl font-extrabold text-brand-primary tracking-tight">ESSYRISE</span>
+                <span className="text-2xl font-medium text-brand-accent tracking-tight">.</span>
               </Link>
 
               <button onClick={() => setIsOpen(false)} className="p-2 text-black hover:bg-gray-100 rounded-lg transition-colors">
@@ -55,7 +54,7 @@ export default function MobileMenu({ categories }: MobileMenuProps) {
 
             <div className="flex-1 overflow-y-auto py-4 px-4 space-y-2">
               
-              <Link href="/" onClick={() => setIsOpen(false)} className={`block px-4 py-3 rounded-xl font-bold transition-colors ${isActive('/') ? 'bg-gray-100 text-black' : 'text-black hover:bg-gray-50'}`}>
+              <Link href="/" onClick={() => setIsOpen(false)} className={`block px-4 py-3 rounded-xl font-bold transition-colors ${isActive('/') ? 'bg-gray-100 text-brand-primary' : 'text-black hover:bg-gray-50'}`}>
                 Home
               </Link>
 
@@ -70,7 +69,7 @@ export default function MobileMenu({ categories }: MobileMenuProps) {
                        <span className="px-12 py-3 text-sm text-gray-500">Loading...</span>
                     ) : (
                       categories.map((cat) => (
-                        <Link key={cat.slug} href={`/category/${cat.slug}`} onClick={() => setIsOpen(false)} className={`px-12 py-3 text-sm font-medium flex items-center justify-between transition-colors ${isActive(`/category/${cat.slug}`) ? 'bg-gray-100 text-black' : 'text-black hover:bg-gray-50'}`}>
+                        <Link key={cat.slug} href={`/category/${cat.slug}`} onClick={() => setIsOpen(false)} className={`px-12 py-3 text-sm font-medium flex items-center justify-between transition-colors ${isActive(`/category/${cat.slug}`) ? 'bg-gray-100 text-brand-primary' : 'text-black hover:bg-gray-50'}`}>
                           {cat.name} <ChevronRight className="h-4 w-4 opacity-50" />
                         </Link>
                       ))
@@ -82,20 +81,20 @@ export default function MobileMenu({ categories }: MobileMenuProps) {
                 )}
               </div>
 
-              <Link href="/shop" onClick={() => setIsOpen(false)} className={`block px-4 py-3 rounded-xl font-bold transition-colors ${isActive('/shop') ? 'bg-gray-100 text-black' : 'text-black hover:bg-gray-50'}`}>
+              <Link href="/shop" onClick={() => setIsOpen(false)} className={`block px-4 py-3 rounded-xl font-bold transition-colors ${isActive('/shop') ? 'bg-gray-100 text-brand-primary' : 'text-black hover:bg-gray-50'}`}>
                 View All
               </Link>
-              
-              <Link href="/cart" onClick={() => setIsOpen(false)} className={`flex items-center justify-between px-4 py-3 rounded-xl font-bold transition-colors ${isActive('/cart') ? 'bg-gray-100 text-black' : 'text-black hover:bg-gray-50'}`}>
-                <span className="flex items-center"><ShoppingBag className="h-5 w-5 mr-3 text-emerald-600" /> Cart</span>
+
+              <Link href="/cart" onClick={() => setIsOpen(false)} className={`flex items-center justify-between px-4 py-3 rounded-xl font-bold transition-colors ${isActive('/cart') ? 'bg-gray-100 text-brand-primary' : 'text-black hover:bg-gray-50'}`}>
+                <span className="flex items-center"><ShoppingBag className="h-5 w-5 mr-3 text-black" /> Cart</span>
                 <span className="text-sm font-medium text-gray-500">0 Items</span>
               </Link>
-
-              <Link href="/wishlist" onClick={() => setIsOpen(false)} className={`flex items-center px-4 py-3 rounded-xl font-bold transition-colors ${isActive('/wishlist') ? 'bg-gray-100 text-black' : 'text-black hover:bg-gray-50'}`}>
-                <Heart className="h-5 w-5 mr-3 text-brand-accent" /> Lists
+              
+              <Link href="/wishlist" onClick={() => setIsOpen(false)} className={`flex items-center px-4 py-3 rounded-xl font-bold transition-colors ${isActive('/wishlist') ? 'bg-gray-100 text-brand-primary' : 'text-black hover:bg-gray-50'}`}>
+                <span className="flex items-center"><Heart className="h-5 w-5 mr-3 text-black" /> Lists</span>
               </Link>
-
             </div>
+
           </div>
         </div>
       )}
