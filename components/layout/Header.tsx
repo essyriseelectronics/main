@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Menu, X, Search, ChevronDown, ChevronRight, ShoppingBag, Heart, User } from "lucide-react";
 
 export default function Header() {
@@ -10,10 +10,8 @@ export default function Header() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  // Exact Etomu scroll lock
+  // EXACT ETOMU SCROLL LOCK
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -31,37 +29,40 @@ export default function Header() {
 
   const isActive = (path: string) => pathname === path;
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/shop?q=${encodeURIComponent(searchQuery.trim())}`);
-      setIsSearchOpen(false);
-      setSearchQuery("");
-      setIsOpen(false);
-    }
-  };
-
   return (
     <nav className="bg-white sticky top-0 z-50 border-b border-gray-100 shadow-sm">
-      <div className="w-full">
+      <div className="w-full px-4 sm:px-6 lg:px-10">
         
-        {/* ========================================= */}
-        {/* DESKTOP NAVBAR (hidden md:flex)           */}
-        {/* ========================================= */}
-        <div className="hidden md:flex justify-between items-center h-20 px-8 lg:px-16">
-          <Link href="/" className="flex items-baseline outline-none select-none text-2xl font-black tracking-tight text-brand-primary">
-            ESSYRISE<span className="text-brand-accent">.</span>
-          </Link>
+        {/* UNIFIED CONTAINER - No duplicated headers */}
+        <div className="flex justify-between items-center h-16 md:h-20 relative">
+          
+          {/* 1. MOBILE HAMBURGER (Hidden on desktop) */}
+          <div className="md:hidden flex items-center z-10">
+            <button 
+              onClick={() => setIsOpen(true)} 
+              className="p-2 -ml-2 text-black focus:outline-none hover:bg-gray-50 rounded-lg transition-colors"
+            >
+              <Menu className="h-6 w-6" strokeWidth={1.5} />
+            </button>
+          </div>
 
-          <div className="flex items-center space-x-8 xl:space-x-10 font-semibold text-sm text-brand-charcoal">
-            <Link href="/" className="hover:text-brand-accent transition-colors">Home</Link>
+          {/* 2. SHARED LOGO (Centered on mobile, Left on desktop) */}
+          <div className="absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0 flex items-center z-10">
+            <Link href="/" className="flex items-baseline outline-none select-none text-2xl font-black tracking-tight text-brand-primary">
+              ESSYRISE<span className="text-brand-accent text-3xl">.</span>
+            </Link>
+          </div>
+
+          {/* 3. DESKTOP LINKS (Hidden on mobile - EXACT Etomu spacing) */}
+          <div className="hidden md:flex items-center space-x-8 xl:space-x-10">
+            <Link href="/" className="text-gray-600 hover:text-brand-primary font-medium transition-colors">Home</Link>
             
-            {/* Hover Dropdown (Etomu style) */}
+            {/* Hover Dropdown */}
             <div className="relative group py-6">
-              <button className="flex items-center hover:text-brand-accent transition-colors outline-none cursor-pointer">
+              <button className="flex items-center text-gray-600 hover:text-brand-primary font-medium transition-colors outline-none cursor-pointer">
                 Categories <ChevronDown className="h-4 w-4 ml-1 opacity-50 transition-transform group-hover:rotate-180" />
               </button>
-              <div className="absolute top-[65px] left-0 w-56 bg-white border border-gray-100 shadow-xl rounded-2xl p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+              <div className="absolute top-[60px] left-0 w-56 bg-white border border-gray-100 shadow-xl rounded-2xl p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                 <Link href="/category/smartphones" className="block px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-brand-primary rounded-xl transition-colors">
                   Smartphones & Phones
                 </Link>
@@ -71,90 +72,50 @@ export default function Header() {
               </div>
             </div>
 
-            <Link href="/shop" className="hover:text-brand-accent transition-colors">View All</Link>
+            <Link href="/shop" className="text-gray-600 hover:text-brand-primary font-medium transition-colors">View All</Link>
           </div>
 
-          <div className="flex items-center space-x-6">
-            {isSearchOpen ? (
-              <form onSubmit={handleSearch} className="flex items-center bg-gray-50 border border-gray-200 rounded-full px-4 py-1.5 w-64 shadow-inner">
-                <input 
-                  type="text"
-                  autoFocus
-                  placeholder="Search products..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="bg-transparent text-sm w-full outline-none text-brand-charcoal"
-                />
-                <button type="button" onClick={() => setIsSearchOpen(false)} className="text-gray-400 hover:text-gray-600 ml-2">
-                  <X className="h-4 w-4" />
-                </button>
-              </form>
-            ) : (
-              <button onClick={() => setIsSearchOpen(true)} className="p-2 text-brand-charcoal hover:text-brand-primary transition-colors cursor-pointer outline-none">
-                <Search className="h-5 w-5" />
-              </button>
-            )}
-
-            <Link href="/login" className="text-sm font-semibold text-brand-charcoal hover:text-brand-primary transition-colors">
-              Login
-            </Link>
-
-            <Link href="/register" className="bg-brand-primary text-white px-6 py-2.5 rounded-full text-sm font-bold hover:opacity-90 transition-opacity shadow-sm">
-              Register
-            </Link>
-
-            <Link href="/cart" className="p-2 text-brand-charcoal hover:text-brand-primary transition-colors relative outline-none">
-              <ShoppingBag className="h-5 w-5" />
-              <span className="absolute top-0 right-0 w-4 h-4 bg-brand-accent text-white text-[10px] font-bold flex items-center justify-center rounded-full">0</span>
-            </Link>
-          </div>
-        </div>
-
-        {/* ========================================= */}
-        {/* MOBILE NAVBAR (md:hidden)                 */}
-        {/* ========================================= */}
-        <div className="md:hidden flex items-center justify-between h-16 px-4">
-          <div className="z-10">
-            <button 
-              onClick={() => setIsOpen(true)} 
-              className="p-2 -ml-2 text-brand-charcoal focus:outline-none hover:bg-gray-50 rounded-lg transition-colors"
-            >
-              <Menu className="h-6 w-6" strokeWidth={1.5} />
+          {/* 4. UTILITIES (Search, Auth, Cart) */}
+          <div className="flex items-center space-x-3 md:space-x-6 z-10">
+            
+            {/* Search - Shared */}
+            <button className="p-2 -mr-1 md:mr-0 text-gray-600 hover:text-brand-primary transition-colors outline-none cursor-pointer">
+              <Search className="h-5 w-5 md:h-5 md:w-5" strokeWidth={1.5} />
             </button>
-          </div>
 
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <Link href="/" className="text-xl font-black tracking-tight text-brand-primary pointer-events-auto flex items-baseline">
-              ESSYRISE<span className="text-brand-accent">.</span>
+            {/* Auth - Desktop Only */}
+            <div className="hidden md:flex items-center space-x-3">
+              <Link href="/login" className="text-gray-600 hover:text-brand-primary font-medium transition-colors">
+                Login
+              </Link>
+              <Link href="/register" className="bg-brand-primary text-white px-5 py-2.5 rounded-xl font-medium hover:opacity-90 transition-colors shadow-sm">
+                Register
+              </Link>
+            </div>
+
+            {/* Cart - Shared */}
+            <Link href="/cart" className="p-2 -mr-2 md:mr-0 text-gray-600 hover:text-brand-primary relative transition-colors outline-none">
+              <ShoppingBag className="h-5 w-5 md:h-5 md:w-5" strokeWidth={1.5} />
+              <span className="absolute top-0 right-0 md:top-0 md:right-0 w-4 h-4 bg-brand-accent text-white text-[10px] font-bold flex items-center justify-center rounded-full">0</span>
             </Link>
           </div>
 
-          <div className="flex items-center gap-2 z-10">
-            <button 
-              onClick={() => setIsOpen(true)}
-              className="p-2 text-brand-charcoal hover:bg-gray-50 rounded-lg transition-colors outline-none"
-            >
-              <Search className="h-6 w-6" strokeWidth={1.5} />
-            </button>
-            <Link href="/cart" className="p-2 text-brand-charcoal hover:bg-gray-50 rounded-lg relative transition-colors outline-none">
-              <ShoppingBag className="h-6 w-6" strokeWidth={1.5} />
-              <span className="absolute top-1 right-0 w-4 h-4 bg-brand-accent text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white">0</span>
-            </Link>
-          </div>
         </div>
-
       </div>
 
       {/* ========================================= */}
-      {/* EXACT ETOMU MOBILE MENU STRUCTURE         */}
+      {/* EXACT ETOMU MOBILE MENU & DRAWER          */}
       {/* ========================================= */}
       {isOpen && (
         <div className="md:hidden">
           <div className="fixed inset-0 z-[100] flex justify-start">
             
+            {/* EXACT ETOMU BACKDROP */}
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity" onClick={() => setIsOpen(false)} />
 
+            {/* EXACT ETOMU DRAWER CONTAINER */}
             <div className="relative w-4/5 max-w-sm bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-left duration-300">
+              
               <div className="flex items-center justify-between p-4 border-b border-gray-100">
                 <Link href="/" onClick={() => setIsOpen(false)} className="flex items-baseline outline-none select-none text-2xl font-black tracking-tight text-brand-primary">
                   ESSYRISE<span className="text-brand-accent text-3xl">.</span>
@@ -165,7 +126,7 @@ export default function Header() {
               </div>
 
               <div className="flex-1 overflow-y-auto py-4 px-4 space-y-2">
-                <Link href="/" onClick={() => setIsOpen(false)} className={`block px-4 py-3 rounded-xl font-bold transition-colors ${isActive('/') ? 'bg-gray-100 text-black' : 'text-black hover:bg-gray-50'}`}>
+                <Link href="/" onClick={() => setIsOpen(false)} className={`block px-4 py-3 rounded-xl font-bold transition-colors ${isActive('/') ? 'bg-gray-50 text-black' : 'text-black hover:bg-gray-50'}`}>
                   Home
                 </Link>
 
@@ -186,17 +147,17 @@ export default function Header() {
                   )}
                 </div>
 
-                <Link href="/shop" onClick={() => setIsOpen(false)} className={`block px-4 py-3 rounded-xl font-bold transition-colors ${isActive('/shop') ? 'bg-gray-100 text-black' : 'text-black hover:bg-gray-50'}`}>
+                <Link href="/shop" onClick={() => setIsOpen(false)} className={`block px-4 py-3 rounded-xl font-bold transition-colors ${isActive('/shop') ? 'bg-gray-50 text-black' : 'text-black hover:bg-gray-50'}`}>
                   View All
                 </Link>
 
-                <Link href="/cart" onClick={() => setIsOpen(false)} className={`flex items-center justify-between px-4 py-3 rounded-xl font-bold transition-colors ${isActive('/cart') ? 'bg-gray-100 text-black' : 'text-black hover:bg-gray-50'}`}>
-                  <span className="flex items-center"><ShoppingBag className="h-5 w-5 mr-3 text-emerald-600" /> Cart</span>
+                <Link href="/cart" onClick={() => setIsOpen(false)} className={`flex items-center justify-between px-4 py-3 rounded-xl font-bold transition-colors ${isActive('/cart') ? 'bg-gray-50 text-black' : 'text-black hover:bg-gray-50'}`}>
+                  <span className="flex items-center"><ShoppingBag className="h-5 w-5 mr-3 text-brand-primary" /> Cart</span>
                   <span className="text-sm font-medium text-gray-500">0 Items</span>
                 </Link>
 
-                <Link href="/wishlist" onClick={() => setIsOpen(false)} className={`flex items-center px-4 py-3 rounded-xl font-bold transition-colors ${isActive('/wishlist') ? 'bg-gray-100 text-black' : 'text-black hover:bg-gray-50'}`}>
-                  <Heart className="h-5 w-5 mr-3 text-red-500" /> Lists
+                <Link href="/wishlist" onClick={() => setIsOpen(false)} className={`flex items-center px-4 py-3 rounded-xl font-bold transition-colors ${isActive('/wishlist') ? 'bg-gray-50 text-black' : 'text-black hover:bg-gray-50'}`}>
+                  <Heart className="h-5 w-5 mr-3 text-brand-accent" /> Lists
                 </Link>
               </div>
 
