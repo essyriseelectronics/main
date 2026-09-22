@@ -1,13 +1,17 @@
 import Link from 'next/link';
 import { ChevronDown, ShoppingBag } from 'lucide-react';
-import MobileMenu from './MobileMenu'; // Resolves the Vercel error
+import MobileMenu from './MobileMenu';
 
 export default function Header() {
-  // Replaced DB query with exact categories
   const categories = [
     { name: 'Smartphones & Phones', slug: 'smartphones' },
     { name: 'Accessories & Chargers', slug: 'phone-accessories' }
   ];
+
+  // If you later add authentication (e.g., NextAuth or Supabase), 
+  // determine these boolean values dynamically here.
+  const hasSession = false;
+  const isAdmin = false;
 
   return (
     <nav className="bg-white sticky top-0 z-50 border-b border-gray-100 shadow-sm">
@@ -23,7 +27,7 @@ export default function Header() {
           {/* DESKTOP LINKS */}
           <div className="hidden md:flex items-center space-x-8 xl:space-x-10">
             <Link href="/" className="text-brand-charcoal hover:text-brand-primary font-medium transition-colors">Home</Link>
-            
+
             <div className="relative group py-6">
               <button className="flex items-center text-brand-charcoal hover:text-brand-primary font-medium transition-colors outline-none cursor-pointer">
                 Categories <ChevronDown className="h-4 w-4 ml-1 opacity-50 transition-transform group-hover:rotate-180" />
@@ -59,8 +63,12 @@ export default function Header() {
             </Link>
           </div>
 
-          {/* MOBILE MENU (Trigger + Drawer) */}
-          <MobileMenu categories={categories} />
+          {/* MOBILE MENU (Trigger + Drawer) - FIX APPLIED HERE */}
+          <MobileMenu 
+            categories={categories} 
+            hasSession={hasSession} 
+            isAdmin={isAdmin} 
+          />
         </div>
       </div>
     </nav>
