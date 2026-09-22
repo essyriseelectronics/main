@@ -23,16 +23,14 @@ export default function Header() {
     return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
-  // Safely lock background scrolling only when menu is open
+  // EXACT SCROLL LOCK FROM YOUR ETOMU EXAMPLE
   useEffect(() => {
     if (isMobileMenuOpen) {
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = "";
+      document.body.style.overflow = 'unset';
     }
-    return () => {
-      document.body.style.overflow = "";
-    };
+    return () => { document.body.style.overflow = 'unset'; };
   }, [isMobileMenuOpen]);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -167,96 +165,74 @@ export default function Header() {
       </header>
 
       {/* ================================================= */}
-      {/* 3. MOBILE DRAWER (TRUE OVERLAY - NO PORTALS)      */}
+      {/* 3. MOBILE DRAWER (ADAPTED EXACTLY FROM ETOMU)     */}
       {/* ================================================= */}
       {isMobileMenuOpen && isMobile && (
-        <div 
-          className="fixed inset-0 z-[99999] flex"
-          style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", zIndex: 99999 }}
-        >
-          
-          {/* Blurred Dark Backdrop (Covers 100% of the screen) */}
-          <div 
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity cursor-pointer" 
-            onClick={() => setIsMobileMenuOpen(false)}
-            style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
-          />
-          
-          {/* Slide-out Drawer */}
-          <div 
-            className="relative w-[85%] max-w-[360px] bg-white h-full shadow-2xl flex flex-col z-10 animate-in slide-in-from-left duration-300"
-            style={{ height: "100%" }}
-          >
+        <div className="fixed inset-0 z-[100] flex">
+          {/* EXACT Backdrop from Etomu */}
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity" onClick={() => setIsMobileMenuOpen(false)} />
+
+          {/* EXACT Drawer Wrapper from Etomu (adjusted left slide instead of right) */}
+          <div className="relative w-4/5 max-w-sm bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-left duration-300">
             
-            {/* Header */}
-            <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 min-h-[70px]">
-              <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-black tracking-tight text-brand-primary">
-                ESSYRISE<span className="text-brand-accent">.</span>
+            {/* Header Area */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-100">
+              <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-black tracking-tight text-brand-primary flex items-baseline">
+                ESSYRISE<span className="text-brand-accent text-3xl">.</span>
               </Link>
-              <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 -mr-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors" aria-label="Close Menu">
-                <X className="w-6 h-6" strokeWidth={1.5} />
+              <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-black hover:bg-gray-100 rounded-lg transition-colors">
+                <X className="h-6 w-6" />
               </button>
             </div>
 
-            {/* Scrollable Links */}
-            <div className="flex-1 overflow-y-auto bg-white flex flex-col">
+            {/* Scrollable Links (EXACT spacing and rounded hover styles from Etomu) */}
+            <div className="flex-1 overflow-y-auto py-4 px-4 space-y-2">
               
-              <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="px-6 py-5 text-[16px] font-medium text-gray-800 border-b border-gray-100 hover:bg-gray-50 transition-colors">
+              <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-3 rounded-xl font-bold transition-colors text-black hover:bg-gray-50">
                 Home
               </Link>
-              
-              <div>
+
+              {/* Accordion exactly like Etomu categories */}
+              <div className="rounded-xl overflow-hidden border border-gray-100 bg-gray-50/50">
                 <button 
-                  onClick={() => setIsMobileCategoryOpen(!isMobileCategoryOpen)}
-                  className="w-full flex items-center justify-between px-6 py-5 text-[16px] font-medium text-gray-800 border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                  onClick={() => setIsMobileCategoryOpen(!isMobileCategoryOpen)} 
+                  className="flex items-center justify-between w-full px-4 py-3 font-bold text-black hover:bg-gray-100 transition-colors"
                 >
                   <span>Shop by Category</span>
-                  <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${isMobileCategoryOpen ? "rotate-90" : ""}`} strokeWidth={2} />
+                  <ChevronDown className={`h-4 w-4 text-black transition-transform ${isMobileCategoryOpen ? 'rotate-180' : ''}`} />
                 </button>
                 {isMobileCategoryOpen && (
-                  <div className="bg-gray-50 flex flex-col border-b border-gray-100">
-                    <Link href="/category/smartphones" onClick={() => setIsMobileMenuOpen(false)} className="py-4 pl-10 text-[15px] font-medium text-gray-600 hover:text-brand-primary transition-colors">
-                      Smartphones & Phones
+                  <div className="bg-white border-t border-gray-100 flex flex-col">
+                    <Link href="/category/smartphones" onClick={() => setIsMobileMenuOpen(false)} className="px-12 py-3 text-sm font-medium flex items-center justify-between transition-colors text-black hover:bg-gray-50">
+                      Smartphones & Phones <ChevronRight className="h-4 w-4 opacity-50" />
                     </Link>
-                    <Link href="/category/phone-accessories" onClick={() => setIsMobileMenuOpen(false)} className="py-4 pl-10 text-[15px] font-medium text-gray-600 hover:text-brand-primary transition-colors">
-                      Accessories & Chargers
+                    <Link href="/category/phone-accessories" onClick={() => setIsMobileMenuOpen(false)} className="px-12 py-3 text-sm font-medium flex items-center justify-between transition-colors text-black hover:bg-gray-50">
+                      Accessories & Chargers <ChevronRight className="h-4 w-4 opacity-50" />
                     </Link>
                   </div>
                 )}
               </div>
 
-              <Link href="/shop" onClick={() => setIsMobileMenuOpen(false)} className="px-6 py-5 text-[16px] font-medium text-gray-800 border-b border-gray-100 hover:bg-gray-50 transition-colors">
+              <Link href="/shop" onClick={() => setIsMobileMenuOpen(false)} className="block px-4 py-3 rounded-xl font-bold transition-colors text-black hover:bg-gray-50">
                 View All
               </Link>
 
-              <Link href="/cart" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between px-6 py-5 border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                <div className="flex items-center gap-4 text-[16px] font-medium text-gray-800">
-                  <ShoppingBag className="w-5 h-5 text-emerald-600" /> 
-                  <span>Cart</span>
-                </div>
-                <span className="text-[15px] text-gray-400">0 Items</span>
+              <Link href="/cart" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between px-4 py-3 rounded-xl font-bold transition-colors text-black hover:bg-gray-50">
+                <span className="flex items-center"><ShoppingBag className="h-5 w-5 mr-3 text-emerald-600" /> Cart</span>
+                <span className="text-sm font-medium text-gray-500">0 Items</span>
               </Link>
 
-              <Link href="/wishlist" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-4 px-6 py-5 border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                <Heart className="w-5 h-5 text-red-500" /> 
-                <span className="text-[16px] font-medium text-gray-800">Lists</span>
+              <Link href="/wishlist" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center px-4 py-3 rounded-xl font-bold transition-colors text-black hover:bg-gray-50">
+                <Heart className="h-5 w-5 mr-3 text-red-500" /> Lists
               </Link>
             </div>
 
-            {/* Bottom Authentication Area */}
-            <div className="p-6 bg-gray-50 border-t border-gray-200 flex items-center justify-start gap-6">
-              <Link 
-                href="/login" 
-                onClick={() => setIsMobileMenuOpen(false)} 
-                className="flex items-center justify-center gap-2 bg-brand-primary text-white px-8 py-3 rounded-full font-bold text-[16px] shadow-sm hover:opacity-90 transition-opacity"
-              >
-                <User className="w-5 h-5" /> Login
+            {/* Footer Area (EXACT spacing and button styles adapted from Etomu) */}
+            <div className="p-4 border-t border-gray-100 bg-gray-50 flex gap-3">
+              <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="flex-1 flex items-center justify-center bg-brand-primary text-white px-4 py-3.5 rounded-xl font-bold shadow-sm hover:opacity-90 transition-colors">
+                <User className="h-5 w-5 mr-2 text-white" /> Login
               </Link>
-              <Link 
-                href="/register" 
-                onClick={() => setIsMobileMenuOpen(false)} 
-                className="text-brand-primary font-bold text-[16px] hover:underline transition-all"
-              >
+              <Link href="/register" onClick={() => setIsMobileMenuOpen(false)} className="flex-1 flex items-center justify-center bg-white border border-gray-200 text-brand-primary px-4 py-3.5 rounded-xl font-bold shadow-sm hover:bg-gray-50 transition-colors">
                 Register
               </Link>
             </div>
