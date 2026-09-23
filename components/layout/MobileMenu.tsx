@@ -1,12 +1,16 @@
-// app/components/layout/MobileMenu.tsx
 'use client'
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, ChevronRight, ShoppingCart, Heart, User } from 'lucide-react';
+import { Menu, X, ChevronRight, ChevronDown, ShoppingCart, Heart, User } from 'lucide-react';
 
-export default function MobileMenu() {
+type MobileMenuProps = {
+  categories: { name: string; slug: string }[];
+};
+
+export default function MobileMenu({ categories }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
 
   // Prevent background scrolling when open
   useEffect(() => {
@@ -36,12 +40,12 @@ export default function MobileMenu() {
 
           {/* Drawer Content - Sliding from LEFT */}
           <div className="relative w-[85%] max-w-sm bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-left duration-300">
-            
+
             {/* Drawer Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-100">
-              <Link href="/" onClick={() => setIsOpen(false)} className="flex items-center gap-1.5 outline-none select-none">
-                <span className="text-xl font-extrabold text-black tracking-tight">kabale</span>
-                <span className="bg-[#0076c0] text-white text-[11px] font-bold px-2 py-0.5 rounded-full">online</span>
+              <Link href="/" onClick={() => setIsOpen(false)} className="flex items-baseline gap-0.5 outline-none select-none">
+                <span className="text-xl font-extrabold text-black tracking-tight">ESSYRISE</span>
+                <span className="text-xl font-extrabold text-[#0076c0] tracking-tight">.</span>
               </Link>
               <button onClick={() => setIsOpen(false)} className="p-1 text-gray-500 hover:bg-gray-100 rounded-lg">
                 <X className="h-6 w-6" />
@@ -54,24 +58,34 @@ export default function MobileMenu() {
                 <Link href="/" onClick={() => setIsOpen(false)} className="px-5 py-3.5 text-[15px] text-gray-700 font-medium hover:bg-gray-50">
                   Home
                 </Link>
-                <button className="flex items-center justify-between w-full px-5 py-3.5 text-[15px] text-gray-700 font-medium hover:bg-gray-50">
-                  Shop by Category <ChevronRight className="h-4 w-4 text-gray-400" />
+
+                {/* Category Accordion */}
+                <button 
+                  onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+                  className="flex items-center justify-between w-full px-5 py-3.5 text-[15px] text-gray-700 font-medium hover:bg-gray-50"
+                >
+                  Shop by Category 
+                  <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform ${isCategoryOpen ? 'rotate-180' : ''}`} />
                 </button>
+                
+                {isCategoryOpen && (
+                  <div className="bg-gray-50 flex flex-col border-y border-gray-100">
+                    {categories.map((cat) => (
+                      <Link 
+                        key={cat.slug} 
+                        href={`/category/${cat.slug}`} 
+                        onClick={() => setIsOpen(false)} 
+                        className="px-9 py-3 text-[14px] text-gray-600 font-medium hover:text-[#0076c0] flex items-center justify-between"
+                      >
+                        {cat.name} <ChevronRight className="h-4 w-4 opacity-50" />
+                      </Link>
+                    ))}
+                  </div>
+                )}
+
                 <Link href="/shop" onClick={() => setIsOpen(false)} className="px-5 py-3.5 text-[15px] text-gray-700 font-medium hover:bg-gray-50">
                   View All
                 </Link>
-                <Link href="/shops" onClick={() => setIsOpen(false)} className="px-5 py-3.5 text-[15px] text-gray-700 font-medium hover:bg-gray-50">
-                  Browse Shops
-                </Link>
-                <Link href="/create-store" onClick={() => setIsOpen(false)} className="px-5 py-3.5 text-[15px] text-gray-700 font-medium hover:bg-gray-50">
-                  Create Store
-                </Link>
-                <Link href="/orders" onClick={() => setIsOpen(false)} className="px-5 py-3.5 text-[15px] text-gray-700 font-medium hover:bg-gray-50">
-                  Orders
-                </Link>
-                <button className="flex items-center justify-between w-full px-5 py-3.5 text-[15px] text-gray-700 font-medium hover:bg-gray-50">
-                  My Account <ChevronRight className="h-4 w-4 text-gray-400" />
-                </button>
               </div>
 
               <div className="border-t border-gray-100 py-2">
@@ -82,7 +96,7 @@ export default function MobileMenu() {
                   </div>
                   <span className="text-gray-400 text-sm">0 Items</span>
                 </Link>
-                <Link href="/lists" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-[15px] text-gray-700 font-medium hover:bg-gray-50">
+                <Link href="/wishlist" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-[15px] text-gray-700 font-medium hover:bg-gray-50">
                   <Heart className="h-5 w-5 text-red-500 fill-red-500" />
                   <span>Lists</span>
                 </Link>
@@ -98,7 +112,7 @@ export default function MobileMenu() {
                 Register
               </Link>
             </div>
-            
+
           </div>
         </div>
       )}
