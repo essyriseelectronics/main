@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { X, ChevronRight, ChevronDown, ShoppingCart, Heart, User, ImageIcon } from 'lucide-react';
@@ -13,7 +13,7 @@ type MobileMenuProps = {
 };
 
 export default function MobileMenu({ categories, isOpen, setIsOpen }: MobileMenuProps) {
-  const [isCategoryOpen, setIsCategoryOpen] = ReactStateHelper(); // standard state below
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false); // <-- Properly initialized as boolean
 
   // Prevent background scrolling when open
   useEffect(() => {
@@ -128,6 +128,3 @@ export default function MobileMenu({ categories, isOpen, setIsOpen }: MobileMenu
     </div>
   );
 }
-
-// Quick helper for accordion toggle state
-import { useState as ReactStateHelper } from 'react';
