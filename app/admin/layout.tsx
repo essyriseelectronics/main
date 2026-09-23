@@ -11,14 +11,9 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    // The main wrapper forces the layout to take up exactly the full screen height
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    // Changed: Added flex-col for mobile stacking, lg:flex-row for desktop side-by-side
+    <div className="flex flex-col lg:flex-row h-screen bg-gray-50 overflow-hidden">
       
-      {/* 
-        The sidebar handles its own responsive behavior:
-        - Mobile: Shows the top header bar + slide-in drawer
-        - Desktop: Shows the static left sidebar
-      */}
       <AdminSidebar />
 
       {/* Main Content Area */}
