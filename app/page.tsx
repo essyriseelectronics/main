@@ -1,9 +1,9 @@
 export const dynamic = "force-dynamic"; // Bypasses the cache so your live database images always show
 
-import Image from "next/image";
 import Link from "next/link";
 import ProductCard from "@/components/products/ProductCard";
 import NewsletterForm from "@/components/marketing/NewsletterForm";
+import CategoryGrid from "@/components/categories/CategoryGrid";
 import { getProducts, getCategories } from "@/lib/actions/products";
 
 export default async function Home() {
@@ -20,20 +20,10 @@ export default async function Home() {
           <div className="flex justify-between items-end mb-8">
             <h2 className="text-2xl md:text-3xl font-bold text-brand-charcoal">Shop by Category</h2>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-6">
-            {categories.map((cat) => (
-              <Link href={`/category/${cat.slug}`} key={cat.id} className="group bg-white rounded-2xl shadow-sm hover:shadow-card-hover p-4 text-center transition-all border border-gray-100 flex flex-col items-center">
-                <div className="w-20 h-20 relative mb-4 rounded-full overflow-hidden bg-gray-50 border-2 border-transparent group-hover:border-brand-accent transition-colors flex items-center justify-center text-gray-400">
-                  {cat.image_url ? (
-                    <Image src={cat.image_url} alt={cat.name} fill className="object-cover" sizes="80px" />
-                  ) : (
-                    <span className="text-xs font-medium">No img</span>
-                  )}
-                </div>
-                <h3 className="font-semibold text-brand-charcoal group-hover:text-brand-primary text-sm md:text-base">{cat.name}</h3>
-              </Link>
-            ))}
-          </div>
+          
+          {/* Reusable Category Component */}
+          <CategoryGrid categories={categories} />
+          
         </div>
       </section>
 
@@ -67,7 +57,6 @@ export default async function Home() {
             Join the Essyrise community. Subscribe to our newsletter to get exclusive offers, new arrival alerts, and tech tips straight to your inbox.
           </p>
 
-          {/* Re-using the Newsletter Form component here */}
           <div className="max-w-md mx-auto">
             <NewsletterForm />
           </div>
