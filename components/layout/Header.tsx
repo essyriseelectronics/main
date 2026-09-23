@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Search, ShoppingCart, ChevronDown, ImageIcon } from 'lucide-react';
-import MobileMenu from './MobileMenu';
-import { queryD1 } from "@/lib/db/client"; // Direct database query for Server Components
+import MobileMenuWrapper from './MobileMenuWrapper'; // <-- Using the client wrapper for the hamburger icon
+import { queryD1 } from "@/lib/db/client"; 
 import { Category } from "@/types";
 
 // Logo with small subtext "electronics" under ESSYRISE
@@ -33,7 +33,8 @@ export default async function Header() {
         {/* ======================= */}
         <div className="flex items-center justify-between h-14 md:!hidden">
           <div className="flex-none">
-            <MobileMenu categories={categories} />
+            {/* Uses the client wrapper so the hamburger menu opens reliably on tap */}
+            <MobileMenuWrapper categories={categories} />
           </div>
 
           <div className="flex-1 flex justify-center">
