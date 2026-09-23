@@ -5,7 +5,7 @@ import {
   addCategory, 
   deleteCategory, 
   toggleCategoryStatus 
-} from "@/lib/actions/admincategories";
+} from "@/lib/actions/adminCategories";
 import DeleteButton from "@/components/admin/DeleteButton"; // <-- Imported the new client component
 
 export const metadata = {
