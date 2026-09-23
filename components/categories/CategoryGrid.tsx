@@ -1,17 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
-
-type Category = {
-  id: string;
-  name: string;
-  slug: string;
-  image_url: string | null;
-  is_active?: number;
-};
+import { Category } from "@/types"; // <-- Import your global type here to fix the mismatch
 
 export default function CategoryGrid({ categories }: { categories: Category[] }) {
   // Only show active categories on the storefront
-  const activeCategories = categories.filter(cat => cat.is_active !== 0);
+  // Checking both 0 and false to be completely safe with SQLite typing
+  const activeCategories = categories.filter(cat => cat.is_active !== 0 && cat.is_active !== false);
 
   if (activeCategories.length === 0) {
     return (
