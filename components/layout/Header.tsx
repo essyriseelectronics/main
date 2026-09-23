@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Search, ShoppingCart, ChevronDown, ImageIcon } from 'lucide-react';
-import MobileMenuWrapper from './MobileMenuWrapper'; // <-- Using the client wrapper for the hamburger icon
+import MobileMenu from './MobileMenu'; 
 import { queryD1 } from "@/lib/db/client"; 
 import { Category } from "@/types";
 
@@ -14,7 +14,6 @@ const Logo = () => (
 );
 
 export default async function Header() {
-  // Fetch categories directly from the database to avoid Server Action render errors
   let categories: Category[] = [];
   try {
     categories = await queryD1<Category>(
@@ -33,8 +32,7 @@ export default async function Header() {
         {/* ======================= */}
         <div className="flex items-center justify-between h-14 md:!hidden">
           <div className="flex-none">
-            {/* Uses the client wrapper so the hamburger menu opens reliably on tap */}
-            <MobileMenuWrapper categories={categories} />
+            <MobileMenu categories={categories} />
           </div>
 
           <div className="flex-1 flex justify-center">
