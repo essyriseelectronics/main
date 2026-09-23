@@ -12,7 +12,8 @@ import {
   Settings, 
   Menu, 
   X, 
-  LogOut 
+  LogOut,
+  Tags // Added this import for the Categories icon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +21,7 @@ const navItems = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "Orders", href: "/admin/orders", icon: ShoppingCart },
   { name: "Products", href: "/admin/products", icon: Package },
+  { name: "Categories", href: "/admin/categories", icon: Tags }, // Added Categories link here
   { name: "Contacts", href: "/admin/contacts", icon: Users },
   { name: "SMS Campaigns", href: "/admin/sms", icon: MessageSquare },
   { name: "Settings", href: "/admin/settings", icon: Settings },
@@ -57,7 +59,7 @@ export default function AdminSidebar() {
           </button>
           <span className="font-bold text-lg tracking-tight">Admin Panel</span>
         </div>
-        
+
         {/* Optional: Add a quick-action icon here if needed, like notifications */}
         <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
           <span className="text-sm font-bold">A</span>
@@ -82,7 +84,7 @@ export default function AdminSidebar() {
         "fixed inset-y-0 left-0 z-[100] w-[85%] max-w-[320px] bg-brand-charcoal text-gray-300 transform transition-transform duration-300 ease-in-out flex flex-col shadow-2xl lg:static lg:w-64 lg:translate-x-0 lg:z-auto lg:shadow-none",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}>
-        
+
         {/* Drawer Header (Visible on both Mobile and Desktop) */}
         <div className="flex items-center justify-between p-6 border-b border-gray-800">
           <div>
@@ -91,7 +93,7 @@ export default function AdminSidebar() {
             </h2>
             <p className="text-[11px] text-gray-500 uppercase tracking-widest mt-1 font-semibold">Workspace</p>
           </div>
-          
+
           {/* Mobile Close Button */}
           <button 
             onClick={() => setIsOpen(false)} 
