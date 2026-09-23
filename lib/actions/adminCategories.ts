@@ -1,8 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-// Adjust this import to match your actual database query wrapper
-import { queryD1 } from "@/lib/db"; 
+import { queryD1 } from "@/lib/db/client"; 
 
 // Utility to generate URL-friendly slugs from the category name
 function generateSlug(text: string) {
@@ -56,7 +55,7 @@ export async function addCategory(formData: FormData) {
 
 export async function deleteCategory(formData: FormData) {
   const id = formData.get("id") as string;
-  
+
   if (!id) return;
 
   try {
@@ -72,7 +71,7 @@ export async function deleteCategory(formData: FormData) {
 export async function toggleCategoryStatus(formData: FormData) {
   const id = formData.get("id") as string;
   const currentStatus = parseInt(formData.get("current_status") as string);
-  
+
   if (!id) return;
 
   const newStatus = currentStatus === 1 ? 0 : 1;
