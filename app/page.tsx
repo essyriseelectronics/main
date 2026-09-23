@@ -14,26 +14,6 @@ export default async function Home() {
 
   return (
     <div>
-      {/* HERO SECTION */}
-      <section className="bg-brand-primary text-white py-20 px-4 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-brand-accent via-brand-primary to-brand-primary"></div>
-        <div className="container mx-auto max-w-5xl text-center relative z-10">
-          <h1 className="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight leading-tight">
-            Latest Phones. <br className="md:hidden" />
-            <span className="text-brand-accent">Genuine Accessories.</span> <br />
-            Great Deals.
-          </h1>
-          <p className="text-lg md:text-xl text-gray-200 mb-10 max-w-2xl mx-auto">
-            Mbarara's premium destination for top-tier electronics, smartphones, and trusted accessories.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/shop" className="bg-brand-accent hover:bg-pink-600 text-white font-bold py-4 px-10 rounded-full transition-all shadow-lg shadow-brand-accent/30 text-lg">
-              Shop Now
-            </Link>
-          </div>
-        </div>
-      </section>
-
       {/* DYNAMIC CATEGORIES */}
       <section className="py-16 bg-brand-surface border-b border-gray-200">
         <div className="container mx-auto px-4">
@@ -86,7 +66,7 @@ export default async function Home() {
           <p className="text-gray-400 mb-8 text-sm md:text-base">
             Join the Essyrise community. Subscribe to our newsletter to get exclusive offers, new arrival alerts, and tech tips straight to your inbox.
           </p>
-          
+
           {/* Re-using the Newsletter Form component here */}
           <div className="max-w-md mx-auto">
             <NewsletterForm />
