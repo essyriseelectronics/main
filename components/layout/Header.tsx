@@ -1,11 +1,10 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Search, ShoppingCart, ChevronDown, ImageIcon } from 'lucide-react';
-import MobileMenu from './MobileMenu'; 
+import MobileMenuWrapper from './MobileMenuWrapper'; 
 import { queryD1 } from "@/lib/db/client"; 
 import { Category } from "@/types";
 
-// Logo with small subtext "electronics" under ESSYRISE
 const Logo = () => (
   <Link href="/" className="outline-none select-none flex flex-col items-center md:items-start">
     <span className="text-2xl md:text-3xl font-extrabold text-black tracking-tight leading-none">ESSYRISE</span>
@@ -30,9 +29,9 @@ export default async function Header() {
         {/* ======================= */}
         {/*       MOBILE VIEW       */}
         {/* ======================= */}
-        <div className="flex items-center justify-between h-14 md:!hidden">
+        <div className="flex md:hidden items-center justify-between h-14">
           <div className="flex-none">
-            <MobileMenu categories={categories} />
+            <MobileMenuWrapper categories={categories} />
           </div>
 
           <div className="flex-1 flex justify-center">
@@ -52,7 +51,7 @@ export default async function Header() {
         {/* ======================= */}
         {/*      DESKTOP VIEW       */}
         {/* ======================= */}
-        <div className="!hidden md:!flex items-center justify-between h-16">
+        <div className="hidden md:flex items-center justify-between h-16">
           <div className="flex-shrink-0">
             <Logo />
           </div>
