@@ -2,9 +2,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Search, ShoppingCart, ChevronDown, ImageIcon } from 'lucide-react';
 import MobileMenu from './MobileMenu';
-import { getCategories } from "@/lib/actions/products";
+import { queryD1 } from "@/lib/db/client"; // Direct database query for Server Components
+import { Category } from "@/types";
 
-// 🚨 LOGO: Updated with small subtext "electronics" under ESSYRISE
+// Logo with small subtext "electronics" under ESSYRISE
 const Logo = () => (
   <Link href="/" className="outline-none select-none flex flex-col items-center md:items-start">
     <span className="text-2xl md:text-3xl font-extrabold text-black tracking-tight leading-none">ESSYRISE</span>
@@ -13,8 +14,15 @@ const Logo = () => (
 );
 
 export default async function Header() {
-  // Fetch dynamic categories directly from your database
-  const categories = await getCategories();
+  // Fetch categories directly from the database to avoid Server Action render errors
+  let categories: Category[] = [];
+  try {
+    categories = await queryD1<Category>(
+      "SELECT * FROM categories WHERE is_active = 1 ORDER BY name ASC"
+    );
+  } catch (error) {
+    console.error("Failed to fetch header categories:", error);
+  }
 
   return (
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
