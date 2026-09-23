@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Plus, Trash2, Eye, EyeOff, ImageIcon, Tag } from "lucide-react";
+import { Plus, Trash2, Eye, EyeOff, ImageIcon, Tag, Upload } from "lucide-react";
 import { 
   getAdminCategories, 
   addCategory, 
@@ -25,51 +25,65 @@ export default async function AdminCategoriesPage() {
         
         {/* ADD CATEGORY FORM */}
         <div className="lg:col-span-1">
-          <form action={addCategory} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 sticky top-24">
+          <form action={addCategory} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 sticky top-24 space-y-4">
             <h2 className="text-lg font-bold text-brand-charcoal mb-4 flex items-center gap-2">
               <Plus className="w-5 h-5 text-brand-primary" />
               Add New Category
             </h2>
 
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-1.5">Name</label>
-                <input 
-                  required
-                  name="name" 
-                  type="text" 
-                  placeholder="e.g. Smartphones"
-                  className="w-full rounded-lg border-gray-300 focus:border-brand-primary focus:ring-brand-primary text-sm"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-1.5">Image URL</label>
-                <input 
-                  name="image_url" 
-                  type="url" 
-                  placeholder="https://..."
-                  className="w-full rounded-lg border-gray-300 focus:border-brand-primary focus:ring-brand-primary text-sm"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-1.5">Description (Optional)</label>
-                <textarea 
-                  name="description" 
-                  rows={3}
-                  placeholder="Brief description of this category..."
-                  className="w-full rounded-lg border-gray-300 focus:border-brand-primary focus:ring-brand-primary text-sm resize-none"
-                ></textarea>
-              </div>
-
-              <button 
-                type="submit"
-                className="w-full bg-brand-primary hover:bg-brand-secondary text-white py-2.5 rounded-lg font-bold transition-colors mt-2"
-              >
-                Create Category
-              </button>
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-1.5">Category Name</label>
+              <input 
+                required
+                name="name" 
+                type="text" 
+                placeholder="e.g. Smartphones"
+                className="w-full rounded-lg border-gray-300 focus:border-brand-primary focus:ring-brand-primary text-sm"
+              />
             </div>
+
+            {/* UPLOAD IMAGE FILE INPUT (Optimized for phone gallery & transparent icons) */}
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-1.5">Upload Image (Transparent PNG)</label>
+              <div className="flex items-center justify-center w-full">
+                <label className="flex flex-col items-center justify-center w-full h-28 border-2 border-gray-300 border-dashed rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+                  <div className="flex flex-col items-center justify-center pt-4 pb-4 px-4 text-center">
+                    <Upload className="w-5 h-5 text-gray-400 mb-1" />
+                    <p className="text-xs text-gray-600 font-medium">Tap to upload icon image</p>
+                    <p className="text-[10px] text-gray-400 mt-0.5">PNG, JPG or WebP</p>
+                  </div>
+                  <input name="image_file" type="file" accept="image/*" className="hidden" />
+                </label>
+              </div>
+            </div>
+
+            {/* OR IMAGE URL */}
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-1.5">Or Image Link / URL</label>
+              <input 
+                name="image_url" 
+                type="url" 
+                placeholder="https://..."
+                className="w-full rounded-lg border-gray-300 focus:border-brand-primary focus:ring-brand-primary text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-1.5">Description (Optional)</label>
+              <textarea 
+                name="description" 
+                rows={2}
+                placeholder="Brief description..."
+                className="w-full rounded-lg border-gray-300 focus:border-brand-primary focus:ring-brand-primary text-sm resize-none"
+              ></textarea>
+            </div>
+
+            <button 
+              type="submit"
+              className="w-full bg-brand-primary hover:bg-brand-secondary text-white py-3 rounded-xl font-bold transition-colors shadow-sm"
+            >
+              Create Category
+            </button>
           </form>
         </div>
 
@@ -99,17 +113,17 @@ export default async function AdminCategoriesPage() {
                       <tr key={cat.id} className="hover:bg-gray-50 transition-colors">
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-lg bg-gray-100 border border-gray-200 overflow-hidden flex items-center justify-center flex-shrink-0">
+                            <div className="w-12 h-12 rounded-xl bg-gray-50 border border-gray-200 overflow-hidden flex items-center justify-center flex-shrink-0 p-1">
                               {cat.image_url ? (
                                 <Image 
                                   src={cat.image_url} 
                                   alt={cat.name} 
-                                  width={40} 
-                                  height={40} 
-                                  className="object-cover w-full h-full"
+                                  width={48} 
+                                  height={48} 
+                                  className="object-contain w-full h-full"
                                 />
                               ) : (
-                                <ImageIcon className="w-4 h-4 text-gray-400" />
+                                <ImageIcon className="w-5 h-5 text-gray-400" />
                               )}
                             </div>
                             <span className="font-bold text-brand-charcoal">{cat.name}</span>
