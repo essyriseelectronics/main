@@ -1,11 +1,12 @@
 import Image from "next/image";
-import { Plus, Trash2, Eye, EyeOff, ImageIcon, Tag, Upload } from "lucide-react";
+import { Plus, Eye, EyeOff, ImageIcon, Tag, Upload } from "lucide-react";
 import { 
   getAdminCategories, 
   addCategory, 
   deleteCategory, 
   toggleCategoryStatus 
-} from "@/lib/actions/adminCategories";
+} from "@/lib/actions/admincategories";
+import DeleteButton from "@/components/admin/DeleteButton"; // <-- Imported the new client component
 
 export const metadata = {
   title: "Manage Categories | Admin",
@@ -42,7 +43,7 @@ export default async function AdminCategoriesPage() {
               />
             </div>
 
-            {/* UPLOAD IMAGE FILE INPUT (Optimized for phone gallery & transparent icons) */}
+            {/* UPLOAD IMAGE FILE INPUT */}
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-1.5">Upload Image (Transparent PNG)</label>
               <div className="flex items-center justify-center w-full">
@@ -160,16 +161,8 @@ export default async function AdminCategoriesPage() {
                             {/* Delete Form */}
                             <form action={deleteCategory}>
                               <input type="hidden" name="id" value={cat.id} />
-                              <button 
-                                type="submit"
-                                title="Delete Category"
-                                className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                onClick={(e) => {
-                                  if (!confirm("Are you sure you want to delete this category?")) e.preventDefault();
-                                }}
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
+                              {/* Using our new client-side delete button */}
+                              <DeleteButton />
                             </form>
 
                           </div>
