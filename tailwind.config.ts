@@ -2,21 +2,21 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./app/**/*.{js,ts,jsx,tsx,mdx}", // Fallback if not using src/
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/**/*.{js,ts,jsx,tsx,mdx}", // Safe catch-all for both structures
   ],
   theme: {
     extend: {
       colors: {
         brand: {
-          primary: "#4B0082", // Deep Royal Purple
+          primary: "#4B0082", 
           secondary: "#6A0DAD", 
-          accent: "#FF007F", // Vibrant Pink/Magenta CTA
-          coral: "#FF7F50", // Badges/Highlights
-          charcoal: "#333333", // Text
-          surface: "#F9FAFB", // Backgrounds
+          accent: "#FF007F", 
+          coral: "#FF7F50", 
+          charcoal: "#333333", 
+          surface: "#F9FAFB", 
         }
       },
       boxShadow: {
@@ -25,6 +25,6 @@ const config: Config = {
       }
     },
   },
-  plugins: [], // We will add @tailwindcss/forms later when building the admin
+  plugins: [],
 };
 export default config;
