@@ -16,7 +16,6 @@ function generateSlug(text: string) {
 
 export async function getAdminCategories() {
   try {
-    // Fetch all categories, including inactive ones, for the admin panel
     const categories = await queryD1(
       "SELECT * FROM categories ORDER BY created_at DESC"
     );
@@ -30,10 +29,23 @@ export async function getAdminCategories() {
 export async function addCategory(formData: FormData) {
   const name = formData.get("name") as string;
   const description = formData.get("description") as string;
-  const image_url = formData.get("image_url") as string;
+  let image_url = formData.get("image_url") as string;
+  const imageFile = formData.get("image_file") as File;
 
   if (!name) {
     throw new Error("Category name is required");
+  }
+
+  // If a file is uploaded from mobile/PC, convert it to a Base64 data URL for SQLite storage
+  if (imageFile && imageFile.size > 0) {
+    try {
+      const bytes = await imageFile.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+      const mimeType = imageFile.type || "image/png";
+      image_url = `data:${mimeType};base64,${buffer.toString("base64")}`;
+    } catch (err) {
+      console.error("Failed to process uploaded image file:", err);
+    }
   }
 
   const slug = generateSlug(name);
