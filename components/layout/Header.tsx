@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Search, ShoppingCart, ChevronDown, ImageIcon } from 'lucide-react';
-import MobileMenuWrapper from './MobileMenuWrapper'; 
+import ClientMobileNav from './ClientMobileNav'; 
 import { queryD1 } from "@/lib/db/client"; 
 import { Category } from "@/types";
 
@@ -27,26 +27,9 @@ export default async function Header() {
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* ======================= */}
-        {/*       MOBILE VIEW       */}
+        {/*       MOBILE VIEW       }
         {/* ======================= */}
-        <div className="flex md:hidden items-center justify-between h-14">
-          <div className="flex-none">
-            <MobileMenuWrapper categories={categories} />
-          </div>
-
-          <div className="flex-1 flex justify-center">
-            <Logo />
-          </div>
-
-          <div className="flex-none flex items-center gap-3">
-            <button className="text-gray-700 hover:text-black">
-              <Search className="h-6 w-6" strokeWidth={2} />
-            </button>
-            <Link href="/cart" className="text-gray-700 hover:text-black relative">
-              <ShoppingCart className="h-6 w-6" strokeWidth={2} />
-            </Link>
-          </div>
-        </div>
+        <ClientMobileNav categories={categories} />
 
         {/* ======================= */}
         {/*      DESKTOP VIEW       */}
