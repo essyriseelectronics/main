@@ -6,7 +6,7 @@ import { ArrowLeft, Users, AlertTriangle } from "lucide-react";
 import { launchSmsCampaign } from "@/lib/actions/sms";
 
 export default function NewSmsCampaignPage() {
-  const [message, setMessage] = useState("Hello {name}, check out our latest offers at Essyrise Electronics!");
+  const [message, setMessage] = useState("Hello {name}, check out our latest offers here: {link}");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -39,7 +39,7 @@ export default function NewSmsCampaignPage() {
       </div>
 
       <form onSubmit={handleSubmit} className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
-        
+
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3 text-red-700">
             <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5" />
@@ -58,6 +58,18 @@ export default function NewSmsCampaignPage() {
           />
         </div>
 
+        {/* NEW: Product Link Input */}
+        <div className="mb-6">
+          <label className="block text-sm font-bold text-brand-charcoal mb-2">Direct Link (Optional)</label>
+          <input 
+            name="link" 
+            type="url" 
+            placeholder="https://essyrise.com/product/..."
+            className="w-full rounded-lg border-gray-300 focus:border-brand-primary focus:ring-brand-primary"
+          />
+          <p className="text-xs text-gray-500 mt-1.5">Provide a URL if you want to include a direct link to a product or promotion.</p>
+        </div>
+
         <div className="mb-6">
           <div className="flex justify-between items-end mb-2">
             <label className="block text-sm font-bold text-brand-charcoal">Message Template</label>
@@ -65,7 +77,7 @@ export default function NewSmsCampaignPage() {
               {message.length} chars {message.length > 160 && '(Will use >1 SMS unit)'}
             </span>
           </div>
-          
+
           <textarea 
             required 
             name="message" 
@@ -74,13 +86,26 @@ export default function NewSmsCampaignPage() {
             onChange={(e) => setMessage(e.target.value)}
             className="w-full rounded-lg border-gray-300 focus:border-brand-primary focus:ring-brand-primary"
           ></textarea>
-          
+
           <div className="mt-3 bg-gray-50 p-3 rounded-lg border border-gray-200">
-            <p className="text-xs font-bold text-gray-600 mb-1">Supported Variables:</p>
+            <p className="text-xs font-bold text-gray-600 mb-2">Supported Variables:</p>
             <div className="flex gap-2">
-              <button type="button" onClick={() => setMessage(m => m + " {name}")} className="text-xs bg-white border border-gray-300 px-2 py-1 rounded hover:border-brand-primary">{"{name}"}</button>
+              <button 
+                type="button" 
+                onClick={() => setMessage(m => m + " {name}")} 
+                className="text-xs font-medium bg-white border border-gray-300 px-3 py-1.5 rounded-md hover:border-brand-primary hover:text-brand-primary transition-colors"
+              >
+                {"{name}"}
+              </button>
+              <button 
+                type="button" 
+                onClick={() => setMessage(m => m + " {link}")} 
+                className="text-xs font-medium bg-white border border-gray-300 px-3 py-1.5 rounded-md hover:border-brand-primary hover:text-brand-primary transition-colors"
+              >
+                {"{link}"}
+              </button>
             </div>
-            <p className="text-xs text-gray-500 mt-2">Example: <i>"Hello John..."</i></p>
+            <p className="text-xs text-gray-500 mt-3">Example: <i>"Hello John, check out our latest offers here: https://essyrise..."</i></p>
           </div>
         </div>
 
