@@ -1,21 +1,20 @@
 import Link from 'next/link';
-import { Search, ShoppingCart, ChevronDown } from 'lucide-react';
+import Image from 'next/image';
+import { Search, ShoppingCart, ChevronDown, ImageIcon } from 'lucide-react';
 import MobileMenu from './MobileMenu';
+import { getCategories } from "@/lib/actions/products";
 
-// 🚨 MOVED OUTSIDE: Prevents expensive re-rendering loops
+// 🚨 LOGO: Updated with small subtext "electronics" under ESSYRISE
 const Logo = () => (
-  <Link href="/" className="flex items-baseline gap-0.5 outline-none select-none">
-    <span className="text-2xl md:text-3xl font-extrabold text-black tracking-tight">ESSYRISE</span>
-    <span className="text-2xl md:text-3xl font-extrabold text-[#0076c0] tracking-tight">.</span>
+  <Link href="/" className="outline-none select-none flex flex-col items-center md:items-start">
+    <span className="text-2xl md:text-3xl font-extrabold text-black tracking-tight leading-none">ESSYRISE</span>
+    <span className="text-[9px] md:text-[10px] font-semibold text-gray-400 tracking-[0.2em] uppercase mt-1 leading-none">electronics</span>
   </Link>
 );
 
-export default function Header() {
-  // Pass dynamic categories into the Mobile Menu and Desktop Dropdown
-  const categories = [
-    { name: 'Smartphones & Phones', slug: 'smartphones' },
-    { name: 'Accessories & Chargers', slug: 'phone-accessories' }
-  ];
+export default async function Header() {
+  // Fetch dynamic categories directly from your database
+  const categories = await getCategories();
 
   return (
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -24,7 +23,6 @@ export default function Header() {
         {/* ======================= */}
         {/*       MOBILE VIEW       */}
         {/* ======================= */}
-        {/* Added !hidden to force override any conflicting global styles */}
         <div className="flex items-center justify-between h-14 md:!hidden">
           <div className="flex-none">
             <MobileMenu categories={categories} />
@@ -47,7 +45,6 @@ export default function Header() {
         {/* ======================= */}
         {/*      DESKTOP VIEW       */}
         {/* ======================= */}
-        {/* Added !hidden and !flex to force state */}
         <div className="!hidden md:!flex items-center justify-between h-16">
           <div className="flex-shrink-0">
             <Logo />
@@ -57,18 +54,33 @@ export default function Header() {
             <Link href="/" className="text-[15px] font-bold text-gray-800 hover:text-[#0076c0]">
               Home
             </Link>
-            
-            {/* Desktop Categories Dropdown */}
+
+            {/* Desktop Categories Dropdown with Thumbnails */}
             <div className="relative group py-6">
               <button className="flex items-center text-[15px] font-bold text-gray-800 group-hover:text-[#0076c0] gap-1 outline-none">
                 Categories <ChevronDown className="h-4 w-4 text-gray-400 group-hover:text-[#0076c0] transition-transform group-hover:rotate-180" />
               </button>
-              <div className="absolute top-[60px] left-0 w-56 bg-white border border-gray-100 shadow-xl rounded-2xl p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                {categories.map((cat) => (
-                  <Link key={cat.slug} href={`/category/${cat.slug}`} className="block px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#0076c0] rounded-xl transition-colors">
-                    {cat.name}
-                  </Link>
-                ))}
+              <div className="absolute top-[60px] left-0 w-64 bg-white border border-gray-100 shadow-xl rounded-2xl p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 space-y-1">
+                {categories.length === 0 ? (
+                  <p className="px-4 py-2 text-sm text-gray-500">No categories found</p>
+                ) : (
+                  categories.map((cat) => (
+                    <Link 
+                      key={cat.slug} 
+                      href={`/category/${cat.slug}`} 
+                      className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#0076c0] rounded-xl transition-colors"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 overflow-hidden flex items-center justify-center flex-shrink-0 p-0.5">
+                        {cat.image_url ? (
+                          <Image src={cat.image_url} alt={cat.name} width={32} height={32} className="object-contain w-full h-full" />
+                        ) : (
+                          <ImageIcon className="w-4 h-4 text-gray-400" />
+                        )}
+                      </div>
+                      <span className="truncate">{cat.name}</span>
+                    </Link>
+                  ))
+                )}
               </div>
             </div>
 
