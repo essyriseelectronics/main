@@ -17,65 +17,58 @@ export default function MobileMenu({ categories }: MobileMenuProps) {
   const [mounted, setMounted] = useState(false);
   const [logs, setLogs] = useState<string[]>([]);
 
-  // Function to print logs directly to your phone screen
   const addLog = (msg: string) => {
     setLogs((prev) => [
       `[${new Date().toLocaleTimeString()}] ${msg}`,
-      ...prev.slice(0, 4), // Keep last 5 logs
+      ...prev.slice(0, 3),
     ]);
   };
 
   useEffect(() => {
     setMounted(true);
-    addLog(`Hydrated! Categories count: ${categories?.length ?? 0}`);
+    addLog(`Hydrated (${categories?.length ?? 0} cats)`);
   }, [categories]);
 
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
-      addLog('Drawer OPEN state set');
+      addLog('Drawer state: OPEN');
     } else {
       document.body.style.overflow = 'unset';
-      addLog('Drawer CLOSED state set');
+      addLog('Drawer state: CLOSED');
     }
     return () => { document.body.style.overflow = 'unset'; };
   }, [isOpen]);
 
-  const handleOpenClick = (e: React.MouseEvent) => {
+  // Unified trigger handler for both tap and click
+  const handleTrigger = (e: React.SyntheticEvent) => {
     e.stopPropagation();
-    addLog(`Menu Button Tapped! Screen width: ${window.innerWidth}px`);
+    addLog('TAP REGISTERED!');
     setIsOpen(true);
   };
 
-  // Mobile Drawer JSX
   const drawerContent = (
     <div 
-      className={`fixed inset-0 z-[99999] transition-all duration-300 ${
-        isOpen ? 'visible pointer-events-auto' : 'invisible pointer-events-none'
+      className={`fixed inset-0 transition-all duration-300 ${
+        isOpen ? 'opacity-100 visible pointer-events-auto' : 'opacity-0 invisible pointer-events-none'
       }`}
-      style={{ zIndex: 99999 }}
+      style={{ zIndex: 999999 }}
     >
-      {/* Backdrop */}
+      {/* Dark Overlay */}
       <div 
-        className={`fixed inset-0 bg-black/70 transition-opacity duration-300 ${
-          isOpen ? 'opacity-100' : 'opacity-0'
-        }`}
-        onClick={() => {
-          addLog('Backdrop tapped -> Closing');
-          setIsOpen(false);
-        }} 
+        className="fixed inset-0 bg-black/70"
+        onClick={() => setIsOpen(false)} 
       />
 
-      {/* Drawer Body */}
+      {/* Sliding Panel */}
       <div 
-        className={`fixed top-0 left-0 bottom-0 w-[85%] max-w-sm bg-white h-full shadow-2xl flex flex-col z-[100000] transition-transform duration-300 ease-in-out transform ${
+        className={`fixed top-0 left-0 bottom-0 w-[85%] max-w-sm bg-white h-full shadow-2xl flex flex-col transition-transform duration-300 ease-in-out transform ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
-        style={{ zIndex: 100000 }}
+        style={{ zIndex: 1000000 }}
       >
-        {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-100">
-          <Link href="/" onClick={() => setIsOpen(false)} className="outline-none select-none flex flex-col items-start">
+          <Link href="/" onClick={() => setIsOpen(false)} className="outline-none flex flex-col items-start">
             <span className="text-xl font-extrabold text-black tracking-tight leading-none">ESSYRISE</span>
             <span className="text-[8px] font-semibold text-gray-400 tracking-[0.2em] uppercase mt-1 leading-none">electronics</span>
           </Link>
@@ -88,7 +81,6 @@ export default function MobileMenu({ categories }: MobileMenuProps) {
           </button>
         </div>
 
-        {/* Links */}
         <div className="flex-1 overflow-y-auto bg-white">
           <div className="flex flex-col py-2">
             <Link href="/" onClick={() => setIsOpen(false)} className="px-5 py-3.5 text-[15px] text-gray-700 font-medium hover:bg-gray-50">
@@ -139,7 +131,6 @@ export default function MobileMenu({ categories }: MobileMenuProps) {
           </div>
         </div>
 
-        {/* Footer */}
         <div className="p-4 border-t border-gray-100 flex items-center justify-between gap-3 bg-white mb-2">
           <Link href="/login" onClick={() => setIsOpen(false)} className="flex-1 flex items-center justify-center gap-2 bg-[#0076c0] text-white px-4 py-2.5 rounded-full font-semibold">
             <User className="h-5 w-5 fill-white" /> Login
@@ -154,33 +145,27 @@ export default function MobileMenu({ categories }: MobileMenuProps) {
 
   return (
     <>
-      {/* 🚨 ON-SCREEN DEBUG POPUP HUD FOR MOBILE 🚨 */}
-      <div className="fixed top-2 left-2 right-2 z-[999999] bg-black/90 text-green-400 p-2.5 rounded-xl text-[11px] font-mono border border-green-500/30 shadow-2xl pointer-events-none">
-        <div className="flex items-center justify-between text-white font-bold border-b border-gray-700 pb-1 mb-1">
-          <span>DEBUG LOGS (On-Screen)</span>
-          <span className={mounted ? "text-green-400" : "text-red-400"}>
-            {mounted ? "Mounted" : "Unmounted"}
-          </span>
+      {/* DEBUG HUD */}
+      <div className="fixed top-2 left-2 right-2 z-[9999999] bg-black/90 text-green-400 p-2 rounded text-[11px] font-mono pointer-events-none">
+        <div className="font-bold border-b border-gray-700 pb-1 mb-1">
+          STATUS: {mounted ? 'MOUNTED' : 'NOT MOUNTED'}
         </div>
-        <div className="space-y-0.5">
-          {logs.length === 0 && <span className="text-gray-400">Tap hamburger to start logs...</span>}
-          {logs.map((log, idx) => (
-            <div key={idx} className="truncate">{log}</div>
-          ))}
-        </div>
+        {logs.map((log, i) => (
+          <div key={i}>{log}</div>
+        ))}
       </div>
 
-      {/* Hamburger Trigger Button */}
+      {/* Button with both onClick and onTouchStart */}
       <button 
         type="button"
-        onClick={handleOpenClick} 
-        className="p-2 bg-gray-100 text-gray-900 rounded-lg active:bg-blue-200 transition-colors z-50 relative"
-        aria-label="Open Navigation Menu"
+        onClick={handleTrigger}
+        onTouchStart={handleTrigger}
+        className="relative z-50 p-2 bg-gray-100 active:bg-blue-200 text-gray-900 rounded-lg pointer-events-auto cursor-pointer"
+        aria-label="Open Menu"
       >
-        <Menu className="h-7 w-7" strokeWidth={2.5} />
+        <Menu className="h-7 w-7 pointer-events-none" strokeWidth={2.5} />
       </button>
 
-      {/* Render Portal directly to Body */}
       {mounted && createPortal(drawerContent, document.body)}
     </>
   );
