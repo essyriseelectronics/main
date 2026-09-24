@@ -5,6 +5,7 @@ import StorefrontWrapper from "@/components/layout/StorefrontWrapper";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { getSettings } from "@/lib/actions/settings";
+import { StoreProvider } from "@/lib/context/StoreContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,13 +25,15 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} min-h-screen flex flex-col`}>
-        <StorefrontWrapper 
-          header={<Header />} 
-          footer={<Footer />}
-          isMaintenance={settings.maintenance_mode}
-        >
-          {children}
-        </StorefrontWrapper>
+        <StoreProvider>
+          <StorefrontWrapper 
+            header={<Header />} 
+            footer={<Footer />}
+            isMaintenance={settings.maintenance_mode}
+          >
+            {children}
+          </StorefrontWrapper>
+        </StoreProvider>
       </body>
     </html>
   );
