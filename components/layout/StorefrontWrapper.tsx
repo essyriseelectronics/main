@@ -1,18 +1,20 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
 
 export default function StorefrontWrapper({
   children,
+  header,
+  footer,
 }: {
   children: React.ReactNode;
+  header: React.ReactNode;
+  footer: React.ReactNode;
 }) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin");
 
-  // If we are in the admin panel, ONLY render the page content (AdminLayout handles the rest)
+  // If we are in the admin panel, ONLY render the page content
   if (isAdmin) {
     return <>{children}</>;
   }
@@ -20,13 +22,11 @@ export default function StorefrontWrapper({
   // Otherwise, render the normal Storefront Header and Footer
   return (
     <>
-      <Header />
-
+      {header}
       <main className="flex-grow">
         {children}
       </main>
-
-      <Footer />
+      {footer}
     </>
   );
 }
