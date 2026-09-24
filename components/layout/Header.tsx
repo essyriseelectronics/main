@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Search, ShoppingCart, ChevronDown, ImageIcon } from 'lucide-react';
-import MobileMenu from './MobileMenu'; // Back to the original import
+import MobileMenu from './MobileMenu'; 
 import { queryD1 } from "@/lib/db/client"; 
 import { Category } from "@/types";
 
@@ -29,20 +29,25 @@ export default async function Header() {
         {/* ======================= */}
         {/*       MOBILE VIEW       */}
         {/* ======================= */}
-        <div className="flex items-center justify-between h-14 md:!hidden">
-          <div className="flex-none">
+        <div className="flex items-center justify-between h-14 md:!hidden relative">
+          {/* Left: Hamburger (Elevated Z-Index & Touch Target Priority) */}
+          <div className="flex-none relative z-20">
             <MobileMenu categories={categories} />
           </div>
 
-          <div className="flex-1 flex justify-center">
-            <Logo />
+          {/* Center: Logo (pointer-events-none prevents invisible wrapper bounds from blocking hamburger taps) */}
+          <div className="flex-1 flex justify-center pointer-events-none">
+            <div className="pointer-events-auto">
+              <Logo />
+            </div>
           </div>
 
-          <div className="flex-none flex items-center gap-3">
-            <button className="text-gray-700 hover:text-black">
+          {/* Right: Actions */}
+          <div className="flex-none flex items-center gap-3 relative z-20">
+            <button type="button" className="text-gray-700 hover:text-black p-1" aria-label="Search">
               <Search className="h-6 w-6" strokeWidth={2} />
             </button>
-            <Link href="/cart" className="text-gray-700 hover:text-black relative">
+            <Link href="/cart" className="text-gray-700 hover:text-black relative p-1" aria-label="Cart">
               <ShoppingCart className="h-6 w-6" strokeWidth={2} />
             </Link>
           </div>
@@ -63,7 +68,7 @@ export default async function Header() {
 
             {/* Desktop Categories Dropdown with Thumbnails */}
             <div className="relative group py-6">
-              <button className="flex items-center text-[15px] font-bold text-gray-800 group-hover:text-[#0076c0] gap-1 outline-none">
+              <button type="button" className="flex items-center text-[15px] font-bold text-gray-800 group-hover:text-[#0076c0] gap-1 outline-none">
                 Categories <ChevronDown className="h-4 w-4 text-gray-400 group-hover:text-[#0076c0] transition-transform group-hover:rotate-180" />
               </button>
               <div className="absolute top-[60px] left-0 w-64 bg-white border border-gray-100 shadow-xl rounded-2xl p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 space-y-1">
@@ -96,7 +101,7 @@ export default async function Header() {
           </div>
 
           <div className="flex items-center gap-5 ml-auto">
-            <button className="text-gray-700 hover:text-[#0076c0]">
+            <button type="button" className="text-gray-700 hover:text-[#0076c0]" aria-label="Search">
               <Search className="h-5 w-5" strokeWidth={2.5} />
             </button>
             <div className="w-px h-5 bg-gray-200"></div>
@@ -106,7 +111,7 @@ export default async function Header() {
             <Link href="/register" className="bg-[#0076c0] text-white px-5 py-1.5 rounded-full text-[15px] font-bold hover:bg-blue-700 transition-colors shadow-sm">
               Register
             </Link>
-            <Link href="/cart" className="text-gray-700 hover:text-[#0076c0] ml-2 relative">
+            <Link href="/cart" className="text-gray-700 hover:text-[#0076c0] ml-2 relative" aria-label="Cart">
               <ShoppingCart className="h-5 w-5" strokeWidth={2} />
             </Link>
           </div>
