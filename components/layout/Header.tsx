@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Search, ShoppingCart, ChevronDown, ImageIcon } from 'lucide-react';
-import ClientMobileNav from './ClientMobileNav'; 
+import MobileMenu from './MobileMenu'; // Back to the original import
 import { queryD1 } from "@/lib/db/client"; 
 import { Category } from "@/types";
 
@@ -27,14 +27,31 @@ export default async function Header() {
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* ======================= */}
-        {/*       MOBILE VIEW       }
+        {/*       MOBILE VIEW       */}
         {/* ======================= */}
-        <ClientMobileNav categories={categories} />
+        <div className="flex items-center justify-between h-14 md:!hidden">
+          <div className="flex-none">
+            <MobileMenu categories={categories} />
+          </div>
+
+          <div className="flex-1 flex justify-center">
+            <Logo />
+          </div>
+
+          <div className="flex-none flex items-center gap-3">
+            <button className="text-gray-700 hover:text-black">
+              <Search className="h-6 w-6" strokeWidth={2} />
+            </button>
+            <Link href="/cart" className="text-gray-700 hover:text-black relative">
+              <ShoppingCart className="h-6 w-6" strokeWidth={2} />
+            </Link>
+          </div>
+        </div>
 
         {/* ======================= */}
         {/*      DESKTOP VIEW       */}
         {/* ======================= */}
-        <div className="hidden md:flex items-center justify-between h-16">
+        <div className="!hidden md:!flex items-center justify-between h-16">
           <div className="flex-shrink-0">
             <Logo />
           </div>
