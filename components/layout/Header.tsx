@@ -21,7 +21,7 @@ export default async function Header() {
     );
 
     const categoryArray = Array.isArray(rawData) ? rawData : (rawData as any)?.results || [];
-    
+
     // STRICT SERIALIZATION: Force every property to be a plain string or null.
     // This strips out any hidden SQLite wrappers that crash Client Components.
     categories = categoryArray.map((cat: any) => ({
@@ -43,8 +43,9 @@ export default async function Header() {
         {/*       MOBILE VIEW       */}
         {/* ======================= */}
         <div className="flex items-center justify-between h-14 md:!hidden relative">
-          <div className="flex-none relative z-20">
-            {/* ISOLATION TEST: If the menu still fails, change `categories` to `[]` here */}
+          
+          {/* FIX: Removed 'relative z-20' so the fixed overlay can break out and cover the header */}
+          <div className="flex-none">
             <MobileMenu categories={categories} />
           </div>
 
@@ -54,7 +55,8 @@ export default async function Header() {
             </div>
           </div>
 
-          <div className="flex-none flex items-center gap-3 relative z-20">
+          {/* FIX: Removed 'relative z-20' so this stops stacking on top of the menu overlay */}
+          <div className="flex-none flex items-center gap-3">
             <button type="button" className="text-gray-700 hover:text-black p-1" aria-label="Search">
               <Search className="h-6 w-6" strokeWidth={2} />
             </button>
