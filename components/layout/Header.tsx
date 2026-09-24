@@ -1,8 +1,9 @@
 import Link from 'next/link';
-import { Search, ShoppingCart, ChevronDown, ImageIcon } from 'lucide-react';
+import { Search, ShoppingCart, ChevronDown, ImageIcon, User } from 'lucide-react';
 import MobileMenu from './MobileMenu'; 
 import { queryD1 } from "@/lib/db/client"; 
 import { Category } from "@/types";
+import { getUser } from '@/lib/auth/getUser'; // <-- Added getUser utility
 
 const Logo = () => (
   <Link href="/" className="outline-none select-none flex flex-col items-center md:items-start">
@@ -13,17 +14,17 @@ const Logo = () => (
 
 export default async function Header() {
   let categories: Category[] = [];
+  
+  // Fetch the logged-in user securely on the server
+  const user = await getUser();
 
   try {
-    // Only select the exact columns needed to minimize payload
     const rawData = await queryD1<Category>(
       "SELECT slug, name, image_url FROM categories WHERE is_active = 1 ORDER BY name ASC"
     );
 
     const categoryArray = Array.isArray(rawData) ? rawData : (rawData as any)?.results || [];
 
-    // STRICT SERIALIZATION: Force every property to be a plain string or null.
-    // This strips out any hidden SQLite wrappers that crash Client Components.
     categories = categoryArray.map((cat: any) => ({
       slug: String(cat.slug || ''),
       name: String(cat.name || ''),
@@ -43,9 +44,8 @@ export default async function Header() {
         {/*       MOBILE VIEW       */}
         {/* ======================= */}
         <div className="flex items-center justify-between h-14 md:!hidden relative">
-          
-          {/* FIX: Removed 'relative z-20' so the fixed overlay can break out and cover the header */}
           <div className="flex-none">
+            {/* Note: In the next step, we will pass the user object into MobileMenu to update its drawer footer too */}
             <MobileMenu categories={categories} />
           </div>
 
@@ -55,7 +55,6 @@ export default async function Header() {
             </div>
           </div>
 
-          {/* FIX: Removed 'relative z-20' so this stops stacking on top of the menu overlay */}
           <div className="flex-none flex items-center gap-3">
             <button type="button" className="text-gray-700 hover:text-black p-1" aria-label="Search">
               <Search className="h-6 w-6" strokeWidth={2} />
@@ -117,12 +116,31 @@ export default async function Header() {
               <Search className="h-5 w-5" strokeWidth={2.5} />
             </button>
             <div className="w-px h-5 bg-gray-200"></div>
-            <Link href="/login" className="text-[15px] font-bold text-gray-800 hover:text-[#0076c0]">
-              Login
-            </Link>
-            <Link href="/register" className="bg-[#0076c0] text-white px-5 py-1.5 rounded-full text-[15px] font-bold hover:bg-blue-700 transition-colors shadow-sm">
-              Register
-            </Link>
+
+            {/* === DYNAMIC AUTHENTICATION UI === */}
+            {user ? (
+              <>
+                {user.role === 'ADMIN' && (
+                  <Link href="/admin" className="text-[15px] font-bold text-red-600 hover:text-red-700">
+                    Admin Panel
+                  </Link>
+                )}
+                <Link href="/profile" className="flex items-center gap-2 bg-[#0076c0] text-white px-5 py-1.5 rounded-full text-[15px] font-bold hover:bg-blue-700 transition-colors shadow-sm">
+                  <User className="h-4 w-4" />
+                  My Account
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href="/login" className="text-[15px] font-bold text-gray-800 hover:text-[#0076c0]">
+                  Login
+                </Link>
+                <Link href="/register" className="bg-[#0076c0] text-white px-5 py-1.5 rounded-full text-[15px] font-bold hover:bg-blue-700 transition-colors shadow-sm">
+                  Register
+                </Link>
+              </>
+            )}
+            
             <Link href="/cart" className="text-gray-700 hover:text-[#0076c0] ml-2 relative" aria-label="Cart">
               <ShoppingCart className="h-5 w-5" strokeWidth={2} />
             </Link>
