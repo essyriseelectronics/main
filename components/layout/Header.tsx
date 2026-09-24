@@ -46,7 +46,8 @@ export default async function Header() {
         <div className="flex items-center justify-between h-14 md:!hidden relative">
           <div className="flex-none">
             {/* Note: In the next step, we will pass the user object into MobileMenu to update its drawer footer too */}
-            <MobileMenu categories={categories} />
+            <MobileMenu categories={categories} user={user} />
+
           </div>
 
           <div className="flex-1 flex justify-center pointer-events-none">
