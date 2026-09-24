@@ -1,6 +1,3 @@
-'use client'
-
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Menu, X, ChevronRight, ChevronDown, ShoppingCart, Heart, User, ImageIcon } from 'lucide-react';
 import { Category } from '@/types';
@@ -10,76 +7,62 @@ type MobileMenuProps = {
 };
 
 export default function MobileMenu({ categories = [] }: MobileMenuProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
-
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isOpen]);
-
   return (
     <>
-      <button 
-        type="button"
-        onClick={() => setIsOpen(true)}
-        className="p-2 -ml-2 text-gray-900 active:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+      {/* 1. HIDDEN CHECKBOX: This tracks the open/close state without JavaScript */}
+      <input type="checkbox" id="mobile-menu-open" className="peer hidden" />
+
+      {/* 2. THE TRIGGER: Clicking this label toggles the hidden checkbox */}
+      <label 
+        htmlFor="mobile-menu-open"
+        className="p-2 -ml-2 text-gray-900 active:bg-gray-100 rounded-lg transition-colors cursor-pointer inline-flex"
         aria-label="Open Navigation Menu"
       >
         <Menu className="h-7 w-7 pointer-events-none" strokeWidth={2.5} />
-      </button>
+      </label>
 
-      <div 
-        className={`fixed inset-0 z-[99999] transition-all duration-300 ${
-          isOpen ? 'opacity-100 visible pointer-events-auto' : 'opacity-0 invisible pointer-events-none'
-        }`}
-      >
-        <div 
-          className="absolute inset-0 bg-black/60"
-          onClick={() => setIsOpen(false)} 
+      {/* 3. THE DRAWER: Tailwind uses `peer-checked:` to slide this in when the checkbox is active */}
+      <div className="fixed inset-0 z-[99999] opacity-0 invisible peer-checked:opacity-100 peer-checked:visible pointer-events-none peer-checked:pointer-events-auto transition-all duration-300">
+        
+        {/* Dark Backdrop (Clicking it acts as a label to uncheck the box and close the menu) */}
+        <label 
+          htmlFor="mobile-menu-open"
+          className="absolute inset-0 bg-black/60 cursor-pointer"
         />
 
-        <div 
-          className={`absolute top-0 left-0 bottom-0 w-[85%] max-w-sm bg-white h-full shadow-2xl flex flex-col transition-transform duration-300 ease-in-out transform ${
-            isOpen ? 'translate-x-0' : '-translate-x-full'
-          }`}
-        >
+        {/* Sliding Panel */}
+        <div className="absolute top-0 left-0 bottom-0 w-[85%] max-w-sm bg-white h-full shadow-2xl flex flex-col transition-transform duration-300 ease-in-out transform -translate-x-full peer-checked:translate-x-0">
+          
+          {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-100">
-            <Link href="/" onClick={() => setIsOpen(false)} className="outline-none flex flex-col items-start">
+            <Link href="/" className="outline-none flex flex-col items-start">
               <span className="text-xl font-extrabold text-black tracking-tight leading-none">ESSYRISE</span>
               <span className="text-[8px] font-semibold text-gray-400 tracking-[0.2em] uppercase mt-1 leading-none">electronics</span>
             </Link>
-            <button 
-              type="button"
-              onClick={() => setIsOpen(false)} 
-              className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg"
+            
+            {/* Close 'X' Button */}
+            <label 
+              htmlFor="mobile-menu-open"
+              className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg cursor-pointer"
             >
               <X className="h-6 w-6" />
-            </button>
+            </label>
           </div>
 
+          {/* Links Body */}
           <div className="flex-1 overflow-y-auto bg-white">
             <div className="flex flex-col py-2">
-              <Link href="/" onClick={() => setIsOpen(false)} className="px-5 py-3.5 text-[15px] text-gray-700 font-medium hover:bg-gray-50">
+              <Link href="/" className="px-5 py-3.5 text-[15px] text-gray-700 font-medium hover:bg-gray-50">
                 Home
               </Link>
 
-              <button 
-                type="button"
-                onClick={() => setIsCategoryOpen(!isCategoryOpen)}
-                className="flex items-center justify-between w-full px-5 py-3.5 text-[15px] text-gray-700 font-medium hover:bg-gray-50"
-              >
-                Shop by Category 
-                <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform ${isCategoryOpen ? 'rotate-180' : ''}`} />
-              </button>
-
-              {isCategoryOpen && (
+              {/* Native HTML5 Accordion (No JavaScript required for this to open/close!) */}
+              <details className="group">
+                <summary className="flex items-center justify-between w-full px-5 py-3.5 text-[15px] text-gray-700 font-medium hover:bg-gray-50 cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                  Shop by Category 
+                  <ChevronDown className="h-4 w-4 text-gray-400 group-open:rotate-180 transition-transform" />
+                </summary>
+                
                 <div className="bg-gray-50 flex flex-col border-y border-gray-100 py-1 space-y-1">
                   {categories.length === 0 ? (
                     <span className="px-8 py-3 text-sm text-gray-500">No categories found</span>
@@ -88,7 +71,6 @@ export default function MobileMenu({ categories = [] }: MobileMenuProps) {
                       <Link 
                         key={cat.slug} 
                         href={`/category/${cat.slug}`} 
-                        onClick={() => setIsOpen(false)} 
                         className="px-6 py-2.5 text-[14px] text-gray-700 font-medium hover:text-[#0076c0] flex items-center justify-between"
                       >
                         <div className="flex items-center gap-3">
@@ -106,32 +88,33 @@ export default function MobileMenu({ categories = [] }: MobileMenuProps) {
                     ))
                   )}
                 </div>
-              )}
+              </details>
 
-              <Link href="/shop" onClick={() => setIsOpen(false)} className="px-5 py-3.5 text-[15px] text-gray-700 font-medium hover:bg-gray-50">
+              <Link href="/shop" className="px-5 py-3.5 text-[15px] text-gray-700 font-medium hover:bg-gray-50">
                 View All
               </Link>
             </div>
 
             <div className="border-t border-gray-100 py-2">
-              <Link href="/cart" onClick={() => setIsOpen(false)} className="flex items-center justify-between px-5 py-3.5 text-[15px] text-gray-700 font-medium hover:bg-gray-50">
+              <Link href="/cart" className="flex items-center justify-between px-5 py-3.5 text-[15px] text-gray-700 font-medium hover:bg-gray-50">
                 <div className="flex items-center gap-3">
                   <ShoppingCart className="h-5 w-5 text-emerald-600" />
                   <span>Cart</span>
                 </div>
               </Link>
-              <Link href="/wishlist" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-[15px] text-gray-700 font-medium hover:bg-gray-50">
+              <Link href="/wishlist" className="flex items-center gap-3 px-5 py-3.5 text-[15px] text-gray-700 font-medium hover:bg-gray-50">
                 <Heart className="h-5 w-5 text-red-500 fill-red-500" />
                 <span>Lists</span>
               </Link>
             </div>
           </div>
 
+          {/* Footer Actions */}
           <div className="p-4 border-t border-gray-100 flex items-center justify-between gap-3 bg-white mb-2">
-            <Link href="/login" onClick={() => setIsOpen(false)} className="flex-1 flex items-center justify-center gap-2 bg-[#0076c0] text-white px-4 py-2.5 rounded-full font-semibold">
+            <Link href="/login" className="flex-1 flex items-center justify-center gap-2 bg-[#0076c0] text-white px-4 py-2.5 rounded-full font-semibold">
               <User className="h-5 w-5 fill-white" /> Login
             </Link>
-            <Link href="/register" onClick={() => setIsOpen(false)} className="flex-1 text-center text-[#0076c0] px-4 py-2.5 font-bold bg-blue-50 hover:bg-blue-100 rounded-full">
+            <Link href="/register" className="flex-1 text-center text-[#0076c0] px-4 py-2.5 font-bold bg-blue-50 hover:bg-blue-100 rounded-full">
               Register
             </Link>
           </div>
