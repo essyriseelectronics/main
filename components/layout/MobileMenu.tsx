@@ -7,9 +7,10 @@ import { Category } from '@/types';
 
 type MobileMenuProps = {
   categories: Category[];
+  user?: { role: string; first_name: string } | null; // Added user prop
 };
 
-export default function MobileMenu({ categories = [] }: MobileMenuProps) {
+export default function MobileMenu({ categories = [], user }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
 
@@ -139,12 +140,27 @@ export default function MobileMenu({ categories = [] }: MobileMenuProps) {
 
           {/* Drawer Footer Buttons */}
           <div className="p-4 border-t border-gray-100 flex items-center justify-between gap-3 bg-white mb-2">
-            <Link href="/login" onClick={() => setIsOpen(false)} className="flex-1 flex items-center justify-center gap-2 bg-[#0076c0] text-white px-4 py-2.5 rounded-full font-semibold">
-              <User className="h-5 w-5 fill-white" /> Login
-            </Link>
-            <Link href="/register" onClick={() => setIsOpen(false)} className="flex-1 text-center text-[#0076c0] px-4 py-2.5 font-bold bg-blue-50 hover:bg-blue-100 rounded-full">
-              Register
-            </Link>
+            {user ? (
+              <>
+                {user.role === 'ADMIN' && (
+                  <Link href="/admin" onClick={() => setIsOpen(false)} className="flex-1 text-center text-red-600 px-4 py-2.5 font-bold bg-red-50 hover:bg-red-100 rounded-full">
+                    Admin
+                  </Link>
+                )}
+                <Link href="/profile" onClick={() => setIsOpen(false)} className="flex-[2] flex items-center justify-center gap-2 bg-[#0076c0] text-white px-4 py-2.5 rounded-full font-semibold">
+                  <User className="h-5 w-5 fill-white" /> My Account
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href="/login" onClick={() => setIsOpen(false)} className="flex-1 flex items-center justify-center gap-2 bg-[#0076c0] text-white px-4 py-2.5 rounded-full font-semibold">
+                  <User className="h-5 w-5 fill-white" /> Login
+                </Link>
+                <Link href="/register" onClick={() => setIsOpen(false)} className="flex-1 text-center text-[#0076c0] px-4 py-2.5 font-bold bg-blue-50 hover:bg-blue-100 rounded-full">
+                  Register
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
