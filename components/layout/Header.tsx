@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { Search, ShoppingCart, ChevronDown, ImageIcon } from 'lucide-react';
 import MobileMenu from './MobileMenu'; 
 import { queryD1 } from "@/lib/db/client"; 
@@ -16,17 +15,21 @@ export default async function Header() {
   let categories: Category[] = [];
 
   try {
+    // Only select the exact columns needed to minimize payload
     const rawData = await queryD1<Category>(
-      "SELECT * FROM categories WHERE is_active = 1 ORDER BY name ASC"
+      "SELECT slug, name, image_url FROM categories WHERE is_active = 1 ORDER BY name ASC"
     );
 
-    // 1. Ensure rawData is an array (handle D1 wrapper if present)
-    const categoryArray = Array.isArray(rawData) 
-      ? rawData 
-      : (rawData as any)?.results || [];
+    const categoryArray = Array.isArray(rawData) ? rawData : (rawData as any)?.results || [];
+    
+    // STRICT SERIALIZATION: Force every property to be a plain string or null.
+    // This strips out any hidden SQLite wrappers that crash Client Components.
+    categories = categoryArray.map((cat: any) => ({
+      slug: String(cat.slug || ''),
+      name: String(cat.name || ''),
+      image_url: cat.image_url ? String(cat.image_url) : null
+    }));
 
-    // 2. FORCE SERIALIZATION: Convert DB objects to plain JSON to prevent React 19 Hydration crashes
-    categories = JSON.parse(JSON.stringify(categoryArray));
   } catch (error) {
     console.error("Failed to fetch header categories:", error);
     categories = [];
@@ -41,7 +44,7 @@ export default async function Header() {
         {/* ======================= */}
         <div className="flex items-center justify-between h-14 md:!hidden relative">
           <div className="flex-none relative z-20">
-            {/* Pass sanitized categories */}
+            {/* ISOLATION TEST: If the menu still fails, change `categories` to `[]` here */}
             <MobileMenu categories={categories} />
           </div>
 
@@ -79,18 +82,18 @@ export default async function Header() {
                 Categories <ChevronDown className="h-4 w-4 text-gray-400 group-hover:text-[#0076c0] transition-transform group-hover:rotate-180" />
               </button>
               <div className="absolute top-[60px] left-0 w-64 bg-white border border-gray-100 shadow-xl rounded-2xl p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 space-y-1">
-                {(!categories || categories.length === 0) ? (
+                {categories.length === 0 ? (
                   <p className="px-4 py-2 text-sm text-gray-500">No categories found</p>
                 ) : (
                   categories.map((cat) => (
                     <Link 
-                      key={cat.slug || cat.name} 
+                      key={cat.slug} 
                       href={`/category/${cat.slug}`} 
                       className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#0076c0] rounded-xl transition-colors"
                     >
                       <div className="w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 overflow-hidden flex items-center justify-center flex-shrink-0 p-0.5">
                         {cat.image_url ? (
-                          <img src={cat.image_url} alt={cat.name} className="object-contain w-full h-full" />
+                          <img src={cat.image_url} alt={cat.name} className="object-contain w-full h-full" loading="lazy" />
                         ) : (
                           <ImageIcon className="w-4 h-4 text-gray-400" />
                         )}
