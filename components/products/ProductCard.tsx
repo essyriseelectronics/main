@@ -14,7 +14,7 @@ export default function ProductCard({ product }: { product: Product }) {
 
   return (
     <Link 
-      href={`/product/${product.slug}`} 
+      href={`/products/${product.slug}`} /* <-- FIXED: Changed to /products/ */
       className="group flex flex-col bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:border-gray-200 transition-all duration-300"
     >
       {/* IMAGE CONTAINER: Restored height and changed to object-contain so nothing gets cut off */}
