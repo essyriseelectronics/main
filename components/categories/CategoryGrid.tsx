@@ -16,14 +16,14 @@ export default function CategoryGrid({ categories }: { categories: Category[] })
 
   return (
     <div className="relative w-full">
-      {/* Horizontal scrolling container */}
-      <div className="flex overflow-x-auto gap-4 md:gap-6 pb-6 snap-x snap-mandatory [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#0076c0]/40 hover:[&::-webkit-scrollbar-thumb]:bg-[#0076c0]/60 [&::-webkit-scrollbar-thumb]:rounded-full transition-colors">
+      {/* Horizontal scrolling container with RED scrollbar */}
+      <div className="flex overflow-x-auto gap-4 md:gap-6 pb-6 snap-x snap-mandatory [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-red-500/60 hover:[&::-webkit-scrollbar-thumb]:bg-red-600 [&::-webkit-scrollbar-thumb]:rounded-full transition-colors">
 
         {activeCategories.map((cat) => (
           <Link 
             href={`/category/${cat.slug}`} 
             key={cat.id} 
-            className="group relative flex-shrink-0 w-36 h-44 md:w-48 md:h-56 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg hover:border-blue-200 transition-all snap-start bg-white border border-gray-100 flex flex-col p-4"
+            className="group relative flex-shrink-0 w-36 h-44 md:w-48 md:h-56 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg hover:border-red-200 transition-all snap-start bg-white border border-gray-100 flex flex-col p-4"
           >
             {/* Image Container - Using object-contain so transparent images fit perfectly */}
             <div className="relative flex-1 w-full h-full mb-3">
@@ -44,7 +44,7 @@ export default function CategoryGrid({ categories }: { categories: Category[] })
 
             {/* Category Name positioned at the bottom in dark text */}
             <div className="text-center mt-auto">
-              <h3 className="font-bold text-gray-900 text-sm md:text-base leading-tight group-hover:text-[#0076c0] transition-colors">
+              <h3 className="font-bold text-gray-900 text-sm md:text-base leading-tight group-hover:text-red-600 transition-colors">
                 {cat.name}
               </h3>
             </div>
