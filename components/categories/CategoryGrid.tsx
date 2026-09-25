@@ -16,46 +16,41 @@ export default function CategoryGrid({ categories }: { categories: Category[] })
 
   return (
     <div className="relative w-full">
-      {/* 
-        Horizontal scrolling container with CSS scroll snapping.
-        The complex bracket classes at the end creatively style the scrollbar 
-        into a sleek "progress bar" track natively.
-      */}
-      <div className="flex overflow-x-auto gap-4 md:gap-6 pb-6 snap-x snap-mandatory [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-brand-primary/40 hover:[&::-webkit-scrollbar-thumb]:bg-brand-primary/60 [&::-webkit-scrollbar-thumb]:rounded-full transition-colors">
-        
+      {/* Horizontal scrolling container */}
+      <div className="flex overflow-x-auto gap-4 md:gap-6 pb-6 snap-x snap-mandatory [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#0076c0]/40 hover:[&::-webkit-scrollbar-thumb]:bg-[#0076c0]/60 [&::-webkit-scrollbar-thumb]:rounded-full transition-colors">
+
         {activeCategories.map((cat) => (
           <Link 
             href={`/category/${cat.slug}`} 
             key={cat.id} 
-            className="group relative flex-shrink-0 w-36 h-48 md:w-52 md:h-64 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all snap-start bg-gray-50 border border-gray-100"
+            className="group relative flex-shrink-0 w-36 h-44 md:w-48 md:h-56 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg hover:border-blue-200 transition-all snap-start bg-white border border-gray-100 flex flex-col p-4"
           >
-            {/* Full-bleed background image */}
-            {cat.image_url ? (
-              <Image 
-                src={cat.image_url} 
-                alt={cat.name} 
-                fill 
-                className="object-cover transition-transform duration-500 group-hover:scale-110" 
-                sizes="(max-width: 768px) 144px, 208px" 
-              />
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                <span className="text-xs font-medium text-gray-400">No img</span>
-              </div>
-            )}
-            
-            {/* Dark gradient overlay so the white text is always readable over any image */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90 group-hover:opacity-100 transition-opacity" />
-            
-            {/* Category Name positioned at the bottom */}
-            <div className="absolute bottom-0 left-0 w-full p-4">
-              <h3 className="font-bold text-white text-sm md:text-base leading-tight drop-shadow-md">
+            {/* Image Container - Using object-contain so transparent images fit perfectly */}
+            <div className="relative flex-1 w-full h-full mb-3">
+              {cat.image_url ? (
+                <Image 
+                  src={cat.image_url} 
+                  alt={cat.name} 
+                  fill 
+                  className="object-contain transition-transform duration-300 group-hover:-translate-y-1" 
+                  sizes="(max-width: 768px) 144px, 192px" 
+                />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-xs font-medium text-gray-400">No img</span>
+                </div>
+              )}
+            </div>
+
+            {/* Category Name positioned at the bottom in dark text */}
+            <div className="text-center mt-auto">
+              <h3 className="font-bold text-gray-900 text-sm md:text-base leading-tight group-hover:text-[#0076c0] transition-colors">
                 {cat.name}
               </h3>
             </div>
           </Link>
         ))}
-        
+
       </div>
     </div>
   );
