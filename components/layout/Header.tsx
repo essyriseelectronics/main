@@ -11,10 +11,11 @@ const Logo = () => (
   <Link href="/" className="outline-none select-none flex items-center gap-2">
     {/* LOGO IMAGE */}
     <img 
-      src="/easy.png" 
-      alt="Essyrise Logo" 
-      className="w-10 h-10 md:w-12 md:h-12 object-contain"
-    />
+  src="/easy.png" 
+  alt="Essyrise Logo" 
+  className="w-9 h-8 md:w-9 md:h-10 object-contain scale-125"
+/>
+
     
     {/* LOGO TEXT */}
     <div className="flex flex-col items-start">
