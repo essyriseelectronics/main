@@ -14,7 +14,7 @@ type MobileMenuProps = {
 export default function MobileMenu({ categories = [], user }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
-  
+
   // Bring in the global store for cart & wishlist counts
   const { cartCount, wishlist, isHydrated } = useStore();
 
@@ -36,7 +36,7 @@ export default function MobileMenu({ categories = [], user }: MobileMenuProps) {
       <button 
         type="button"
         onClick={() => setIsOpen(true)}
-        className="p-2 -ml-2 text-gray-900 active:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+        className="p-2 -mr-2 text-gray-900 active:bg-gray-100 rounded-lg transition-colors cursor-pointer"
         aria-label="Open Navigation Menu"
       >
         <Menu className="h-7 w-7 pointer-events-none" strokeWidth={2.5} />
@@ -56,16 +56,32 @@ export default function MobileMenu({ categories = [], user }: MobileMenuProps) {
 
         {/* Sliding Drawer */}
         <div 
-          className={`absolute top-0 left-0 bottom-0 w-[85%] max-w-sm bg-white h-full shadow-2xl flex flex-col transition-transform duration-300 ease-in-out transform ${
-            isOpen ? 'translate-x-0' : '-translate-x-full'
+          className={`absolute top-0 right-0 bottom-0 w-[85%] max-w-sm bg-white h-full shadow-2xl flex flex-col transition-transform duration-300 ease-in-out transform ${
+            isOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
         >
           {/* Drawer Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-100">
-            <Link href="/" onClick={() => setIsOpen(false)} className="outline-none flex flex-col items-start">
-              <span className="text-xl font-extrabold text-black tracking-tight leading-none">ESSYRISE</span>
-              <span className="text-[8px] font-semibold text-gray-400 tracking-[0.2em] uppercase mt-1 leading-none">electronics</span>
+            <Link href="/" onClick={() => setIsOpen(false)} className="outline-none select-none flex items-center gap-2">
+              {/* LOGO IMAGE */}
+              <img 
+                src="/easy.png" 
+                alt="Essyrise Logo" 
+                className="w-7 h-7 object-contain"
+              />
+              
+              {/* LOGO TEXT */}
+              <div className="flex flex-col items-start">
+                <span className="text-xl font-extrabold tracking-tight leading-none flex">
+                  <span className="text-red-600">ESSY</span>
+                  <span className="text-[#0076c0]">RISE</span>
+                </span>
+                <span className="text-[8px] font-bold text-[#0076c0] tracking-[0.2em] uppercase mt-0.5 leading-none">
+                  electronics
+                </span>
+              </div>
             </Link>
+            
             <button 
               type="button"
               onClick={() => setIsOpen(false)} 
