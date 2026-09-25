@@ -2,15 +2,30 @@ import Link from 'next/link';
 import { ChevronDown, ImageIcon, User } from 'lucide-react';
 import MobileMenu from './MobileMenu'; 
 import CartIcon from './CartIcon'; 
-import SearchBar from './SearchBar'; // <-- Imported our new Search Component
+import SearchBar from './SearchBar'; 
 import { queryD1 } from "@/lib/db/client"; 
 import { Category } from "@/types";
 import { getUser } from '@/lib/auth/getUser'; 
 
 const Logo = () => (
-  <Link href="/" className="outline-none select-none flex flex-col items-center md:items-start">
-    <span className="text-2xl md:text-3xl font-extrabold text-black tracking-tight leading-none">ESSYRISE</span>
-    <span className="text-[9px] md:text-[10px] font-semibold text-gray-400 tracking-[0.2em] uppercase mt-1 leading-none">electronics</span>
+  <Link href="/" className="outline-none select-none flex items-center gap-2">
+    {/* LOGO IMAGE */}
+    <img 
+      src="/easy.png" 
+      alt="Essyrise Logo" 
+      className="w-8 h-8 md:w-10 md:h-10 object-contain"
+    />
+    
+    {/* LOGO TEXT */}
+    <div className="flex flex-col items-start">
+      <span className="text-2xl md:text-3xl font-extrabold tracking-tight leading-none flex">
+        <span className="text-red-600">ESSY</span>
+        <span className="text-[#0076c0]">RISE</span>
+      </span>
+      <span className="text-[9px] md:text-[10px] font-bold text-[#0076c0] tracking-[0.2em] uppercase mt-0.5 leading-none">
+        electronics
+      </span>
+    </div>
   </Link>
 );
 
@@ -44,39 +59,37 @@ export default async function Header() {
         {/* ======================= */}
         {/*       MOBILE VIEW       */}
         {/* ======================= */}
-        <div className="flex items-center justify-between h-14 md:!hidden relative">
+        <div className="flex items-center justify-between h-16 md:!hidden relative">
+          
+          {/* Left: Logo */}
           <div className="flex-none">
-            <MobileMenu categories={categories} user={user} />
+            <Logo />
           </div>
 
-          <div className="flex-1 flex justify-center pointer-events-none">
-            <div className="pointer-events-auto">
-              <Logo />
-            </div>
-          </div>
-
-          <div className="flex-none flex items-center gap-3">
-            {/* Dynamic Mobile Search Bar */}
+          {/* Right: Actions (Search -> Cart -> Menu) */}
+          <div className="flex-none flex items-center gap-3 sm:gap-4">
             <SearchBar isMobile={true} />
             <CartIcon isMobile={true} />
+            <MobileMenu categories={categories} user={user} />
           </div>
+          
         </div>
 
         {/* ======================= */}
         {/*      DESKTOP VIEW       */}
         {/* ======================= */}
-        <div className="!hidden md:!flex items-center justify-between h-16">
+        <div className="!hidden md:!flex items-center justify-between h-[72px]">
           <div className="flex-shrink-0">
             <Logo />
           </div>
 
           <div className="flex items-center gap-6 lg:gap-8 ml-8">
-            <Link href="/" className="text-[15px] font-bold text-gray-800 hover:text-[#0076c0]">
+            <Link href="/" className="text-[15px] font-bold text-gray-800 hover:text-[#0076c0] transition-colors">
               Home
             </Link>
 
             <div className="relative group py-6">
-              <button type="button" className="flex items-center text-[15px] font-bold text-gray-800 group-hover:text-[#0076c0] gap-1 outline-none">
+              <button type="button" className="flex items-center text-[15px] font-bold text-gray-800 group-hover:text-[#0076c0] gap-1 outline-none transition-colors">
                 Categories <ChevronDown className="h-4 w-4 text-gray-400 group-hover:text-[#0076c0] transition-transform group-hover:rotate-180" />
               </button>
               <div className="absolute top-[60px] left-0 w-64 bg-white border border-gray-100 shadow-xl rounded-2xl p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 space-y-1">
@@ -103,7 +116,7 @@ export default async function Header() {
               </div>
             </div>
 
-            <Link href="/shop" className="text-[15px] font-bold text-gray-800 hover:text-[#0076c0]">
+            <Link href="/shop" className="text-[15px] font-bold text-gray-800 hover:text-[#0076c0] transition-colors">
               View All
             </Link>
           </div>
@@ -119,7 +132,7 @@ export default async function Header() {
             {user ? (
               <>
                 {user.role === 'ADMIN' && (
-                  <Link href="/admin" className="text-[15px] font-bold text-red-600 hover:text-red-700">
+                  <Link href="/admin" className="text-[15px] font-bold text-red-600 hover:text-red-700 transition-colors">
                     Admin Panel
                   </Link>
                 )}
@@ -130,7 +143,7 @@ export default async function Header() {
               </>
             ) : (
               <>
-                <Link href="/login" className="text-[15px] font-bold text-gray-800 hover:text-[#0076c0]">
+                <Link href="/login" className="text-[15px] font-bold text-gray-800 hover:text-[#0076c0] transition-colors">
                   Login
                 </Link>
                 <Link href="/register" className="bg-[#0076c0] text-white px-5 py-1.5 rounded-full text-[15px] font-bold hover:bg-blue-700 transition-colors shadow-sm">
