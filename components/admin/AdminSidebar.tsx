@@ -13,6 +13,7 @@ import {
   Menu, 
   X, 
   LogOut,
+Search,
   Tags,
   Shield // Added for Staff/Users
 } from "lucide-react";
