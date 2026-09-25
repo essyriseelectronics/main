@@ -35,7 +35,8 @@ export default async function Home() {
             <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">Featured Deals <span className="text-[#0076c0]">.</span></h2>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+          {/* UPDATED: gap-2 on mobile, md:gap-6 on desktop */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-6">
             {featuredProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -51,7 +52,8 @@ export default async function Home() {
 
         {regularProducts.length > 0 ? (
           <>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {/* UPDATED: gap-2 on mobile, md:gap-6 on desktop */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-6">
               {regularProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
