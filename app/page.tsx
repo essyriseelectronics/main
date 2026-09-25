@@ -21,21 +21,26 @@ export default async function Home() {
       {/* DYNAMIC CATEGORIES */}
       <section className="py-16 bg-gray-50 border-b border-gray-200">
         <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-end mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Shop by Category</h2>
+          <div className="flex justify-between items-end mb-10">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 relative inline-block">
+              Shop by Category
+              <span className="absolute -bottom-3 left-0 w-[115%] h-1.5 bg-[#0076c0] rounded-full"></span>
+            </h2>
           </div>
           <CategoryGrid categories={categories} />
         </div>
       </section>
 
-      {/* FEATURED PRODUCTS (Only shows if you have featured items) */}
+      {/* FEATURED PRODUCTS */}
       {featuredProducts.length > 0 && (
         <section className="pt-16 w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-end mb-8 border-b border-gray-100 pb-4">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">Featured Deals <span className="text-[#0076c0]">.</span></h2>
+          <div className="flex justify-between items-end mb-10">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 relative inline-block">
+              Featured Deals
+              <span className="absolute -bottom-3 left-0 w-[115%] h-1.5 bg-[#0076c0] rounded-full"></span>
+            </h2>
           </div>
 
-          {/* UPDATED: gap-2 on mobile, md:gap-6 on desktop */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-6">
             {featuredProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
@@ -44,15 +49,17 @@ export default async function Home() {
         </section>
       )}
 
-      {/* LATEST ARRIVALS (Regular non-featured products) */}
+      {/* LATEST ARRIVALS */}
       <section className="py-16 w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-end mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Latest Arrivals</h2>
+        <div className="flex justify-between items-end mb-10">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 relative inline-block">
+            Latest Arrivals
+            <span className="absolute -bottom-3 left-0 w-[115%] h-1.5 bg-[#0076c0] rounded-full"></span>
+          </h2>
         </div>
 
         {regularProducts.length > 0 ? (
           <>
-            {/* UPDATED: gap-2 on mobile, md:gap-6 on desktop */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-6">
               {regularProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
