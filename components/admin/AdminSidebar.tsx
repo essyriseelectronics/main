@@ -13,7 +13,8 @@ import {
   Menu, 
   X, 
   LogOut,
-  Tags // Added this import for the Categories icon
+  Tags,
+  Shield // Added for Staff/Users
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -21,8 +22,9 @@ const navItems = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "Orders", href: "/admin/orders", icon: ShoppingCart },
   { name: "Products", href: "/admin/products", icon: Package },
-  { name: "Categories", href: "/admin/categories", icon: Tags }, // Added Categories link here
+  { name: "Categories", href: "/admin/categories", icon: Tags },
   { name: "Contacts", href: "/admin/contacts", icon: Users },
+  { name: "Staff & Roles", href: "/admin/users", icon: Shield }, // Added the new users page here
   { name: "SMS Campaigns", href: "/admin/sms", icon: MessageSquare },
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
@@ -48,7 +50,7 @@ export default function AdminSidebar() {
       {/* ========================================= */}
       {/* MOBILE TOP BAR (Visible only on small screens) */}
       {/* ========================================= */}
-      <div className="lg:hidden bg-brand-primary text-white p-4 flex justify-between items-center sticky top-0 z-40 shadow-md">
+      <div className="lg:hidden bg-[#0076c0] text-white p-4 flex justify-between items-center sticky top-0 z-40 shadow-md">
         <div className="flex items-center gap-2">
           <button 
             onClick={() => setIsOpen(true)}
@@ -81,7 +83,7 @@ export default function AdminSidebar() {
       {/* SIDEBAR DRAWER (Mobile: Fixed & Slide-in | Desktop: Static) */}
       {/* ========================================= */}
       <div className={cn(
-        "fixed inset-y-0 left-0 z-[100] w-[85%] max-w-[320px] bg-brand-charcoal text-gray-300 transform transition-transform duration-300 ease-in-out flex flex-col shadow-2xl lg:static lg:w-64 lg:translate-x-0 lg:z-auto lg:shadow-none",
+        "fixed inset-y-0 left-0 z-[100] w-[85%] max-w-[320px] bg-gray-900 text-gray-300 transform transition-transform duration-300 ease-in-out flex flex-col shadow-2xl lg:static lg:w-64 lg:translate-x-0 lg:z-auto lg:shadow-none",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}>
 
@@ -89,7 +91,7 @@ export default function AdminSidebar() {
         <div className="flex items-center justify-between p-6 border-b border-gray-800">
           <div>
             <h2 className="text-2xl font-extrabold text-white tracking-tight">
-              ESSYRISE<span className="text-brand-accent">.</span>
+              ESSYRISE<span className="text-[#0076c0]">.</span>
             </h2>
             <p className="text-[11px] text-gray-500 uppercase tracking-widest mt-1 font-semibold">Workspace</p>
           </div>
@@ -115,7 +117,7 @@ export default function AdminSidebar() {
                 className={cn(
                   "flex items-center gap-3 px-4 py-3.5 lg:py-3 rounded-xl transition-colors font-medium",
                   isActive 
-                    ? "bg-brand-primary text-white shadow-md shadow-brand-primary/20" 
+                    ? "bg-[#0076c0] text-white shadow-md shadow-blue-900/20" 
                     : "text-gray-400 hover:bg-gray-800 hover:text-white"
                 )}
               >
@@ -127,11 +129,11 @@ export default function AdminSidebar() {
         </nav>
 
         {/* Bottom Action (Logout) */}
-        <div className="p-4 border-t border-gray-800 bg-brand-charcoal">
-          <button className="flex items-center justify-center gap-3 px-4 py-3.5 rounded-xl text-gray-400 hover:text-white hover:bg-red-500/10 hover:text-red-500 w-full transition-colors font-medium">
+        <div className="p-4 border-t border-gray-800 bg-gray-900">
+          <Link href="/api/auth/logout" className="flex items-center justify-center gap-3 px-4 py-3.5 rounded-xl text-gray-400 hover:text-white hover:bg-red-500/10 hover:text-red-500 w-full transition-colors font-medium">
             <LogOut className="w-5 h-5" />
             <span className="text-[15px]">Logout</span>
-          </button>
+          </Link>
         </div>
       </div>
     </>
