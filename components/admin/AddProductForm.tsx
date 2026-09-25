@@ -1,15 +1,14 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { UploadCloud, X, Loader2, ImagePlus } from 'lucide-react';
-import { addProduct } from '@/lib/actions/products'; // We will build this action next
+// IMPORTANT: Update this import path to point to exactly where your createProduct action lives.
+import { createProduct } from '@/lib/actions/admin'; 
 
 type Category = { id: string; name: string };
 
 export default function AddProductForm({ categories }: { categories: Category[] }) {
-  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState('');
   
@@ -31,7 +30,7 @@ export default function AddProductForm({ categories }: { categories: Category[] 
     const newFiles = [...selectedImages, ...files].slice(0, 5);
     setSelectedImages(newFiles);
 
-    // Generate previews
+    // Generate local previews
     const newPreviews = newFiles.map(file => URL.createObjectURL(file));
     setImagePreviews(newPreviews);
   };
@@ -54,17 +53,18 @@ export default function AddProductForm({ categories }: { categories: Category[] 
 
     const formData = new FormData(e.currentTarget);
     
-    // Append all selected images to the formData
+    // Append all selected images to the formData under the key "images"
     selectedImages.forEach((file) => {
       formData.append('images', file);
     });
 
     startTransition(async () => {
-      const result = await addProduct(formData);
-      if (result.success) {
-        router.push('/admin/products');
-      } else {
-        setError(result.error || 'Failed to add product');
+      try {
+        await createProduct(formData);
+        // We do not need a router.push() here because your createProduct action 
+        // uses Next.js redirect() which automatically redirects the user.
+      } catch (err) {
+        setError('Failed to add product. Please try again.');
       }
     });
   };
@@ -189,7 +189,7 @@ export default function AddProductForm({ categories }: { categories: Category[] 
         </div>
 
         {/* 5. Inventory & Status */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Availability</label>
             <select
@@ -201,7 +201,19 @@ export default function AddProductForm({ categories }: { categories: Category[] 
               <option value="OUT OF STOCK">Out of Stock</option>
             </select>
           </div>
-          <div className="flex items-center gap-3 mt-6 md:mt-8">
+          <div className="flex items-center gap-3 pb-3">
+            <input
+              type="checkbox"
+              id="is_featured"
+              name="is_featured"
+              value="true"
+              className="w-5 h-5 text-[#0076c0] border-gray-300 rounded focus:ring-[#0076c0]"
+            />
+            <label htmlFor="is_featured" className="text-sm font-medium text-gray-700 cursor-pointer">
+              Featured Product
+            </label>
+          </div>
+          <div className="flex items-center gap-3 pb-3">
             <input
               type="checkbox"
               id="is_new_arrival"
@@ -210,7 +222,7 @@ export default function AddProductForm({ categories }: { categories: Category[] 
               className="w-5 h-5 text-[#0076c0] border-gray-300 rounded focus:ring-[#0076c0]"
             />
             <label htmlFor="is_new_arrival" className="text-sm font-medium text-gray-700 cursor-pointer">
-              Mark as "New Arrival"
+              New Arrival
             </label>
           </div>
         </div>
