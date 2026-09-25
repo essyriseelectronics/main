@@ -18,26 +18,24 @@ export default async function Home() {
 
   return (
     <div>
-      {/* DYNAMIC CATEGORIES (Reduced padding from py-16 to py-8 md:py-10) */}
-      <section className="py-8 md:py-10 bg-gray-50 border-b border-gray-200">
+      {/* DYNAMIC CATEGORIES (Tighter mobile padding: py-6 and mb-4) */}
+      <section className="py-6 md:py-10 bg-gray-50 border-b border-gray-200">
         <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-end mb-8 md:mb-10">
-            <h2 className="text-xl md:text-3xl font-bold text-gray-900 relative inline-block">
+          <div className="flex justify-between items-end mb-4 md:mb-8">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900">
               Shop by Category
-              <span className="absolute -bottom-3 left-0 w-[115%] h-1.5 bg-[#0076c0] rounded-full"></span>
             </h2>
           </div>
           <CategoryGrid categories={categories} />
         </div>
       </section>
 
-      {/* FEATURED PRODUCTS (Reduced padding from pt-16 to pt-8 md:pt-10) */}
+      {/* FEATURED PRODUCTS */}
       {featuredProducts.length > 0 && (
-        <section className="pt-8 md:pt-10 w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-end mb-8 md:mb-10">
-            <h2 className="text-xl md:text-3xl font-bold text-gray-900 relative inline-block">
+        <section className="py-6 md:py-10 w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-end mb-4 md:mb-8">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900">
               Featured Deals
-              <span className="absolute -bottom-3 left-0 w-[115%] h-1.5 bg-[#0076c0] rounded-full"></span>
             </h2>
           </div>
 
@@ -49,12 +47,11 @@ export default async function Home() {
         </section>
       )}
 
-      {/* LATEST ARRIVALS (Reduced padding from py-16 to py-10 md:py-12) */}
-      <section className="py-10 md:py-12 w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-end mb-8 md:mb-10">
-          <h2 className="text-xl md:text-3xl font-bold text-gray-900 relative inline-block">
+      {/* LATEST ARRIVALS */}
+      <section className="py-6 md:py-10 w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-end mb-4 md:mb-8">
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900">
             Latest Arrivals
-            <span className="absolute -bottom-3 left-0 w-[115%] h-1.5 bg-[#0076c0] rounded-full"></span>
           </h2>
         </div>
 
@@ -67,7 +64,7 @@ export default async function Home() {
             </div>
             
             {/* VIEW ALL CALL TO ACTION */}
-            <div className="mt-12 flex flex-col items-center text-center">
+            <div className="mt-8 md:mt-12 flex flex-col items-center text-center">
               <p className="text-gray-500 max-w-lg mx-auto mb-6 text-[15px]">
                 Looking for something else? Discover our complete collection of premium electronics, accessories, and everyday tech essentials.
               </p>
