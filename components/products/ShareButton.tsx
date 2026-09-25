@@ -43,7 +43,7 @@ export default function ShareButton({ title, text }: ShareButtonProps) {
   };
 
   const handleNativeShare = async () => {
-    if (navigator.share) {
+    if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
       try {
         await navigator.share({ title, text, url });
         setIsOpen(false);
@@ -134,7 +134,7 @@ export default function ShareButton({ title, text }: ShareButtonProps) {
           </button>
 
           {/* Fallback to Native Share on Mobile Devices */}
-          {typeof navigator !== "undefined" && navigator.share && (
+          {typeof navigator !== "undefined" && typeof navigator.share === "function" && (
             <button
               onClick={handleNativeShare}
               className="flex items-center gap-3 w-full p-2.5 hover:bg-gray-50 rounded-xl text-sm font-medium text-gray-700 transition-colors group mt-1"
