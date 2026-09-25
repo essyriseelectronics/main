@@ -13,11 +13,11 @@ type Product = {
   name: string;
   category_id: string;
   price: number;
-  discount_price: number | null;
+  discount_price?: number | null; // <-- Added the ? to fix the TypeScript error
   description: string;
   availability: string;
-  is_featured: boolean | number;
-  is_new_arrival: boolean | number;
+  is_featured?: boolean | number; // Made optional just in case
+  is_new_arrival?: boolean | number; // Made optional just in case
   images: ProductImage[];
 };
 
@@ -218,7 +218,7 @@ export default function EditProductForm({ product, categories }: { product: Prod
               type="number"
               name="discount_price"
               min="0"
-              defaultValue={product.discount_price || ''}
+              defaultValue={product.discount_price ?? ''}
               className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-[#0076c0] focus:border-[#0076c0] outline-none"
             />
           </div>
