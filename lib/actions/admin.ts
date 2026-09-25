@@ -10,7 +10,7 @@ import { redirect } from "next/navigation";
 export async function createCategory(formData: FormData) {
   const name = formData.get("name") as string;
   const description = formData.get("description") as string;
-  
+
   // Create a URL-friendly slug (e.g., "Phone Accessories" -> "phone-accessories")
   const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
   const id = `cat-${crypto.randomUUID()}`;
@@ -42,31 +42,35 @@ export async function createProduct(formData: FormData) {
     const id = `prod-${crypto.randomUUID()}`;
     const slug = `${name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}-${id.slice(5, 10)}`;
 
-    // 2. Upload image to R2 if provided
-    const imageFile = formData.get("image") as File;
-    let imageUrl = "";
-    let r2Key = "";
-
-    if (imageFile && imageFile.size > 0) {
-      const uploadResult = await uploadImageToR2(imageFile);
-      imageUrl = uploadResult.url;
-      r2Key = uploadResult.key;
-    }
-
-    // 3. Insert Product into D1
+    // 2. Insert Product into D1 FIRST (so we have the ID to attach images to)
     await queryD1(
       `INSERT INTO products (id, name, slug, category_id, description, price, discount_price, availability, is_featured, is_new_arrival) 
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [id, name, slug, categoryId, description, price, discountPrice, availability, isFeatured, isNewArrival]
     );
 
-    // 4. Insert Image metadata into D1 if upload was successful
-    if (imageUrl) {
-      const imgId = `img-${crypto.randomUUID()}`;
-      await queryD1(
-        `INSERT INTO product_images (id, product_id, image_url, r2_key, is_primary) VALUES (?, ?, ?, ?, 1)`,
-        [imgId, id, imageUrl, r2Key]
-      );
+    // 3. Extract multiple images from the form data
+    // "images" matches the key we used in formData.append('images', file) in the UI
+    const imageFiles = formData.getAll("images") as File[];
+
+    // 4. Loop through the images, upload to R2, and save to database
+    for (let i = 0; i < imageFiles.length; i++) {
+      const imageFile = imageFiles[i];
+
+      if (imageFile && imageFile.size > 0) {
+        // Upload to Cloudflare R2 using your existing helper
+        const uploadResult = await uploadImageToR2(imageFile);
+        
+        const imgId = `img-${crypto.randomUUID()}`;
+        // The first image uploaded (index 0) becomes the primary image
+        const isPrimary = i === 0 ? 1 : 0; 
+
+        // Insert Image metadata into D1
+        await queryD1(
+          `INSERT INTO product_images (id, product_id, image_url, r2_key, is_primary) VALUES (?, ?, ?, ?, ?)`,
+          [imgId, id, uploadResult.url, uploadResult.key, isPrimary]
+        );
+      }
     }
 
     // Clear Next.js cache so the new product shows up immediately
