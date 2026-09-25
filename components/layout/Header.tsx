@@ -1,7 +1,8 @@
 import Link from 'next/link';
-import { Search, ChevronDown, ImageIcon, User } from 'lucide-react';
+import { ChevronDown, ImageIcon, User } from 'lucide-react';
 import MobileMenu from './MobileMenu'; 
-import CartIcon from './CartIcon'; // <-- Imported our new Client Component
+import CartIcon from './CartIcon'; 
+import SearchBar from './SearchBar'; // <-- Imported our new Search Component
 import { queryD1 } from "@/lib/db/client"; 
 import { Category } from "@/types";
 import { getUser } from '@/lib/auth/getUser'; 
@@ -16,7 +17,6 @@ const Logo = () => (
 export default async function Header() {
   let categories: Category[] = [];
 
-  // Fetch the logged-in user securely on the server
   const user = await getUser();
 
   try {
@@ -56,10 +56,8 @@ export default async function Header() {
           </div>
 
           <div className="flex-none flex items-center gap-3">
-            <button type="button" className="text-gray-700 hover:text-black p-1" aria-label="Search">
-              <Search className="h-6 w-6" strokeWidth={2} />
-            </button>
-            {/* Replaced static icon with dynamic CartIcon (Mobile style) */}
+            {/* Dynamic Mobile Search Bar */}
+            <SearchBar isMobile={true} />
             <CartIcon isMobile={true} />
           </div>
         </div>
@@ -111,9 +109,10 @@ export default async function Header() {
           </div>
 
           <div className="flex items-center gap-5 ml-auto">
-            <button type="button" className="text-gray-700 hover:text-[#0076c0]" aria-label="Search">
-              <Search className="h-5 w-5" strokeWidth={2.5} />
-            </button>
+            
+            {/* Dynamic Desktop Search Bar */}
+            <SearchBar />
+            
             <div className="w-px h-5 bg-gray-200"></div>
 
             {/* === DYNAMIC AUTHENTICATION UI === */}
@@ -140,7 +139,6 @@ export default async function Header() {
               </>
             )}
 
-            {/* Replaced static icon with dynamic CartIcon (Desktop style) */}
             <CartIcon />
           </div>
         </div>
