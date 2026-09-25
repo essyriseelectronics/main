@@ -1,19 +1,33 @@
+export const dynamic = "force-dynamic";
+
 import Image from "next/image";
-import { Plus, Eye, EyeOff, ImageIcon, Tag, Upload } from "lucide-react";
+import Link from "next/link";
+import { Plus, Eye, EyeOff, ImageIcon, Tag, Upload, Pencil, X } from "lucide-react";
 import { 
   getAdminCategories, 
   addCategory, 
   deleteCategory, 
-  toggleCategoryStatus 
+  toggleCategoryStatus,
+  updateCategory // <-- Added our new update action
 } from "@/lib/actions/adminCategories";
-import DeleteButton from "@/components/admin/DeleteButton"; // <-- Imported the new client component
+import DeleteButton from "@/components/admin/DeleteButton"; 
 
 export const metadata = {
   title: "Manage Categories | Admin",
 };
 
-export default async function AdminCategoriesPage() {
+export default async function AdminCategoriesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
+  const resolvedParams = await searchParams;
+  const editId = resolvedParams?.edit as string | undefined;
+
   const categories = await getAdminCategories();
+  
+  // Find the category we are editing (if any)
+  const editingCategory = editId ? categories.find((c: any) => c.id === editId) : null;
 
   return (
     <div className="pb-12">
@@ -23,14 +37,43 @@ export default async function AdminCategoriesPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        {/* ADD CATEGORY FORM */}
+
+        {/* ADD / EDIT CATEGORY FORM */}
         <div className="lg:col-span-1">
-          <form action={addCategory} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 sticky top-24 space-y-4">
-            <h2 className="text-lg font-bold text-brand-charcoal mb-4 flex items-center gap-2">
-              <Plus className="w-5 h-5 text-brand-primary" />
-              Add New Category
-            </h2>
+          <form 
+            action={editingCategory ? updateCategory : addCategory} 
+            className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 sticky top-24 space-y-4"
+          >
+            {/* Hidden fields for Update mode */}
+            {editingCategory && (
+              <>
+                <input type="hidden" name="id" value={editingCategory.id} />
+                <input type="hidden" name="existing_image_url" value={editingCategory.image_url || ""} />
+              </>
+            )}
+
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold text-brand-charcoal flex items-center gap-2">
+                {editingCategory ? (
+                  <>
+                    <Pencil className="w-5 h-5 text-[#0076c0]" />
+                    Edit Category
+                  </>
+                ) : (
+                  <>
+                    <Plus className="w-5 h-5 text-brand-primary" />
+                    Add New Category
+                  </>
+                )}
+              </h2>
+              
+              {/* Cancel Edit Button */}
+              {editingCategory && (
+                <Link href="/admin/categories" className="p-1 text-gray-400 hover:bg-gray-100 rounded-full transition-colors" title="Cancel Edit">
+                  <X className="w-5 h-5" />
+                </Link>
+              )}
+            </div>
 
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-1.5">Category Name</label>
@@ -38,14 +81,27 @@ export default async function AdminCategoriesPage() {
                 required
                 name="name" 
                 type="text" 
+                defaultValue={editingCategory?.name || ""}
                 placeholder="e.g. Smartphones"
                 className="w-full rounded-lg border-gray-300 focus:border-brand-primary focus:ring-brand-primary text-sm"
               />
             </div>
 
+            {/* Current Image Preview (Only shows if editing and it has an image) */}
+            {editingCategory?.image_url && (
+              <div className="mb-2">
+                <span className="block text-xs font-bold text-gray-500 mb-1">Current Image:</span>
+                <div className="w-16 h-16 bg-gray-50 border border-gray-200 rounded-lg overflow-hidden p-1">
+                  <img src={editingCategory.image_url} alt="Current" className="w-full h-full object-contain" />
+                </div>
+              </div>
+            )}
+
             {/* UPLOAD IMAGE FILE INPUT */}
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-1.5">Upload Image (Transparent PNG)</label>
+              <label className="block text-sm font-bold text-gray-700 mb-1.5">
+                {editingCategory ? "Upload New Image (Optional)" : "Upload Image (Transparent PNG)"}
+              </label>
               <div className="flex items-center justify-center w-full">
                 <label className="flex flex-col items-center justify-center w-full h-28 border-2 border-gray-300 border-dashed rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
                   <div className="flex flex-col items-center justify-center pt-4 pb-4 px-4 text-center">
@@ -64,6 +120,7 @@ export default async function AdminCategoriesPage() {
               <input 
                 name="image_url" 
                 type="url" 
+                defaultValue={editingCategory?.image_url && !editingCategory.image_url.includes('cloudflare') ? editingCategory.image_url : ""}
                 placeholder="https://..."
                 className="w-full rounded-lg border-gray-300 focus:border-brand-primary focus:ring-brand-primary text-sm"
               />
@@ -74,6 +131,7 @@ export default async function AdminCategoriesPage() {
               <textarea 
                 name="description" 
                 rows={2}
+                defaultValue={editingCategory?.description || ""}
                 placeholder="Brief description..."
                 className="w-full rounded-lg border-gray-300 focus:border-brand-primary focus:ring-brand-primary text-sm resize-none"
               ></textarea>
@@ -83,7 +141,7 @@ export default async function AdminCategoriesPage() {
               type="submit"
               className="w-full bg-brand-primary hover:bg-brand-secondary text-white py-3 rounded-xl font-bold transition-colors shadow-sm"
             >
-              Create Category
+              {editingCategory ? "Update Category" : "Create Category"}
             </button>
           </form>
         </div>
@@ -110,8 +168,8 @@ export default async function AdminCategoriesPage() {
                       </td>
                     </tr>
                   ) : (
-                    categories.map((cat) => (
-                      <tr key={cat.id} className="hover:bg-gray-50 transition-colors">
+                    categories.map((cat: any) => (
+                      <tr key={cat.id} className={`hover:bg-gray-50 transition-colors ${editingCategory?.id === cat.id ? 'bg-blue-50/50' : ''}`}>
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
                             <div className="w-12 h-12 rounded-xl bg-gray-50 border border-gray-200 overflow-hidden flex items-center justify-center flex-shrink-0 p-1">
@@ -144,7 +202,16 @@ export default async function AdminCategoriesPage() {
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex items-center justify-end gap-2">
-                            
+
+                            {/* Edit Link */}
+                            <Link 
+                              href={`/admin/categories?edit=${cat.id}`}
+                              className="p-2 text-gray-400 hover:text-[#0076c0] hover:bg-blue-50 rounded-lg transition-colors"
+                              title="Edit Category"
+                            >
+                              <Pencil className="w-4 h-4" />
+                            </Link>
+
                             {/* Toggle Status Form */}
                             <form action={toggleCategoryStatus}>
                               <input type="hidden" name="id" value={cat.id} />
@@ -161,7 +228,6 @@ export default async function AdminCategoriesPage() {
                             {/* Delete Form */}
                             <form action={deleteCategory}>
                               <input type="hidden" name="id" value={cat.id} />
-                              {/* Using our new client-side delete button */}
                               <DeleteButton />
                             </form>
 
