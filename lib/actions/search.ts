@@ -46,3 +46,32 @@ export async function getSearchSuggestions(query: string): Promise<SearchSuggest
     return [];
   }
 }
+
+// 3. Fetch paginated searches for the Admin Dashboard
+export async function getPaginatedSearches(page: number = 1, limit: number = 20) {
+  try {
+    const offset = (page - 1) * limit;
+    
+    // Get the total count of searches for pagination math
+    const countResult = await queryD1<{ total: number }>(
+      `SELECT COUNT(*) as total FROM search_queries`
+    );
+    const total = countResult[0]?.total || 0;
+
+    // Get the specific rows for the current page
+    const queries = await queryD1<{ id: string; query: string; created_at: string }>(
+      `SELECT id, query, created_at FROM search_queries ORDER BY created_at DESC LIMIT ? OFFSET ?`,
+      [limit, offset]
+    );
+
+    return {
+      queries,
+      total,
+      totalPages: Math.ceil(total / limit),
+      currentPage: page
+    };
+  } catch (error) {
+    console.error("Failed to fetch paginated searches", error);
+    return { queries: [], total: 0, totalPages: 0, currentPage: page };
+  }
+}
