@@ -4,15 +4,19 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Menu, X, ChevronRight, ChevronDown, ShoppingCart, Heart, User, ImageIcon } from 'lucide-react';
 import { Category } from '@/types';
+import { useStore } from '@/lib/context/StoreContext';
 
 type MobileMenuProps = {
   categories: Category[];
-  user?: { role: string; first_name: string } | null; // Added user prop
+  user?: { role: string; first_name: string } | null;
 };
 
 export default function MobileMenu({ categories = [], user }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  
+  // Bring in the global store for cart & wishlist counts
+  const { cartCount, wishlist, isHydrated } = useStore();
 
   // Lock body scroll when the menu is active
   useEffect(() => {
@@ -123,17 +127,29 @@ export default function MobileMenu({ categories = [], user }: MobileMenuProps) {
               </Link>
             </div>
 
-            {/* Quick Links */}
+            {/* Quick Links with Live Badges */}
             <div className="border-t border-gray-100 py-2">
               <Link href="/cart" onClick={() => setIsOpen(false)} className="flex items-center justify-between px-5 py-3.5 text-[15px] text-gray-700 font-medium hover:bg-gray-50">
                 <div className="flex items-center gap-3">
-                  <ShoppingCart className="h-5 w-5 text-emerald-600" />
+                  <ShoppingCart className="h-5 w-5 text-[#0076c0]" />
                   <span>Cart</span>
                 </div>
+                {isHydrated && cartCount > 0 && (
+                  <span className="bg-[#0076c0] text-white text-[11px] font-bold px-2 py-0.5 rounded-full">
+                    {cartCount}
+                  </span>
+                )}
               </Link>
-              <Link href="/wishlist" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-5 py-3.5 text-[15px] text-gray-700 font-medium hover:bg-gray-50">
-                <Heart className="h-5 w-5 text-red-500 fill-red-500" />
-                <span>Lists</span>
+              <Link href="/wishlist" onClick={() => setIsOpen(false)} className="flex items-center justify-between px-5 py-3.5 text-[15px] text-gray-700 font-medium hover:bg-gray-50">
+                <div className="flex items-center gap-3">
+                  <Heart className="h-5 w-5 text-red-500 fill-red-500" />
+                  <span>Lists</span>
+                </div>
+                {isHydrated && wishlist.length > 0 && (
+                  <span className="bg-red-50 text-red-600 border border-red-100 text-[11px] font-bold px-2 py-0.5 rounded-full">
+                    {wishlist.length}
+                  </span>
+                )}
               </Link>
             </div>
           </div>
