@@ -1,9 +1,10 @@
 import Link from 'next/link';
-import { Search, ShoppingCart, ChevronDown, ImageIcon, User } from 'lucide-react';
+import { Search, ChevronDown, ImageIcon, User } from 'lucide-react';
 import MobileMenu from './MobileMenu'; 
+import CartIcon from './CartIcon'; // <-- Imported our new Client Component
 import { queryD1 } from "@/lib/db/client"; 
 import { Category } from "@/types";
-import { getUser } from '@/lib/auth/getUser'; // <-- Added getUser utility
+import { getUser } from '@/lib/auth/getUser'; 
 
 const Logo = () => (
   <Link href="/" className="outline-none select-none flex flex-col items-center md:items-start">
@@ -14,7 +15,7 @@ const Logo = () => (
 
 export default async function Header() {
   let categories: Category[] = [];
-  
+
   // Fetch the logged-in user securely on the server
   const user = await getUser();
 
@@ -45,9 +46,7 @@ export default async function Header() {
         {/* ======================= */}
         <div className="flex items-center justify-between h-14 md:!hidden relative">
           <div className="flex-none">
-            {/* Note: In the next step, we will pass the user object into MobileMenu to update its drawer footer too */}
             <MobileMenu categories={categories} user={user} />
-
           </div>
 
           <div className="flex-1 flex justify-center pointer-events-none">
@@ -60,9 +59,8 @@ export default async function Header() {
             <button type="button" className="text-gray-700 hover:text-black p-1" aria-label="Search">
               <Search className="h-6 w-6" strokeWidth={2} />
             </button>
-            <Link href="/cart" className="text-gray-700 hover:text-black relative p-1" aria-label="Cart">
-              <ShoppingCart className="h-6 w-6" strokeWidth={2} />
-            </Link>
+            {/* Replaced static icon with dynamic CartIcon (Mobile style) */}
+            <CartIcon isMobile={true} />
           </div>
         </div>
 
@@ -141,10 +139,9 @@ export default async function Header() {
                 </Link>
               </>
             )}
-            
-            <Link href="/cart" className="text-gray-700 hover:text-[#0076c0] ml-2 relative" aria-label="Cart">
-              <ShoppingCart className="h-5 w-5" strokeWidth={2} />
-            </Link>
+
+            {/* Replaced static icon with dynamic CartIcon (Desktop style) */}
+            <CartIcon />
           </div>
         </div>
 
