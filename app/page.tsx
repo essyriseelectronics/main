@@ -10,9 +10,11 @@ export default async function Home() {
   const products = await getProducts();
   const categories = await getCategories();
 
-  // Display up to 20 products. 
-  // (If you want ONLY featured items, change this to: products.filter(p => p.is_featured).slice(0, 20))
-  const displayProducts = products.slice(0, 20);
+  // 1. Filter out ONLY the featured products
+  const featuredProducts = products.filter(p => p.is_featured);
+  
+  // 2. Filter out the non-featured products and grab the latest 20
+  const regularProducts = products.filter(p => !p.is_featured).slice(0, 20);
 
   return (
     <div>
@@ -26,16 +28,31 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* PRODUCTS GRID (20 Items, Full Width, Responsive) */}
+      {/* FEATURED PRODUCTS (Only shows if you have featured items) */}
+      {featuredProducts.length > 0 && (
+        <section className="pt-16 w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-end mb-8 border-b border-gray-100 pb-4">
+            <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">Featured Deals <span className="text-[#0076c0]">.</span></h2>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {featuredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* LATEST ARRIVALS (Regular non-featured products) */}
       <section className="py-16 w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-end mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Latest Arrivals & Deals</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Latest Arrivals</h2>
         </div>
 
-        {displayProducts.length > 0 ? (
+        {regularProducts.length > 0 ? (
           <>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-              {displayProducts.map((product) => (
+              {regularProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
@@ -55,7 +72,7 @@ export default async function Home() {
           </>
         ) : (
           <div className="text-center py-10 bg-gray-50 rounded-xl border border-dashed border-gray-200">
-            <p className="text-gray-500">No products added yet. Add your first product in the admin dashboard.</p>
+            <p className="text-gray-500">No recent products available. Check back soon!</p>
           </div>
         )}
       </section>
