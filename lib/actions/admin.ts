@@ -60,7 +60,7 @@ export async function createProduct(formData: FormData) {
       if (imageFile && imageFile.size > 0) {
         // Upload to Cloudflare R2 using your existing helper
         const uploadResult = await uploadImageToR2(imageFile);
-        
+
         const imgId = `img-${crypto.randomUUID()}`;
         // The first image uploaded (index 0) becomes the primary image
         const isPrimary = i === 0 ? 1 : 0; 
@@ -85,4 +85,24 @@ export async function createProduct(formData: FormData) {
 
   // Redirect back to product list after successful creation
   redirect("/admin/products");
+}
+
+export async function deleteProduct(productId: string) {
+  try {
+    // 1. Delete associated images first (Foreign Key cleanup)
+    await queryD1(`DELETE FROM product_images WHERE product_id = ?`, [productId]);
+    
+    // 2. Delete the product itself
+    await queryD1(`DELETE FROM products WHERE id = ?`, [productId]);
+
+    // 3. Refresh the pages so the item disappears immediately
+    revalidatePath("/admin/products");
+    revalidatePath("/shop");
+    revalidatePath("/");
+    
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    return { success: false, error: "Failed to delete product" };
+  }
 }
