@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { queryD1 } from "@/lib/db/client"; 
 
 // Utility to generate URL-friendly slugs from the category name
@@ -96,4 +97,52 @@ export async function toggleCategoryStatus(formData: FormData) {
     console.error("Error toggling category status:", error);
     throw new Error("Failed to update status");
   }
+}
+
+export async function updateCategory(formData: FormData) {
+  const id = formData.get("id") as string;
+  const name = formData.get("name") as string;
+  const description = formData.get("description") as string;
+  let image_url = formData.get("image_url") as string;
+  const existing_image_url = formData.get("existing_image_url") as string;
+  const imageFile = formData.get("image_file") as File | null;
+
+  if (!id || !name) {
+    throw new Error("Category ID and name are required");
+  }
+
+  let finalImageUrl = existing_image_url;
+
+  // Handle new file upload via Base64 (just like addCategory)
+  if (imageFile && imageFile.size > 0) {
+    try {
+      const bytes = await imageFile.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+      const mimeType = imageFile.type || "image/png";
+      finalImageUrl = `data:${mimeType};base64,${buffer.toString("base64")}`;
+    } catch (err) {
+      console.error("Failed to process uploaded image file:", err);
+    }
+  } 
+  // Or if they provided a direct URL instead
+  else if (image_url) {
+    finalImageUrl = image_url;
+  }
+
+  try {
+    // We update the name, description, and image. (We don't update the slug to preserve links)
+    await queryD1(
+      `UPDATE categories SET name = ?, description = ?, image_url = ? WHERE id = ?`,
+      [name, description || null, finalImageUrl || null, id]
+    );
+
+    revalidatePath("/admin/categories");
+    revalidatePath("/");
+  } catch (error) {
+    console.error("Error updating category:", error);
+    throw new Error("Failed to update category");
+  }
+
+  // Redirect to clear the ?edit=id parameter from the URL
+  redirect("/admin/categories");
 }
