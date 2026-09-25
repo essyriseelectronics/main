@@ -10,8 +10,37 @@ import { StoreProvider } from "@/lib/context/StoreContext";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Essyrise Electronics | Phones & Genuine Accessories in Mbarara",
+  title: {
+    default: "Essyrise Electronics | Phones & Genuine Accessories in Mbarara",
+    template: "%s | Essyrise Electronics",
+  },
   description: "The latest phones, genuine accessories, and great deals in Mbarara, Uganda. Order online today.",
+  keywords: ["electronics Mbarara", "smartphones Uganda", "Essyrise Electronics", "phone accessories BNK Mall"],
+  openGraph: {
+    title: "Essyrise Electronics | Phones & Genuine Accessories in Mbarara",
+    description: "The latest phones, genuine accessories, and great deals in Mbarara, Uganda. Order online today.",
+    url: "https://essyriseelectronics.com",
+    siteName: "Essyrise Electronics",
+    images: [
+      {
+        url: "/1200.png",
+        width: 1200,
+        height: 630,
+        alt: "Essyrise Electronics Store",
+      },
+    ],
+    locale: "en_UG",
+    type: "website",
+  },
+  icons: {
+    icon: [
+      { url: "/48.png", sizes: "48x48", type: "image/png" },
+    ],
+    apple: [
+      { url: "/180.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
+  manifest: "/manifest.json",
 };
 
 export default async function RootLayout({
