@@ -154,7 +154,7 @@ export default function SearchBar({ isMobile }: { isMobile?: boolean }) {
                     {suggestions.map((item) => (
                       <Link
                         key={item.slug}
-                        href={`/product/${item.slug}`}
+                        href={`/products/${item.slug}`} /* <-- FIXED PATH HERE */
                         onClick={() => setIsOpen(false)}
                         className="flex items-center gap-4 p-2 hover:bg-gray-50 rounded-xl transition-colors"
                       >
