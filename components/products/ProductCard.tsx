@@ -17,18 +17,18 @@ export default function ProductCard({ product }: { product: Product }) {
       href={`/product/${product.slug}`} 
       className="group flex flex-col bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:border-gray-200 transition-all duration-300"
     >
-      {/* IMAGE CONTAINER */}
-      <div className="relative aspect-square bg-gray-50 overflow-hidden flex-shrink-0">
+      {/* IMAGE CONTAINER: Restored height and changed to object-contain so nothing gets cut off */}
+      <div className="relative h-48 md:h-56 w-full bg-gray-50 flex-shrink-0 p-4">
         <Image 
           src={primaryImage} 
           alt={product.name} 
           fill 
-          className="object-cover group-hover:scale-105 transition-transform duration-500" 
+          className="object-contain group-hover:scale-105 transition-transform duration-500" 
           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw" 
         />
         
         {/* Status Badges */}
-        <div className="absolute top-2 left-2 flex flex-col gap-1.5">
+        <div className="absolute top-2 left-2 flex flex-col gap-1.5 z-10">
           {product.is_new_arrival === 1 && (
             <span className="bg-[#0076c0] text-white text-[9px] md:text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md shadow-sm">
               New
@@ -42,7 +42,7 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>
       </div>
 
-      {/* CONTENT CONTAINER (Reduced padding on mobile: p-3) */}
+      {/* CONTENT CONTAINER */}
       <div className="p-3 md:p-4 flex flex-col flex-1">
         
         <h3 className="text-sm md:text-base font-bold text-gray-900 line-clamp-1 group-hover:text-[#0076c0] transition-colors">
