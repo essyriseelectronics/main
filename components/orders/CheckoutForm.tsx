@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { StoreItem, useStore } from '@/lib/context/StoreContext';
 import { User, Phone, MapPin, Loader2, CheckCircle2 } from 'lucide-react';
+import { createOrder } from '@/lib/actions/orders';
 
 export type CheckoutFormProps = {
   cartItems: StoreItem[];
@@ -24,53 +25,57 @@ export default function CheckoutForm({ cartItems, cartTotal }: CheckoutFormProps
     
     const formData = new FormData(e.currentTarget);
     
-    // Attach the cart data to the submission payload
+    // Construct the payload matching the Server Action requirements
     const orderPayload = {
-      firstName: formData.get('first_name'),
-      lastName: formData.get('last_name'),
-      phone: formData.get('phone'),
-      location: formData.get('location'),
-      address: formData.get('address'),
-      items: cartItems, // The array of products from the cart
+      firstName: formData.get('first_name') as string,
+      lastName: formData.get('last_name') as string,
+      phone: formData.get('phone') as string,
+      location: formData.get('location') as string,
+      address: formData.get('address') as string,
+      items: cartItems, 
       total: cartTotal,
     };
 
     startTransition(async () => {
       try {
-        // TODO: Replace this timeout with your actual server action to save the order
-        // const result = await placeMultiItemOrder(orderPayload);
+        // Send the real order to your D1 Database!
+        const result = await createOrder(orderPayload);
         
-        // Simulating network request
-        await new Promise((resolve) => setTimeout(resolve, 1500)); 
-        
-        setSuccess(true);
-        clearCart(); // Empty the cart from local storage after successful checkout
-        
-        // Redirect to a success/thank you page
-        setTimeout(() => {
-          router.push('/'); 
-        }, 2000);
+        if (result.success) {
+          setSuccess(true);
+          clearCart(); // Empty the local storage cart
+          
+          // Show the success message for 3 seconds, then redirect to home
+          setTimeout(() => {
+            router.push('/'); 
+          }, 3000);
+        } else {
+          setError(result.error || 'Failed to process order.');
+        }
       } catch (err) {
         setError('Failed to process your order. Please try again.');
       }
     });
   };
 
+  // SUCCESS SCREEN
   if (success) {
     return (
       <div className="bg-white p-8 md:p-12 rounded-3xl shadow-sm border border-emerald-100 text-center max-w-2xl mx-auto">
         <CheckCircle2 className="w-16 h-16 text-emerald-500 mx-auto mb-6" />
         <h2 className="text-3xl font-bold text-gray-900 mb-4">Order Placed Successfully!</h2>
         <p className="text-gray-500 mb-8">
-          Thank you for shopping with EssyRise Electronics. We will contact you shortly to confirm delivery.
+          Thank you for shopping with EssyRise Electronics. Your order has been received, and we will contact you shortly to confirm delivery.
         </p>
+        <Loader2 className="w-6 h-6 animate-spin text-emerald-500 mx-auto" />
       </div>
     );
   }
 
+  // CHECKOUT FORM
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-      {/* Checkout Form */}
+      {/* 1. Customer Details Form */}
       <div className="lg:col-span-7 bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-100">
         <h2 className="text-xl font-bold text-gray-900 mb-6">Delivery Details</h2>
         
@@ -156,7 +161,7 @@ export default function CheckoutForm({ cartItems, cartTotal }: CheckoutFormProps
           <button
             type="submit"
             disabled={isPending}
-            className="w-full flex justify-center items-center py-4 px-4 rounded-xl text-base font-bold text-white bg-[#0076c0] hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0076c0] disabled:opacity-70 transition-colors mt-8"
+            className="w-full flex justify-center items-center py-4 px-4 rounded-xl text-base font-bold text-white bg-[#0076c0] hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0076c0] disabled:opacity-70 transition-colors mt-8 shadow-sm"
           >
             {isPending ? (
               <Loader2 className="h-6 w-6 animate-spin" />
@@ -167,7 +172,7 @@ export default function CheckoutForm({ cartItems, cartTotal }: CheckoutFormProps
         </form>
       </div>
 
-      {/* Order Summary Sidebar */}
+      {/* 2. Order Summary Sidebar */}
       <div className="lg:col-span-5 bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-100 sticky top-24">
         <h2 className="text-xl font-bold text-gray-900 mb-6">Your Order</h2>
         
