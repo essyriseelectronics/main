@@ -26,6 +26,7 @@ const navItems = [
   { name: "Contacts", href: "/admin/contacts", icon: Users },
   { name: "Staff & Roles", href: "/admin/users", icon: Shield }, // Added the new users page here
   { name: "SMS Campaigns", href: "/admin/sms", icon: MessageSquare },
+{ name: "Searches", href: "/admin/searches", icon: Search },
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
 
