@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
-import { subscribeToNewsletter } from "@/lib/actions/newsletter";
+import { subscribeEmail } from "@/lib/actions/newsletter";
 
 export default function NewsletterForm() {
   const [email, setEmail] = useState("");
@@ -17,7 +17,8 @@ export default function NewsletterForm() {
     const formData = new FormData();
     formData.append("email", email);
 
-    const result = await subscribeToNewsletter(formData);
+    // Using your exact server action name here
+    const result = await subscribeEmail(formData);
 
     if (result?.error) {
       setStatus("error");
@@ -25,7 +26,7 @@ export default function NewsletterForm() {
     } else {
       setStatus("success");
       setMessage("Thanks for subscribing! Check your inbox for updates.");
-      setEmail(""); // Clear the input field
+      setEmail(""); // Clear the input field after success
     }
   }
 
