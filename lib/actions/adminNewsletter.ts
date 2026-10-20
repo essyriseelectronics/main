@@ -10,7 +10,8 @@ export type Subscriber = {
 };
 
 // 1. Get total subscribers & email list
-export async function getSubscribers() {
+// Added explicit return type: Promise<Subscriber[]>
+export async function getSubscribers(): Promise<Subscriber[]> {
   try {
     const subscribers = await queryD1<Subscriber>(
       "SELECT id, email, created_at FROM subscribers ORDER BY created_at DESC"
@@ -128,7 +129,8 @@ export async function sendBroadcastEmail(subject: string, messageHtml: string) {
       return { error: "No subscribers found to send email to." };
     }
 
-    const recipientList = subscribers.map((sub) => ({ email: sub.email }));
+    // FIX: Explicitly typed `sub` as `Subscriber`
+    const recipientList = subscribers.map((sub: Subscriber) => ({ email: sub.email }));
 
     // Send emails in batches using Brevo's Transactional / Batch Email Endpoint
     // Brevo accepts up to 99 recipients per call in 'to' array or bulk distribution
