@@ -13,9 +13,10 @@ import {
   Menu, 
   X, 
   LogOut,
-Search,
+  Search,
   Tags,
-  Shield // Added for Staff/Users
+  Shield, 
+  Mail // Added Mail icon for Newsletter
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -25,9 +26,10 @@ const navItems = [
   { name: "Products", href: "/admin/products", icon: Package },
   { name: "Categories", href: "/admin/categories", icon: Tags },
   { name: "Contacts", href: "/admin/contacts", icon: Users },
-  { name: "Staff & Roles", href: "/admin/users", icon: Shield }, // Added the new users page here
+  { name: "Newsletter", href: "/admin/newsletter", icon: Mail }, // Added Newsletter page here
+  { name: "Staff & Roles", href: "/admin/users", icon: Shield }, 
   { name: "SMS Campaigns", href: "/admin/sms", icon: MessageSquare },
-{ name: "Searches", href: "/admin/searches", icon: Search },
+  { name: "Searches", href: "/admin/searches", icon: Search },
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
 
