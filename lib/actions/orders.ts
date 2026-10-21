@@ -24,13 +24,30 @@ export type CheckoutPayload = {
   address: string;
   items: CartItem[];
   total: number;
-  paymentMethod: "mobile_money" | "card" | "cash_on_delivery";
+  paymentMethod: "mobile_money" | "cash_on_delivery";
 };
 
-// --- HELPER: Send Order Received Email via Brevo ---
-async function sendOrderConfirmationEmail(payload: CheckoutPayload, orderNumber: string, customerName: string) {
+// --- HELPER: Send Rich Receipt Email (Triggered by Webhook or COD) ---
+export async function sendOrderReceiptEmail(orderId: string) {
   const apiKey = process.env.BREVO_API_KEY;
   if (!apiKey) return;
+
+  // 1. Fetch the Order
+  const orders = await queryD1<any>("SELECT * FROM orders WHERE id = ?", [orderId]);
+  const order = Array.isArray(orders) ? orders[0] : (orders as any)?.results?.[0];
+  if (!order || !order.customer_email) return;
+
+  // 2. Fetch the Items (Joining products & images to get thumbnails and links)
+  const itemsData = await queryD1<any>(
+    `SELECT oi.product_name_snapshot as name, oi.quantity, oi.unit_price as price, 
+            p.slug, 
+            (SELECT image_url FROM product_images WHERE product_id = oi.product_id ORDER BY is_primary DESC LIMIT 1) as image_url
+     FROM order_items oi
+     LEFT JOIN products p ON oi.product_id = p.id
+     WHERE oi.order_id = ?`, 
+     [orderId]
+  );
+  const items = Array.isArray(itemsData) ? itemsData : (itemsData as any)?.results || [];
 
   const resolveImageUrl = (url: string | null) => {
     if (!url) return "https://essyriseelectronics.com/192.png";
@@ -39,15 +56,15 @@ async function sendOrderConfirmationEmail(payload: CheckoutPayload, orderNumber:
   };
 
   const domain = "https://essyriseelectronics.com";
-  const paymentText = payload.paymentMethod === "cash_on_delivery" ? "Cash on Delivery" : "Online Payment";
+  const paymentText = order.payment_method === "cash_on_delivery" ? "Cash on Delivery" : "MTN / Airtel Mobile Money";
 
-  const itemsHtml = payload.items.map(item => `
+  const itemsHtml = items.map((item: any) => `
     <tr>
       <td style="padding: 12px; border-bottom: 1px solid #f3f4f6; width: 60px;">
         <img src="${resolveImageUrl(item.image_url)}" alt="${item.name}" style="width: 50px; height: 50px; object-fit: contain; border-radius: 8px;" />
       </td>
       <td style="padding: 12px; border-bottom: 1px solid #f3f4f6;">
-        <a href="${domain}/products/${item.slug}" style="text-decoration: none; color: #111827; font-weight: bold; font-size: 14px;">${item.name}</a>
+        <a href="${domain}/products/${item.slug || ''}" style="text-decoration: none; color: #111827; font-weight: bold; font-size: 14px;">${item.name}</a>
         <div style="color: #6b7280; font-size: 12px; margin-top: 4px;">Qty: ${item.quantity}</div>
       </td>
       <td style="padding: 12px; border-bottom: 1px solid #f3f4f6; text-align: right; font-weight: bold; color: #0076c0; font-size: 14px;">
@@ -62,12 +79,12 @@ async function sendOrderConfirmationEmail(payload: CheckoutPayload, orderNumber:
         <h1 style="color: #ffffff; margin: 0; font-size: 24px;">ESSYRISE ELECTRONICS</h1>
       </div>
       <div style="padding: 32px 24px;">
-        <h2 style="color: #111827; margin-top: 0;">Order Received!</h2>
-        <p style="color: #4b5563;">Hi ${customerName},<br/><br/>We have received your order <strong>#${orderNumber}</strong>.</p>
+        <h2 style="color: #111827; margin-top: 0;">Payment Confirmed!</h2>
+        <p style="color: #4b5563;">Hi ${order.customer_name},<br/><br/>Your order <strong>#${order.order_number}</strong> is confirmed and we are preparing it for delivery.</p>
         <table style="width: 100%; border-collapse: collapse; margin-top: 12px;">${itemsHtml}</table>
         <div style="margin-top: 24px; text-align: right; padding-top: 16px; border-top: 2px solid #f3f4f6;">
           <p style="margin: 4px 0; color: #6b7280;">Payment Method: <strong>${paymentText}</strong></p>
-          <p style="margin: 4px 0; font-size: 18px;">Total: <strong style="color: #0076c0;">UGX ${payload.total.toLocaleString()}</strong></p>
+          <p style="margin: 4px 0; font-size: 18px;">Total: <strong style="color: #0076c0;">UGX ${order.total_amount.toLocaleString()}</strong></p>
         </div>
       </div>
     </div>
@@ -79,17 +96,17 @@ async function sendOrderConfirmationEmail(payload: CheckoutPayload, orderNumber:
       headers: { "Accept": "application/json", "Content-Type": "application/json", "api-key": apiKey },
       body: JSON.stringify({
         sender: { name: "Essyrise Electronics", email: "info@essyriseelectronics.com" },
-        to: [{ email: payload.email, name: customerName }],
+        to: [{ email: order.customer_email, name: order.customer_name }],
         bcc: [{ email: "essyriseelectronics@gmail.com", name: "Essyrise Admin" }],
-        subject: `Order Received - #${orderNumber}`,
+        subject: `Order Confirmed - #${order.order_number}`,
         htmlContent: emailHtml,
       }),
     });
   } catch (error) { console.error("Email failed", error); }
 }
 
-// --- HELPER: Send Status Update Email via Brevo ---
-async function sendStatusUpdateEmail(order: any, newStatus: string) {
+// --- HELPER: Send Basic Status Updates via Brevo ---
+export async function sendStatusUpdateEmail(order: any, newStatus: string) {
   const apiKey = process.env.BREVO_API_KEY;
   if (!apiKey || !order.customer_email) return;
 
@@ -109,12 +126,16 @@ async function sendStatusUpdateEmail(order: any, newStatus: string) {
       subject = `Your order #${order.order_number} has been delivered`;
       statusMessage = "Your order has been successfully delivered. Thank you for shopping with Essyrise Electronics!";
       break;
+    case "PAYMENT_FAILED":
+      subject = `Payment Failed - Order #${order.order_number}`;
+      statusMessage = "We were unable to confirm your payment. If you missed the mobile money PIN prompt or it timed out, please visit the store to place your order again.";
+      break;
     case "CANCELLED":
-      subject = `Order Update - #${order.order_number}`;
-      statusMessage = "Unfortunately, your order has been cancelled. If you believe this is a mistake, please contact our support team.";
+      subject = `Order Cancelled - #${order.order_number}`;
+      statusMessage = "Your order has been cancelled. If you believe this is a mistake, please contact our support team.";
       break;
     default:
-      return; // Don't send emails for other statuses
+      return; 
   }
 
   const emailHtml = `
@@ -170,7 +191,6 @@ export async function createOrder(payload: CheckoutPayload) {
     const orderNumber = generateOrderNumber(Math.floor(Math.random() * 999));
     const initialStatus = payload.paymentMethod === "cash_on_delivery" ? "PROCESSING" : "NEW";
 
-    // UPDATED: Now saving customer_email and payment_method to DB
     await queryD1(
       `INSERT INTO orders (id, order_number, customer_id, customer_name, customer_phone, customer_email, location, delivery_address, total_amount, status, payment_method)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -189,7 +209,10 @@ export async function createOrder(payload: CheckoutPayload) {
     revalidatePath("/admin/orders");
     revalidatePath("/admin");
 
-    if (payload.email) sendOrderConfirmationEmail(payload, orderNumber, name);
+    // Only send the receipt email immediately if it is Cash On Delivery
+    if (payload.paymentMethod === "cash_on_delivery" && payload.email) {
+      await sendOrderReceiptEmail(orderId);
+    }
 
     if (payload.paymentMethod !== "cash_on_delivery") {
       const paymentResponse = await initiateMarzPayCollection({
@@ -201,7 +224,7 @@ export async function createOrder(payload: CheckoutPayload) {
       });
 
       if (paymentResponse.error) return { success: false, error: paymentResponse.error };
-      return { success: true, orderNumber, paymentMethod: payload.paymentMethod, redirectUrl: paymentResponse.redirectUrl, message: paymentResponse.message };
+      return { success: true, orderNumber, paymentMethod: payload.paymentMethod, message: paymentResponse.message };
     }
 
     return { success: true, orderNumber, paymentMethod: "cash_on_delivery" };
@@ -223,17 +246,14 @@ export async function getOrders(): Promise<Order[]> {
 
 export async function updateOrderStatus(orderId: string, newStatus: string) {
   try {
-    // 1. Fetch the order to get the email BEFORE updating
     const orders = await queryD1<any>("SELECT * FROM orders WHERE id = ?", [orderId]);
     const order = Array.isArray(orders) ? orders[0] : (orders as any)?.results?.[0];
 
-    // 2. Update the status in the database
     await queryD1(
       `UPDATE orders SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
       [newStatus, orderId]
     );
 
-    // 3. Trigger the email to the customer
     if (order && order.customer_email) {
       await sendStatusUpdateEmail(order, newStatus);
     }
