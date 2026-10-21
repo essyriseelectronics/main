@@ -13,7 +13,7 @@ export async function GET(request: Request) {
   // cookieStore.delete("session");
 
   // 3. Redirect the user back to the login page (or home page)
-  const loginUrl = new URL("/admin/login", request.url);
+  const loginUrl = new URL("/", request.url);
   
   return NextResponse.redirect(loginUrl);
 }
