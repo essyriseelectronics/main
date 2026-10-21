@@ -1,6 +1,5 @@
 "use server";
 
-// Import Node's native fetch and ProxyAgent directly to bypass Next.js fetch caching/wrapping
 import { fetch as undiciFetch, ProxyAgent } from "undici";
 
 export async function initiateMarzPayCollection(data: {
@@ -35,7 +34,7 @@ export async function initiateMarzPayCollection(data: {
   }
 
   // Prepare the payload based on the payment method
-  const payload: any = {
+  const payload: Record<string, any> = {
     amount: data.amount,
     reference: reference,
     country: "UG", // Hardcoded for Uganda
@@ -54,26 +53,33 @@ export async function initiateMarzPayCollection(data: {
     payload.phone_number = formattedPhone;
   }
 
-  // Configure Fetch Options
-  const fetchOptions: any = {
-    method: "POST",
-    headers: {
-      "Authorization": `Basic ${authHeader}`,
-      "Content-Type": "application/json",
-      "Accept": "application/json",
-    },
-    body: JSON.stringify(payload),
+  const headers = {
+    "Authorization": `Basic ${authHeader}`,
+    "Content-Type": "application/json",
+    "Accept": "application/json",
   };
 
-  // If Fixie is configured, route the request through the static IP proxy
-  if (fixieUrl) {
-    fetchOptions.dispatcher = new ProxyAgent(fixieUrl);
-  }
-
   try {
-    // Use undiciFetch to ensure the proxy dispatcher is respected
-    const response = await undiciFetch(`${baseUrl}/collect-money`, fetchOptions);
-    const result = await response.json() as any;
+    let response: Response;
+
+    // Route through Fixie static IP if environment variable is present
+    if (fixieUrl) {
+      const dispatcher = new ProxyAgent(fixieUrl);
+      response = (await undiciFetch(`${baseUrl}/collect-money`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(payload),
+        dispatcher,
+      })) as unknown as Response;
+    } else {
+      response = await fetch(`${baseUrl}/collect-money`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(payload),
+      });
+    }
+
+    const result = (await response.json()) as any;
 
     if (!response.ok) {
       console.error("MarzPay API Error:", result);
@@ -85,7 +91,7 @@ export async function initiateMarzPayCollection(data: {
       return { success: true, redirectUrl: result.data.redirect_url, reference };
     }
 
-    // For mobile money, the customer gets a USSD prompt on their phone
+    // For mobile money, the customer receives a USSD prompt on their phone
     return { 
       success: true, 
       message: "Check your phone to enter your PIN and complete the payment.",
