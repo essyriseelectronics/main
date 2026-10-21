@@ -1,3 +1,5 @@
+export const revalidate = 3600; // Cache for 1 hour to save Vercel limits
+
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -13,14 +15,36 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   if (!product) return { title: "Product Not Found" };
 
+  const baseUrl = "https://essyriseelectronics.com";
+  const rawImageUrl = product.images?.[0]?.image_url || "";
+  
+  // WhatsApp requires an absolute URL to generate the image thumbnail
+  const imageUrl = rawImageUrl.startsWith("http") ? rawImageUrl : `${baseUrl}${rawImageUrl}`;
+
   return {
     title: `${product.name} | Essyrise Electronics`,
     description: product.description,
     openGraph: {
       title: product.name,
       description: product.description,
-      images: [product.images[0]?.image_url || ""],
+      url: `${baseUrl}/products/${product.slug}`,
+      siteName: "Essyrise Electronics",
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: product.name,
+        }
+      ],
+      type: "website",
     },
+    twitter: {
+      card: "summary_large_image",
+      title: product.name,
+      description: product.description,
+      images: [imageUrl],
+    }
   };
 }
 
@@ -37,8 +61,9 @@ export default async function ProductDetailsPage({ params }: { params: Promise<{
   // Use the discount price if it exists, otherwise fall back to regular price
   const activePrice = product.discount_price || product.price;
   
-  // Custom WhatsApp message pre-filled with the product name
-  const waMessage = `Hi Essyrise Electronics, I would like to inquire about: ${product.name}`;
+  // Construct the absolute URL and the formatted WhatsApp message
+  const productUrl = `https://essyriseelectronics.com/products/${product.slug}`;
+  const waMessage = `Hi Essyrise Electronics, I would like to inquire about this item:\n\n*${product.name}*\n${productUrl}`;
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12 max-w-6xl">
@@ -116,7 +141,7 @@ export default async function ProductDetailsPage({ params }: { params: Promise<{
               />
             )}
 
-            {/* NEW: Direct WhatsApp Inquiry Button */}
+            {/* Direct WhatsApp Inquiry Button */}
             <a 
               href={`https://wa.me/256758288233?text=${encodeURIComponent(waMessage)}`}
               target="_blank"
