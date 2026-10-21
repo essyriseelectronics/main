@@ -1,4 +1,4 @@
-import { Search, Eye } from "lucide-react";
+import { Search, Eye, CreditCard, Smartphone, Truck } from "lucide-react";
 import { getOrders } from "@/lib/actions/orders";
 import { formatUGX } from "@/lib/utils";
 import StatusUpdater from "@/components/admin/StatusUpdater";
@@ -7,7 +7,7 @@ export default async function AdminOrdersPage() {
   const orders = await getOrders();
 
   const getStatusColor = (status: string) => {
-    switch (status) {
+    switch (status?.toUpperCase()) {
       case "NEW": return "bg-blue-100 text-blue-700";
       case "CONFIRMED": return "bg-purple-100 text-purple-700";
       case "PROCESSING": return "bg-orange-100 text-orange-700";
@@ -15,6 +15,19 @@ export default async function AdminOrdersPage() {
       case "DELIVERED": return "bg-green-100 text-green-700";
       case "CANCELLED": return "bg-red-100 text-red-700";
       default: return "bg-gray-100 text-gray-700";
+    }
+  };
+
+  const getPaymentBadge = (method: string) => {
+    switch (method) {
+      case "card":
+        return <div className="flex items-center gap-1.5 text-xs font-semibold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-full w-fit"><CreditCard className="w-3.5 h-3.5"/> Card</div>;
+      case "mobile_money":
+        return <div className="flex items-center gap-1.5 text-xs font-semibold text-yellow-700 bg-yellow-50 px-2.5 py-1 rounded-full w-fit"><Smartphone className="w-3.5 h-3.5"/> MoMo / Airtel</div>;
+      case "cash_on_delivery":
+        return <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full w-fit"><Truck className="w-3.5 h-3.5"/> C.O.D.</div>;
+      default:
+        return <span className="text-xs text-gray-400">Unknown</span>;
     }
   };
 
@@ -54,14 +67,14 @@ export default async function AdminOrdersPage() {
                 <th className="px-6 py-4 font-medium">Order ID / Date</th>
                 <th className="px-6 py-4 font-medium">Customer</th>
                 <th className="px-6 py-4 font-medium">Location</th>
-                <th className="px-6 py-4 font-medium">Total</th>
+                <th className="px-6 py-4 font-medium">Total / Payment</th>
                 <th className="px-6 py-4 font-medium">Status</th>
                 <th className="px-6 py-4 font-medium text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {orders.length > 0 ? (
-                orders.map((order) => (
+                orders.map((order: any) => (
                   <tr key={order.id} className="hover:bg-gray-50/50 transition-colors">
                     <td className="px-6 py-4">
                       <p className="font-bold text-brand-charcoal">{order.order_number}</p>
@@ -78,7 +91,8 @@ export default async function AdminOrdersPage() {
                       <p className="text-xs text-gray-400 truncate max-w-[150px]">{order.delivery_address}</p>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="font-bold text-brand-primary">{formatUGX(order.total_amount)}</span>
+                      <span className="font-bold text-brand-primary block mb-1">{formatUGX(order.total_amount)}</span>
+                      {getPaymentBadge(order.payment_method)}
                     </td>
                     <td className="px-6 py-4">
                       {/* Client component to handle status changes without full page reload */}
