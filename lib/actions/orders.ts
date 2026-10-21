@@ -4,8 +4,8 @@ import { queryD1 } from "@/lib/db/client";
 import { generateOrderNumber, normalizeUgandaPhone } from "@/lib/utils";
 import { Product, Order } from "@/types";
 import { revalidatePath } from "next/cache";
+import { initiateMarzPayCollection } from "./payments"; // Import our new payment action
 
-// Type definition for the payload coming from your CheckoutForm
 export type CartItem = {
   id: string;
   slug: string;
@@ -19,10 +19,12 @@ export type CheckoutPayload = {
   firstName: string;
   lastName: string;
   phone: string;
+  email: string;
   location: string;
   address: string;
   items: CartItem[];
   total: number;
+  paymentMethod: "mobile_money" | "card" | "cash_on_delivery";
 };
 
 // --- CREATE (Public Checkout) ---
@@ -53,11 +55,14 @@ export async function createOrder(payload: CheckoutPayload) {
     // 2. Create the main Order record
     const orderId = `ord-${crypto.randomUUID()}`;
     const orderNumber = generateOrderNumber(Math.floor(Math.random() * 999));
+    
+    // Default status is 'pending_payment' for online, 'processing' for COD
+    const initialStatus = payload.paymentMethod === "cash_on_delivery" ? "processing" : "pending_payment";
 
     await queryD1(
-      `INSERT INTO orders (id, order_number, customer_id, customer_name, customer_phone, location, delivery_address, total_amount)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-       [orderId, orderNumber, contactId, name, phone, payload.location, payload.address, total]
+      `INSERT INTO orders (id, order_number, customer_id, customer_name, customer_phone, location, delivery_address, total_amount, status)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       [orderId, orderNumber, contactId, name, phone, payload.location, payload.address, total, initialStatus]
     );
 
     // 3. Loop through cart items and insert them into order_items
@@ -76,7 +81,31 @@ export async function createOrder(payload: CheckoutPayload) {
     revalidatePath("/admin/orders");
     revalidatePath("/admin");
 
-    return { success: true, orderNumber };
+    // 4. Handle Online Payments via MarzPay
+    if (payload.paymentMethod !== "cash_on_delivery") {
+      const paymentResponse = await initiateMarzPayCollection({
+        amount: total,
+        phoneNumber: phone,
+        method: payload.paymentMethod,
+        orderId: orderId, // Pass the DB ID so our webhook can update it later
+        customerEmail: payload.email || "info@essyriseelectronics.com"
+      });
+
+      if (paymentResponse.error) {
+        return { success: false, error: paymentResponse.error };
+      }
+
+      return { 
+        success: true, 
+        orderNumber, 
+        paymentMethod: payload.paymentMethod,
+        redirectUrl: paymentResponse.redirectUrl, 
+        message: paymentResponse.message 
+      };
+    }
+
+    // If Cash on Delivery, just return success
+    return { success: true, orderNumber, paymentMethod: "cash_on_delivery" };
     
   } catch (error) {
     console.error("Failed to create order:", error);
@@ -88,7 +117,6 @@ export async function createOrder(payload: CheckoutPayload) {
 
 export async function getOrders(): Promise<Order[]> {
   try {
-    // Fetch all orders, newest first
     const sql = `SELECT * FROM orders ORDER BY created_at DESC`;
     return await queryD1<Order>(sql);
   } catch (error) {
