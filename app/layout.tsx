@@ -4,6 +4,7 @@ import "./globals.css";
 import StorefrontWrapper from "@/components/layout/StorefrontWrapper";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import FloatingWhatsApp from "@/components/layout/FloatingWhatsApp"; // Implemented
 import { getSettings } from "@/lib/actions/settings";
 import { StoreProvider } from "@/lib/context/StoreContext";
 
@@ -63,6 +64,9 @@ export default async function RootLayout({
             {children}
           </StorefrontWrapper>
         </StoreProvider>
+        
+        {/* Render globally across all pages */}
+        <FloatingWhatsApp />
       </body>
     </html>
   );
