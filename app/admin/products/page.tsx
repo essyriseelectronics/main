@@ -5,7 +5,7 @@ import { getProducts } from "@/lib/actions/products";
 import { formatUGX } from "@/lib/utils";
 import DeleteProductButton from "@/components/admin/DeleteProductButton"; // <-- Import the new button
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 export default async function AdminProductsPage() {
   const products = await getProducts();
