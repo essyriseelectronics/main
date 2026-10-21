@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useStore } from "@/lib/context/StoreContext";
 import { createOrder } from "@/lib/actions/orders";
-import { Loader2, CheckCircle2, CreditCard, Smartphone, Truck } from "lucide-react";
+import { Loader2, CheckCircle2, Smartphone, Truck } from "lucide-react";
 import Link from "next/link";
 
 export default function CheckoutPage() {
@@ -22,7 +22,7 @@ export default function CheckoutPage() {
     email: "",
     location: "Mbarara",
     address: "",
-    paymentMethod: "mobile_money" as "mobile_money" | "card" | "cash_on_delivery"
+    paymentMethod: "mobile_money" as "mobile_money" | "cash_on_delivery"
   });
 
   if (!isHydrated) return null;
@@ -50,19 +50,13 @@ export default function CheckoutPage() {
       return;
     }
 
-    // Handle Card Redirect
-    if (res.paymentMethod === "card" && res.redirectUrl) {
-      window.location.href = res.redirectUrl;
-      return; // Stop execution, browser is navigating away
-    }
-
     // Empty the cart locally
     cart.forEach(item => removeFromCart(item.id));
 
     // Show Success Screen for Mobile Money or COD
     setSuccessData({
       orderNumber: res.orderNumber as string,
-      message: res.message // Will contain the "Check your phone for PIN" message
+      message: res.message // Will contain the "Check your phone for PIN" message if mobile money
     });
     setLoading(false);
   }
@@ -158,15 +152,6 @@ export default function CheckoutPage() {
                   <div className="ml-3">
                     <span className="block text-sm font-bold text-gray-900">MTN / Airtel Mobile Money</span>
                     <span className="block text-xs text-gray-500">Pay instantly from your phone</span>
-                  </div>
-                </label>
-
-                <label className={`flex items-center p-4 border rounded-xl cursor-pointer transition-all ${formData.paymentMethod === 'card' ? 'border-[#0076c0] bg-blue-50/50' : 'border-gray-200 hover:border-gray-300'}`}>
-                  <input type="radio" name="payment" value="card" checked={formData.paymentMethod === 'card'} onChange={() => setFormData({...formData, paymentMethod: 'card'})} className="w-4 h-4 text-[#0076c0] border-gray-300 focus:ring-[#0076c0]" />
-                  <CreditCard className={`w-5 h-5 ml-4 ${formData.paymentMethod === 'card' ? 'text-[#0076c0]' : 'text-gray-400'}`} />
-                  <div className="ml-3">
-                    <span className="block text-sm font-bold text-gray-900">Debit / Credit Card</span>
-                    <span className="block text-xs text-gray-500">Visa, Mastercard</span>
                   </div>
                 </label>
 
